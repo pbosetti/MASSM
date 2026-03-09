@@ -1,0 +1,61 @@
+---
+title: "04 - HMM Example on Sequential States"
+format: pdf
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Objective
+
+Estimate hidden operating states from sequential emissions using an HMM.
+
+```{r}
+library(tidyverse)
+library(HiddenMarkov)
+```
+
+## Simulated sequential measurements
+
+```{r}
+set.seed(999)
+
+n <- 400
+true_states <- numeric(n)
+true_states[1] <- 1
+
+for (t in 2:n) {
+  if (true_states[t - 1] == 1) {
+    true_states[t] <- sample(c(1, 2), 1, prob = c(0.92, 0.08))
+  } else {
+    true_states[t] <- sample(c(1, 2), 1, prob = c(0.10, 0.90))
+  }
+}
+
+mu <- c(45, 72)
+sd_vec <- c(4, 6)
+emission <- rnorm(n, mean = mu[true_states], sd = sd_vec[true_states])
+```
+
+## Fit Gaussian HMM and decode states
+
+```{r}
+Pi <- matrix(c(0.90, 0.10,
+               0.10, 0.90), nrow = 2, byrow = TRUE)
+
+delta <- c(0.5, 0.5)
+
+distn <- "norm"
+pm <- list(mean = c(42, 70), sd = c(5, 7))
+
+hmm <- dthmm(x = emission, Pi = Pi, delta = delta, distn = distn, pm = pm)
+fit <- BaumWelch(hmm, control = bwcontrol(maxiter = 100))
+
+decoded <- Viterbi(fit)
+
+tibble(
+  time = seq_along(emission),
+  observed = emission,
+  decoded_state = factor(decoded)
+)

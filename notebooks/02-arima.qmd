@@ -1,0 +1,45 @@
+---
+title: "02 - ARIMA Example on Power Signal"
+format: pdf
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Objective
+
+Fit an ARIMA model to a manufacturing power signal and inspect diagnostics.
+
+```{r}
+library(tidyverse)
+library(forecast)
+```
+
+## Simulated power time series
+
+```{r}
+set.seed(123)
+
+n <- 500
+trend <- seq(0, 8, length.out = n)
+season <- 2 * sin(2 * pi * (1:n) / 50)
+noise <- arima.sim(model = list(ar = 0.6, ma = -0.3), n = n, sd = 1.2)
+
+power_ts <- ts(40 + trend + season + noise, frequency = 50)
+```
+
+## Fit and evaluate ARIMA
+
+```{r}
+fit <- auto.arima(power_ts, seasonal = TRUE, stepwise = FALSE, approximation = FALSE)
+
+fc <- forecast(fit, h = 20)
+
+res_diag <- checkresiduals(fit, plot = FALSE)
+
+list(
+  model = fit,
+  forecast = fc,
+  residual_diagnostics = res_diag
+)

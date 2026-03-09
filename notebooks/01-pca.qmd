@@ -1,0 +1,61 @@
+---
+title: "01 - PCA Example on Manufacturing Signals"
+format: pdf
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Objective
+
+Use PCA to reduce multivariate sensor features before state classification.
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+```
+
+## Simulated manufacturing signals
+
+```{r}
+set.seed(42)
+
+n <- 1200
+states <- c("idle", "stable", "anomaly")
+
+dat <- tibble(
+  state = sample(states, n, replace = TRUE, prob = c(0.35, 0.50, 0.15)),
+  power = rnorm(n, if_else(state == "idle", 20, if_else(state == "stable", 55, 75)), 6),
+  vibration = rnorm(n, if_else(state == "idle", 0.8, if_else(state == "stable", 2.2, 3.8)), 0.4),
+  sound = rnorm(n, if_else(state == "idle", 45, if_else(state == "stable", 62, 78)), 4),
+  torque = rnorm(n, if_else(state == "idle", 10, if_else(state == "stable", 28, 35)), 3)
+) |>
+  mutate(state = factor(state))
+
+split <- initial_split(dat, prop = 0.8, strata = state)
+train <- training(split)
+test <- testing(split)
+```
+
+## PCA + linear classifier workflow
+
+```{r}
+rec <- recipe(state ~ ., data = train) |>
+  step_normalize(all_predictors()) |>
+  step_pca(all_predictors(), num_comp = 2)
+
+model <- logistic_reg(mode = "classification") |>
+  set_engine("nnet")
+
+wf <- workflow() |>
+  add_recipe(rec) |>
+  add_model(model)
+
+fit <- fit(wf, data = train)
+
+pred <- predict(fit, test) |>
+  bind_cols(test |> select(state))
+
+metrics <- metric_set(accuracy, kap)(pred, truth = state, estimate = .pred_class)
+metrics

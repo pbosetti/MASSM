@@ -1,0 +1,33 @@
+---
+title: "Multi-agent system for smart machining, part II"
+subtitle: "An ECIU Micromodule"
+author: "Paolo Bosetti and Daniele Fontanelli"
+format: revealjs
+---
+
+# Course goals
+
+- Understand state classification from industrial time series
+- Learn assumptions, estimation, and diagnostics of classical models
+- Compare PCA, ARIMA, SVM, HMM, and GMM in manufacturing contexts
+
+# Course structure (30 hours)
+
+## Part 1 --- Fundamentals (P. Bosetti, 10h)
+1. Distributed data acquisition **architectures** and edge computing [{{< bi file-slides >}}](/slides/0_distributed_daq.html)
+1. **Time series** of stochastic process variables [{{< bi file-slides >}}](/slides/1_time_series.html)
+1. Time-domain: **ARIMA** [{{< bi file-slides >}}](/slides/2_time_domain.html)
+1. Feature-based: **PCA**, SVM [{{< bi file-slides >}}](/slides/3_feature_based.html)
+1. Frequency-domain: **Fast Fourier Transform** [{{< bi file-slides >}}](/slides/4_frequency_domain.html)
+
+
+## Part 2 --- Algorithms (D. Fontanelli, 20h)
+
+1. Fundamentals and evolution of **maintenance management**, including failures, faults, maintenance activities, and decision-making.
+2. Scheduling and execution of **maintenance actions**, including breakdown, time-based, opportunity-based, and degradation-based policies.
+3. **Condition monitoring**, PHM, diagnostics, prognostics, P/F curve, and Remaining Useful Life estimation.
+4. **Detection theory foundations**: binary and multiple hypothesis testing, false alarms, missed detections, ROC curves, and likelihood-ratio tests.
+5. Neyman-Pearson, Bayesian, and GLRT approaches for **detection under known or uncertain model parameters**.
+6. **Classification of process data** using Bayes classifiers, logistic regression, neural networks, temporal models, HMM/CRF methods, and risk minimization.
+7. **Anomaly and non-conformity detection** in time-series process data, including control charts, PCA, autoencoders, LSTMs, threshold tuning, drift detection, deployment, and industrial case studies.
+

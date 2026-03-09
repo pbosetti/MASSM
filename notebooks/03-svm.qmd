@@ -1,0 +1,60 @@
+---
+title: "03 - SVM Example for State Classification"
+format: pdf
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Objective
+
+Classify operating states from sensor features using an RBF SVM.
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+```
+
+## Simulated feature dataset
+
+```{r}
+set.seed(202)
+
+n <- 1500
+states <- c("idle", "stable", "anomaly")
+
+dat <- tibble(
+  state = sample(states, n, replace = TRUE, prob = c(0.30, 0.55, 0.15)),
+  power = rnorm(n, if_else(state == "idle", 20, if_else(state == "stable", 58, 80)), 7),
+  vibration = rnorm(n, if_else(state == "idle", 0.7, if_else(state == "stable", 2.0, 4.1)), 0.5),
+  sound = rnorm(n, if_else(state == "idle", 44, if_else(state == "stable", 63, 81)), 5),
+  temp = rnorm(n, if_else(state == "idle", 30, if_else(state == "stable", 43, 57)), 3)
+) |>
+  mutate(state = factor(state))
+
+split <- initial_split(dat, prop = 0.8, strata = state)
+train <- training(split)
+test <- testing(split)
+```
+
+## Train SVM and score
+
+```{r}
+rec <- recipe(state ~ ., data = train) |>
+  step_normalize(all_predictors())
+
+svm_spec <- svm_rbf(mode = "classification", cost = 1, rbf_sigma = 0.05) |>
+  set_engine("kernlab")
+
+wf <- workflow() |>
+  add_recipe(rec) |>
+  add_model(svm_spec)
+
+fit <- fit(wf, data = train)
+
+pred <- predict(fit, test) |>
+  bind_cols(test |> select(state))
+
+metrics <- metric_set(accuracy, kap)(pred, truth = state, estimate = .pred_class)
+metrics
