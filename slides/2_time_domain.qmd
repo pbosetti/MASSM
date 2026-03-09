@@ -22,31 +22,31 @@ library(patchwork)
 theme_set(theme_gray()+theme(legend.position = "bottom"))
 ```
 
-# Serie Temporali
+# Time Series
 
-Una **serie temporale** è costituita da una serie di osservazioni di una variabile aleatoria tale per cui l'influenza di un'osservazione sulle seguenti non possa essere trascurata e---quindi---tale che la dipendenza dal tempo risulti essenziale
+A **time series** consists of a sequence of observations of a random variable such that the influence of one observation on the following ones cannot be neglected and, therefore, dependence on time becomes essential
 
-## Statistica delle serie temporali
+## Time-series statistics
 
-Tutti i metodi di regressione visti fin ora sono basati sull'assunzione che la variabile aleatoria sia $x\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)$. Cioè tutte le osservazioni **devono essere non-autocorrelate**
+All regression methods seen so far are based on the assumption that the random variable is $x\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)$. That is, all observations **must be uncorrelated**
 
-Quest'assunzione è, tra l'altro, alla base della raccomandazione di casualizzazione della sequenza operativa
+This assumption is, among other things, the basis for the recommendation to randomize the operating sequence
 
-Supponiamo di poter considerare una misura come un segnale tempo-dipendente. È evidente che riducendo l'intervallo di campionamento del segnale prima o poi ogni campione sarà correlato al precedente
+Suppose we can treat a measurement as a time-dependent signal. It is clear that by reducing the signal sampling interval, sooner or later each sample will be correlated with the previous one
 
-Esiste quindi una **frequenza di campionamento massima** al di sopra della quale ogni misura risulta essere autocorrelata, cioè **le osservazioni di $x$ non sono più IID**
+There is therefore a **maximum sampling frequency** above which every measurement turns out to be autocorrelated, that is, **the observations of $x$ are no longer IID**
 
-Questa situazione sussiste quando la **dinamica** propria dello strumento di misura o del misurando stesso---che sono **sempre finite**---sono più lente dell'intervallo temporale in cui si effettuano le misure
+This situation occurs when the **dynamics** of the measuring instrument or of the measurand itself, which are **always finite**, are slower than the time interval at which measurements are taken
 
-## Statistica delle serie temporali
+## Time-series statistics
 
 :::columns
 :::column
-Consideriamo ad esempio la serie temporale in figura che riporta la differenza tra la temperatura media delle terre emerse e il corrispondente valore medio nel periodo 1951--1980
+Consider, for example, the time series in the figure, which reports the difference between the mean temperature of land areas and the corresponding mean value over the period 1951--1980
 
-È evidente che osservazioni vicine sono più correlate di osservazioni lontane
+It is clear that nearby observations are more correlated than distant ones
 
-Inoltre è evidente (**ed è di interesse**) valutare la dipendenza della v.a. considerata dal tempo allo scopo di **effettuare delle previsioni future**
+Moreover, it is clear, and relevant, to evaluate the dependence of the random variable on time in order to **make future predictions**
 
 :::
 :::column
@@ -55,11 +55,11 @@ ts <- ts_xts(gtemp_land)
 ref <- ts["1951/1980"]
 ggplot(ts, aes(x=Index, y=value)) + 
   geom_line(color=gray(0.5)) + 
-  geom_line(data=ref, aes(y=value, color="Periodo di riferimento"), linewidth=1) +
+  geom_line(data=ref, aes(y=value, color="Reference Period"), linewidth=1) +
   # geom_point(shape=4) +
   geom_hline(yintercept=0, linetype=2) +
   scale_x_date(breaks="20 years", date_labels = "%Y") +
-  labs(x="anno", y="Anomalia termica terre emerse (°C)", color="") +
+  labs(x="Year", y="Land Temperature Anomaly (°C)", color="") +
   theme(legend.position = "bottom")
 ```
 
@@ -67,45 +67,45 @@ ggplot(ts, aes(x=Index, y=value)) +
 :::
 
 
-## Autocovarianza e autocorrelazione
+## Autocovariance and autocorrelation
 
-Abbiamo visto come gli operatori **covarianza** e **correlazione** servano a stimare l'indipendenza di due campioni
+We have seen how the **covariance** and **correlation** operators are used to estimate the independence of two samples
 
-Considerando un segnale tempo-dipendente $x=x(t)$, è interessante considerare la covarianza del segnale con se stesso, traslato nel tempo
+Considering a time-dependent signal $x=x(t)$, it is interesting to consider the covariance of the signal with itself, shifted in time
 
-Definiamo la **funzione autocovarianza** $\gamma(s,t)$ come la funzione che valuta la covarianza di un segnale temporale con se stesso valutato **iniziando** ai tempi $s$ e $t$:
+We define the **autocovariance function** $\gamma(s,t)$ as the function that evaluates the covariance of a time signal with itself evaluated **starting** at times $s$ and $t$:
 $$
 \gamma_x(s, t) = \sigma_{x_s, x_t} = E[(x_s-\mu_s)(x_t-\mu_t)]
 $$
 
-È evidente che $\gamma_x(s,s)=\sigma^2(x_s)$
+It is clear that $\gamma_x(s,s)=\sigma^2(x_s)$
 
-La **funzione di autocorrelazione** (ACF), di conseguenza, è definita come:
+The **autocorrelation function** (ACF), consequently, is defined as:
 $$
 \rho_x(s, t) = \frac{\gamma_x(s,t)}{\sqrt{\gamma_x(s,s)\gamma_x(t,t)}}
 $$
-ed ha il vantaggio di essere sempre compresa in $[-1,1]$. È inoltre evidente che $\rho_x(s,s)=1$
+and has the advantage of always lying in $[-1,1]$. It is also clear that $\rho_x(s,s)=1$
 
 
 
 
-## Autocorrelazione
-Se campioniamo un segnale continuo a intervalli fissi $\Delta t$ per una durata complessiva $T$, otteniamo una **serie temporale finita** di $N=T/\Delta t$ osservazioni: $x_{0}=\left<x_1, x_2, \dots, x_N\right>$
+## Autocorrelation
+If we sample a continuous signal at fixed intervals $\Delta t$ over a total duration $T$, we obtain a **finite time series** of $N=T/\Delta t$ observations: $x_{0}=\left<x_1, x_2, \dots, x_N\right>$
 
-Possiamo estendere la definizione stabilendo che sia $s=t_0 = 0$ l'istante iniziale della serie e che sia $t=s+\tau$ un generico momento successivo tale per cui
+We can extend the definition by setting $s=t_0 = 0$ as the initial instant of the series and $t=s+\tau$ as a generic later instant such that
 $$
 \tau = \ell \Delta t
 $$
-dove $\ell$ è il ritardo o *lag*, e allora l'**autocovarianza** e l'**autocorrelazione per una s.t. finita** risultano:
+where $\ell$ is the delay or *lag*, and then the **autocovariance** and **autocorrelation for a finite time series** become:
 $$
 \gamma_x(\ell) = \frac{\sum_{i=1}^{N-\ell} (x_i - \bar x_0) (x_{i+\ell}-\bar x_\ell) }{N-\ell-2},\quad \rho_x(\ell) = \frac{\gamma_x(\ell)}{\sqrt{\sigma_x(0)\sigma_x(\ell)}}
 $$
-dove
+where
 $$
 \bar x_0=\frac{1}{N-\ell}\sum\nolimits_{i=1}^{N-\ell} x_i,\quad \bar x_\ell=\frac{1}{N-\ell}\sum\nolimits_{i=\ell}^{N} x_i
 $$
 
-## Autocorrelogramma (ACF)
+## Autocorrelogram (ACF)
 
 :::columns
 :::{.column width=60%}
@@ -118,38 +118,38 @@ ps <- ggplot(c[ell:length(c$i),]) +
   geom_line(data=c[1:ell,], aes(x=i, y=value), color=gray(2/3), linetype=2) +
   coord_cartesian(xlim=range(c$i)) +
   theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
-  labs(y="valore")
+  labs(y="Value")
 pt <- ggplot(lag(c, ell)) +
   geom_line(aes(x=i+ell, y=value)) +
   coord_cartesian(xlim=range(c$i)) +
-  labs(x="indice", y="valore")
+  labs(x="Index", y="Value")
 ggarrange(ps, pt, nrow=2, heights=c(1,1.08))
 ```
 :::
 :::{.column width=40%}
-Per costruire il grafico ACF di una s.t. si trasla l'ascissa di $\ell$ campioni trascurando i primi $\ell$ campioni nella s.t. non traslata e gli ultimi $\ell$ campioni in quella traslata
+To construct the ACF plot of a time series, the axis is shifted by $\ell$ samples, neglecting the first $\ell$ samples in the unshifted series and the last $\ell$ samples in the shifted one
 
-Poi si calcola l'autocorrelazione tra le due serie
+Then the autocorrelation between the two series is computed
 
-Il processo viene ripetuto per $\ell=0, 1, \dots, n$, con $n$ scelto in funzione della dimensione della serie, tipicamente pari ad almeno 50 e comunque non oltre la metà della lunghezza della s.t.
+The process is repeated for $\ell=0, 1, \dots, n$, with $n$ chosen as a function of the series length, typically at least 50 and in any case no more than half the length of the time series
 :::
 :::
 
-## Autocorrelogramma (ACF)
+## Autocorrelogram (ACF)
 
 :::columns
 :::column
-La **funzione di autocorrelazione** $\rho_x(\ell)$ che è una funzione **a valori discreti**, può essere messa in grafico per studiare il *lag* massimo al di sopra del quale la serie storica $x$ non è più autocorrelata
+The **autocorrelation function** $\rho_x(\ell)$, which is a **discrete-valued** function, can be plotted to study the maximum *lag* beyond which the historical series $x$ is no longer autocorrelated
 
-In figura il segnale di un microfono che registra il suono "AAHH". La serie è **evidentemente periodica** ogni 0.01 s
+The figure shows the signal of a microphone recording the sound "AAHH". The series is **clearly periodic** every 0.01 s
 
-L'autocorrelogramma mostra **autocorrelazione elevata** fino a $\ell=4$. Poi l'andamento è **periodico**, a confermare che la s.t. è autocorrelata con se stessa ogni circa 10 lag
+The autocorrelogram shows **high autocorrelation** up to $\ell=4$. Then the pattern is **periodic**, confirming that the time series is autocorrelated with itself about every 10 lags
 
 :::
 
 :::column
 :::panel-tabset
-### Serie storica
+### Time series
 ```{r}
 #| fig-height: 3
 s <- ts_data.frame(speech) %>% slice(seq(1,n(),by=1)) %>%
@@ -157,7 +157,7 @@ s <- ts_data.frame(speech) %>% slice(seq(1,n(),by=1)) %>%
 s %>%
 ggplot(aes(x=time, y=value)) + 
   geom_line() +
-  labs(x="tempo (s)", y="tensione (mV)")
+  labs(x="Time (s)", y="Voltage (mV)")
 ```
 
 ### ACF
@@ -176,32 +176,32 @@ with(acf(s$value, lag.max = 100, plot=F), data.frame(lag, acf)) %>%
 :::
 
 :::aside
-**ACF** sta per *Auto-Correlation Function*; la banda evidenziata in blu è l'intervallo di confidenza al 95%. Inoltre, in generale vale sempre $\rho_x(0)=1$
+**ACF** stands for *Auto-Correlation Function*; the blue highlighted band is the 95% confidence interval. Also, in general, $\rho_x(0)=1$ always holds
 :::
 
-## Autocorrelogramma (ACF)
+## Autocorrelogram (ACF)
 
 :::columns
 :::column
-Consideriamo gli stessi dati della s.t. precedente, ma campionati in istanti casuali
+Consider the same data as the previous time series, but sampled at random instants
 
-Allora $y\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)$ e quindi $\rho_y(\ell) = 0~\forall \ell>0$
+Then $y\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)$ and therefore $\rho_y(\ell) = 0~\forall \ell>0$
 
-Come atteso, l'unico valore della ACF fuori dall'initervallo di confidenza è $\rho_x(0)$
+As expected, the only ACF value outside the confidence interval is $\rho_x(0)$
 
-In questo caso si dice anche che la s.t. è un ***random walk***
+In this case one also says that the time series is a ***random walk***
 :::
 
 :::column
 :::panel-tabset
-### Serie storica
+### Time series
 ```{r}
 #| fig-height: 3
 s <- s %>% mutate(value = sample(value))
 s %>%
 ggplot(aes(x=time, y=value)) + 
   geom_line() +
-  labs(x="tempo", y="tensione (mV)")
+  labs(x="Time", y="Voltage (mV)")
 ```
 
 ### ACF
@@ -222,34 +222,34 @@ with(acf(s$value, lag.max = 100, plot=F), data.frame(lag, acf)) %>%
 
 
 
-## Serie temporali stazionarie
-Una s.t. può essere stazionaria o meno. Si definiscono:
+## Stationary time series
+A time series may or may not be stationary. The following are defined:
 
-Serie temporale stazionaria in **senso ampio**
-: È una serie temporale per cui il comportamento probabilistico di una qualsiasi collezione di valori $\left<x_{t_1}, x_{t_2},\dots, x_{t_k}\right>$ è identico a quello della collezione traslata $\left<x_{t_1+h}, x_{t_2+h},\dots, x_{t_k+h}\right>$, cioè:
+Time series stationary in the **wide sense**
+: It is a time series for which the probabilistic behavior of any collection of values $\left<x_{t_1}, x_{t_2},\dots, x_{t_k}\right>$ is identical to that of the shifted collection $\left<x_{t_1+h}, x_{t_2+h},\dots, x_{t_k+h}\right>$, that is:
 $$
 \mathrm{Pr}(x_{t_1}\leq c_1, \dots, x_{t_k}\leq c_k) = \mathrm{Pr}(x_{t_1+h}\leq c_1, \dots, x_{t_k+h}\leq c_k).
 $$
 
-Serie temporale stazionaria in **senso stretto**
-: È una serie temporale per cui il valor medio della serie temporale è costante (tempo-indipendente)
-  e la funzione di autocovarianza $\gamma(s,t)$ dipende da $s$ e $t$ solo tramite la loro differenza $|s-t|$ 
+Time series stationary in the **strict sense**
+: It is a time series for which the mean value of the series is constant, independent of time,
+  and the autocovariance function $\gamma(s,t)$ depends on $s$ and $t$ only through their difference $|s-t|$ 
 
-Per una **serie stazionaria in senso ampio** si può assumere $\sigma_x(0)=\sigma_x(\ell)=\sigma_x$ e $\bar x_0=\bar x_\ell$ e, quindi, $\rho_x(\ell) = \gamma_x(\ell)/\sigma_x$
+For a **wide-sense stationary series** one may assume $\sigma_x(0)=\sigma_x(\ell)=\sigma_x$ and $\bar x_0=\bar x_\ell$ and, therefore, $\rho_x(\ell) = \gamma_x(\ell)/\sigma_x$
 
 
-## Stabilizzazione
+## Stabilization
 
-* Le ST stazionarie almeno in senso ampio sono più semplici da trattare
-* È quindi utile cercare di **stabilizzare** la ST separandola in un termine di **tendenza** (*trend*) $x_t$ più un termine **stazionario** $x_s$
-* la stabilizzazione può essere fatta in due modi:
-  - *detrending* mediante regressione lineare: $x_t = x_{l,t} + x_{s,t}$, dove $x_{l,t} = a + bt$ e, quindi, $x_{s,t}$ risulta essere la **serie dei residui** della regressione lineare di $x_t$
-  - *detrending* per differenziazione
-* La ST stabilizzata può poi essere analizzata e quindi ri-trasformata mediante l'operazione inversa:
-  - somma del termine di tendenza 
-  - integrazione (cioè somma cumulativa)
+* Time series stationary at least in the wide sense are easier to handle
+* It is therefore useful to try to **stabilize** the time series by separating it into a **trend** term $x_t$ plus a **stationary** term $x_s$
+* stabilization can be done in two ways:
+  - *detrending* by linear regression: $x_t = x_{l,t} + x_{s,t}$, where $x_{l,t} = a + bt$ and, therefore, $x_{s,t}$ is the **residual series** of the linear regression of $x_t$
+  - *detrending* by differencing
+* The stabilized time series can then be analyzed and then transformed back by the inverse operation:
+  - adding the trend term
+  - integration, that is cumulative sum
   
-## Stabilizzazione (esempio)
+## Stabilization (example)
 :::{style="text-align: center;"}
 ```{r fig.width=8}
 m <- lm(chicken~time(chicken))
@@ -260,37 +260,37 @@ f <- xts(data.frame(
 p1 <- ggplot(ts_xts(chicken)) +
   geom_line(aes(x=Index, y=value)) +
   geom_line(aes(x=Index, y=line), data=f, col="blue") +
-  labs(title="Prezzo di un pollo intero in Georgia (US)", x="data", y="prezzo ($)")
+  labs(title="Price of a Whole Chicken in Georgia (US)", x="Date", y="Price ($)")
 
 p2 <- ggplot(f) +
   geom_hline(yintercept = 0, color="blue") +
   geom_line(aes(x=Index, y=res)) +
-  labs(title="De-trend lineare", x="data", y="prezzo ($)")
+  labs(title="Linear De-trend", x="Date", y="Price ($)")
 
 p3 <- ggplot(diff(ts_xts(chicken))) +
   geom_hline(yintercept = 0, color="blue") +
   geom_line(aes(x=Index, y=value)) +
-  labs(title="De-trend per differenziazione", x="data", y="prezzo ($)")
+  labs(title="Differenced De-trend", x="Date", y="Price ($)")
 
 p1 / (p2 + p3)
 ```
 :::
 
 
-## Operatori di differenziazione
+## Differencing operators
 
-In generale, la stabilizzazione per differenziazione dà risultati migliori ed è anche più pratica: se la ST differenziata non è stabile, è possibile aumentare l'ordine di differenziazione fino a raggiungere la stabilità
+In general, stabilization by differencing gives better results and is also more practical: if the differenced time series is not stable, the differencing order can be increased until stability is reached
 
-Come si differenzia una ST?
+How is a time series differenced?
 
-Si definiscono:
+The following are defined:
 
-* **Operatore *backshift***: è l'operatore $B^n$ tale per cui $B^n x_t := x_{t-n}$
-* **Operatore differenza**: è l'operatore $\nabla$ tale per cui $\nabla x_t := x_t - x_{t-1}=(1-B)x_t$. Risulta quindi che $\nabla^dx_t=(1-B)^dx_t$, e quindi ad esempio $\nabla^2x_t=(1-B)^2x_t=x_t-2x_{t-1}+x_{t-2}$
+* **Backshift operator**: this is the operator $B^n$ such that $B^n x_t := x_{t-n}$
+* **Difference operator**: this is the operator $\nabla$ such that $\nabla x_t := x_t - x_{t-1}=(1-B)x_t$. It follows that $\nabla^dx_t=(1-B)^dx_t$, and therefore for example $\nabla^2x_t=(1-B)^2x_t=x_t-2x_{t-1}+x_{t-2}$
 
-Quindi ad esempio la differenziazione $\nabla^2x_t$ è l'equivalente discreto della derivata seconda $\frac{d^2}{dt^2}x(t)$ per la funzione continua $x(t)$
+So, for example, differencing $\nabla^2x_t$ is the discrete equivalent of the second derivative $\frac{d^2}{dt^2}x(t)$ for the continuous function $x(t)$
 
-## Stabilizzazione e ACF
+## Stabilization and ACF
 
 :::{style="text-align: center;"}
 ```{r fig.width=8}
@@ -300,7 +300,7 @@ p1 <- with(acf(as.numeric(chicken), lag.max = 50, plot=F), data.frame(lag, acf))
   geom_hline(yintercept=c(-1,1)*qnorm((1 + 0.95)/2)/sqrt(1020),
              linetype=2, color="blue") +
   geom_segment(mapping = aes(xend = lag, yend = 0)) +
-  labs(title="ACF ST prezzo del pollo", x="lag", y=TeX("$\\rho_x$"))
+  labs(title="ACF ST Chicken Price", x="lag", y=TeX("$\\rho_x$"))
 
 p2 <- with(acf(f$res, lag.max = 50, plot=F), data.frame(lag, acf)) %>%
   ggplot(aes(x=lag, y=acf)) + 
@@ -308,7 +308,7 @@ p2 <- with(acf(f$res, lag.max = 50, plot=F), data.frame(lag, acf)) %>%
   geom_hline(yintercept=c(-1,1)*qnorm((1 + 0.95)/2)/sqrt(1020),
              linetype=2, color="blue") +
   geom_segment(mapping = aes(xend = lag, yend = 0)) +
-  labs(title="ACF de-trend lineare", x="lag", y=TeX("$\\rho_x$"))
+  labs(title="ACF linear de-trend", x="lag", y=TeX("$\\rho_x$"))
 
 p3 <- with(acf(diff(chicken), lag.max = 50, plot=F), data.frame(lag=1:51, acf)) %>%
   ggplot(aes(x=lag, y=acf)) + 
@@ -316,20 +316,20 @@ p3 <- with(acf(diff(chicken), lag.max = 50, plot=F), data.frame(lag=1:51, acf)) 
   geom_hline(yintercept=c(-1,1)*qnorm((1 + 0.95)/2)/sqrt(1020),
              linetype=2, color="blue") +
   geom_segment(mapping = aes(xend = lag, yend = 0)) +
-  labs(title="ACF ST differenziata", x="lag", y=TeX("$\\rho_x$"))
+  labs(title="ACF ST Differenced", x="lag", y=TeX("$\\rho_x$"))
 
 p1 / (p2 + p3)
 ```
 :::
 
-## Stabilizzazione e ACF
+## Stabilization and ACF
 
 :::columns
 
 :::column
-* La ACF di una serie non stabilizzata mostra sempre una correlazione anche a *lag* elevati
-* La ACF della serie dei residui di una regressione lineare decresce più rapidamente, ma mantiene comunque una correlazione anche a *lag* elevati
-* La ACF della serie differenziata, inoltre, si smorza molto rapidamente (i *lag* 1, 2, 3, ... dovrebbero essere esponenziali), dopodiché mostra oscillazioni armoniche, indice di una **periodicità** nella ST originale
+* The ACF of a non-stabilized series always shows correlation even at high *lags*
+* The ACF of the residual series from a linear regression decreases faster, but still keeps correlation even at high *lags*
+* The ACF of the differenced series, moreover, damps out very quickly, the *lags* 1, 2, 3, ... should be exponential, after which it shows harmonic oscillations, indicating a **periodicity** in the original time series
 :::
 
 :::column
@@ -342,28 +342,28 @@ p3
 :::
 
 :::aside
-Possiamo quindi dire che la serie storica del prezzo del pollo mostra un *trend* che si **stabilizza al primo ordine** di differenziazione, ha una dinamica che mostra **autocorrelazione fino ai tre punti precedenti**, e un andamento **periodico** con periodo pari a 12 *lag*.
+We can therefore say that the historical chicken price series shows a *trend* that **stabilizes at first-order** differencing, has dynamics that show **autocorrelation up to the previous three points**, and a **periodic** pattern with period equal to 12 *lags*.
 :::
 
 
 
-# Modelli statistici
+# Statistical models
 
-La regressione classica applicata alle serie temporali **è spesso insufficiente**. Ad esempio, nel caso del prezzo del pollo l'analisi della autocorrelazione mostra un comportamento ciclico che la regressione classica non riesce ad evidenziare
+Classical regression applied to time series **is often insufficient**. For example, in the case of chicken price, autocorrelation analysis shows a cyclic behavior that classical regression cannot highlight
 
-È quindi necessario sviluppare delle tecniche che consentano di modellare i dettagli di una serie temporale, in particolare tenendo in considerazione anche **l'autocorrelazione** che può caratterizzare le serie temporali
+It is therefore necessary to develop techniques that allow the details of a time series to be modeled, in particular by also taking into account the **autocorrelation** that can characterize time series
 
-## Modelli AR --- definizione
+## AR models --- definition
 
-Un modello Auto-Regressivo (AR) esprime una determinata osservazione $x_t$ al tempo $t$ come combinazione lineare di $p$ valori precedenti $x_{t-1}, x_{t-2},\dots,x_{t-p}$. Un modello AR di ordine $p$, abbreviato in $\mathrm{AR}(p)$, ha la forma:
+An Auto-Regressive (AR) model expresses a given observation $x_t$ at time $t$ as a linear combination of $p$ previous values $x_{t-1}, x_{t-2},\dots,x_{t-p}$. An AR model of order $p$, abbreviated as $\mathrm{AR}(p)$, has the form:
 $$
 x_t=\phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t \label{eq:AR}
 $$
 
-* $x_t$ è stazionaria in senso ampio e $w_t\sim\mathcal{N}(0, \sigma^2_w)$
-* $\phi_1, \phi_2,\dots,\phi_p$ sono costanti e $\phi_p\neq0$
+* $x_t$ is wide-sense stationary and $w_t\sim\mathcal{N}(0, \sigma^2_w)$
+* $\phi_1, \phi_2,\dots,\phi_p$ are constants and $\phi_p\neq0$
 
-Se la media di $x_t$ non è nulla, si sostituisce $x_t$ con $x_t - \mu$ per ottenere:
+If the mean of $x_t$ is not zero, $x_t$ is replaced with $x_t - \mu$ to obtain:
 $$
 \begin{align}
 x_t-\mu&=\phi_1( x_{t-1}-\mu) + \phi_2 (x_{t-2}-\mu)+\dots+\phi_p (x_{t-p}-\mu) + w_t \\
@@ -372,12 +372,12 @@ x_t&=\alpha + \phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t,~~~\alp
 $$
 
 :::aside
-Le $w_t$ sono anche chiamate **innovazioni**, dato che sono l'unico contributo **nuovo** di un punto rispetto ai precedenti.
+The $w_t$ are also called **innovations**, since they are the only **new** contribution of a point with respect to the previous ones.
 :::
 
-## Modelli AR --- regressione
+## AR models --- regression
 
-Ricordando la definizione dell'**operatore *backshift***, la definizione di $w_t$ può essere scritta come:
+Recalling the definition of the **backshift operator**, the definition of $w_t$ can be written as:
 
 $$
 (1-\phi_1 B - \phi_2 B^2 -\dots-\phi_p B^p)x_t=w_t
@@ -387,38 +387,38 @@ o ancora più concisamente come:
 $$
 \Phi_p(B)x_t=w_t
 $$
-dove $\Phi_p(B):=1-\phi_1B-\phi_2B^2-\dots-\phi_pB^p$ è detto **operatore autoregressivo**.
+where $\Phi_p(B):=1-\phi_1B-\phi_2B^2-\dots-\phi_pB^p$ is called the **autoregressive operator**.
 
-Effettuare la regressione di un modello $\mathrm{AR}(p)$ su una serie storica $x_t$ significa quindi adattare il modello $\Phi_p(B)\hat{ x_t}=w_t$ identificando i coefficienti di $\Phi_p(B)$ che minimizzano i residui quadratici medi, essendo i residui $\varepsilon_t = x_t - \hat{ x_t} = x_t - \Phi_p^{-1}(B)w_t$ (ammesso che esista l'inversa $\Phi_p^{-1}(B)$).
+Performing the regression of an $\mathrm{AR}(p)$ model on a historical series $x_t$ therefore means fitting the model $\Phi_p(B)\hat{ x_t}=w_t$ by identifying the coefficients of $\Phi_p(B)$ that minimize the mean squared residuals, where the residuals are $\varepsilon_t = x_t - \hat{ x_t} = x_t - \Phi_p^{-1}(B)w_t$, assuming the inverse $\Phi_p^{-1}(B)$ exists.
 
 
 
-## Modelli MA --- definizione
+## MA models --- definition
 
-Alternativamente, è possibile immaginare il caso in cui la generica osservazione $x_t$ è espressa come combinazione lineare **del disturbo** agente sulle $q$ osservazioni precedenti. Un modello MA di ordine $q$, abbreviato come $\mathrm{MA}(q)$ è definito come
+Alternatively, one can imagine the case in which the generic observation $x_t$ is expressed as a linear combination of the **disturbance** acting on the previous $q$ observations. An MA model of order $q$, abbreviated as $\mathrm{MA}(q)$, is defined as
 $$
 x_t = w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q}
 $$
 
 * $w_t\sim\mathcal{N}(0, \sigma_w^2)$
-* $\theta_1, \theta_2,\dots,\theta_q$ sono parametri costanti con $\theta_q\neq0$
+* $\theta_1, \theta_2,\dots,\theta_q$ are constant parameters with $\theta_q\neq0$
 
-## Modelli MA --- regressione
+## MA models --- regression
 
-Analogamente al caso $\mathrm{AR}(p)$, per $\mathrm{MA}(q)$ è possibile definire l'**operatore media mobile** di ordine $q$:
+Similarly to the $\mathrm{AR}(p)$ case, for $\mathrm{MA}(q)$ it is possible to define the **moving-average operator** of order $q$:
 $$
 \Theta_q(B)=(1+\theta_1 B+\theta_2 B^2+\dots+\theta_q B^q)
 $$ 
-tale per cui la equazione per $x_t$ può essere scritta come:
+such that the equation for $x_t$ can be written as:
 
 $$
 x_t=\Theta_q(B)w_t
 $$
 
-Come sopra, regredire un modello $\mathrm{MA}(q)$ ad una serie storica $x_t$ significa identificare i termini di $\Theta_q(B)$ che minimizzano i residui quadratici medi, definiti come $\varepsilon_t = x_t - \hat{x_t} = x_t - \Theta_q(B)$ (si noti che questa volta non c'è l'inversa!)
+As above, regressing an $\mathrm{MA}(q)$ model onto a historical series $x_t$ means identifying the terms of $\Theta_q(B)$ that minimize the mean squared residuals, defined as $\varepsilon_t = x_t - \hat{x_t} = x_t - \Theta_q(B)$, note that this time there is no inverse.
 
 
-## Modelli MA e ACF
+## MA models and ACF
 ```{r}
 set.seed(0)
 tsma <- arima.sim(model=list(ma=c(-0.5, 0.7, -0.75)), n=200)
@@ -427,12 +427,12 @@ tsma <- arima.sim(model=list(ma=c(-0.5, 0.7, -0.75)), n=200)
 :::columns
 
 :::column
-Una ST $MA(q)$ ha una memoria che si estende fino al *lag* $q$, nel senso che le innovazioni a distanze superiori a $q$ non hanno alcun effetto sull'ultima osservazione
+An $MA(q)$ time series has a memory extending up to *lag* $q$, in the sense that innovations at distances greater than $q$ have no effect on the last observation
 
-Quindi, data una serie temporale di tipo $MA(q)$ si può spesso identificare l'ordine dalla sua ACF, contando i picchi dopo quello a *lag* 0:
+Therefore, given an $MA(q)$ time series, one can often identify the order from its ACF by counting the peaks after the one at *lag* 0:
 
-* tre picchi fuori dalla banda di confidenza significano un modello $MA(3)$
-* i segni dei picchi corrispondono ai segni dei coefficienti
+* three peaks outside the confidence band mean an $MA(3)$ model
+* the signs of the peaks correspond to the signs of the coefficients
 
 
 :::
@@ -441,7 +441,7 @@ Quindi, data una serie temporale di tipo $MA(q)$ si può spesso identificare l'o
 
 
 ```{r}
-autoplot(tsma, xlab="#", ylab="valore") /
+autoplot(tsma, xlab="#", ylab="Value") /
 (autoplot(acf(tsma, plot=F)) + 
   geom_hline(yintercept=0))
 ```
@@ -450,7 +450,7 @@ autoplot(tsma, xlab="#", ylab="valore") /
 :::
 
 
-## Modelli MA e ACF
+## MA models and ACF
 ```{r}
 set.seed(0)
 tsar <- arima.sim(model=list(ar=c(0.5, 0.3)), n=200)
@@ -459,9 +459,9 @@ tsar <- arima.sim(model=list(ar=c(0.5, 0.3)), n=200)
 :::columns
 
 :::column
-Se invece la serie temporale è di tipo $AR(p)$, ogni osservazione dipende dall'innovazione e da tutte le osservazioni precedenti, in modo ricorsivo 
+If instead the time series is of type $AR(p)$, each observation depends on the innovation and on all previous observations, recursively
 
-In questo caso l'autocorrelogramma riporterà un decadimento esponenziale seguito eventualmente da oscillazioni armoniche
+In this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations
 
 :::
 
@@ -469,7 +469,7 @@ In questo caso l'autocorrelogramma riporterà un decadimento esponenziale seguit
 
 
 ```{r}
-autoplot(tsar, xlab="#", ylab="valore") /
+autoplot(tsar, xlab="#", ylab="Value") /
 (autoplot(acf(tsar, plot=F)) + 
   geom_hline(yintercept=0))
 ```
@@ -478,9 +478,9 @@ autoplot(tsar, xlab="#", ylab="valore") /
 :::
 
 
-## Modelli AR e PACF
+## AR models and PACF
 
-Per i modelli di tipo $AR(p)$ è comunque possibile identificare l'ordine mediante la **funzione di autocorrelazione parziale** o PACF, così definita:
+For models of type $AR(p)$ it is still possible to identify the order through the **partial autocorrelation function**, or PACF, defined as follows:
 
 $$
 \begin{align}
@@ -488,23 +488,23 @@ $$
 \mathrm{PACF}_k &= \mathrm{ACF}(z_{t+k} - \hat{z_{t+k}}, z_t - \hat{z_t}),~~~k\geq2 \\
 \end{align}
 $$
-in cui $\hat{z_{t+k}}$ e $\hat{z_t}$ sono combinazioni lineari di $\{z_{t+1}, z_{t+2},\dots,z_{t+k-1}\}$ che minimizzano l'errore quadratico medio di $z_{t+k}$ e $z_t$, rispettivamente
+where $\hat{z_{t+k}}$ and $\hat{z_t}$ are linear combinations of $\{z_{t+1}, z_{t+2},\dots,z_{t+k-1}\}$ that minimize the mean squared error of $z_{t+k}$ and $z_t$, respectively
 
 
 
-## Modelli AR e PACF
+## AR models and PACF
 
 :::columns
 
 :::column
-In generale, quindi, se la ACF mostra una memoria infinita (modello AR) e la PACF mostra pochi picchi, il numero di picchi è l'ordine del modello AR
+In general, therefore, if the ACF shows an infinite memory, AR model, and the PACF shows few peaks, the number of peaks is the order of the AR model
 
-**Attenzione**: non si considerano i picchi dopo il primo *cut-off*, cioè il *lag* in corrispondenza del quale l'autocorrelazione scende sotto il limite di confidenza per la prima volta
+**Warning**: peaks after the first *cut-off* are not considered, that is, the *lag* at which the autocorrelation falls below the confidence limit for the first time
 :::
 
 :::column
 ```{r}
-forecast::ggtsdisplay(tsar, main="Serie AR")
+forecast::ggtsdisplay(tsar, main="AR Series")
 ```
 :::
 
@@ -512,38 +512,38 @@ forecast::ggtsdisplay(tsar, main="Serie AR")
 
 
 :::aside
-**Attenzione**: in questi grafici ACF e PACF il *lag* comincia da 1!
+**Warning**: in these ACF and PACF plots the *lag* starts from 1.
 :::
 
-## Modelli MA e PACF
+## MA models and PACF
 
 :::columns
 
 :::column
-Confrontando sia ACF che PACF
+Comparing both ACF and PACF
 
-* puro rumore: ACF e PACF sono nulle per *lag* maggiore di 0
-* $AR(p)$: ACF decresce lentamente, PACF non-nulla per *lag* minori o uguali a $p$, nulla altrimenti
-* $MA(q)$: ACF mostra $q$ picchi; se $PACF(1) > 0$, PACF oscilla a 0, altrimenti decade geometricamente a 0
+* pure noise: ACF and PACF are zero for *lag* greater than 0
+* $AR(p)$: ACF decreases slowly, PACF is non-zero for *lags* less than or equal to $p$, zero otherwise
+* $MA(q)$: ACF shows $q$ peaks; if $PACF(1) > 0$, PACF oscillates to 0, otherwise it decays geometrically to 0
 :::
 
 :::column
 ```{r}
-forecast::ggtsdisplay(tsma, main="Serie MA")
+forecast::ggtsdisplay(tsma, main="MA Series")
 ```
 :::
 :::
 
 :::aside
-Spesso, in pratica queste indicazioni sono difficili da riscontrare ed è quindi difficile individuare $p,q$ in maniera certa e univoca
+Often, in practice, these indications are hard to observe and it is therefore difficult to identify $p,q$ in a certain and unambiguous way
 :::
 
 
-## Modelli ARMA
+## ARMA models
 
-L'ovvia estensione risulta dalla combinazione dei modelli $\mathrm{AR}(p)$ e $\mathrm{MA}(q)$
+The obvious extension comes from combining the $\mathrm{AR}(p)$ and $\mathrm{MA}(q)$ models
 
-Un modello ARMA di ordine $p,q$, abbreviato come $\mathrm{ARMA}(p,q)$ è definito come:
+An ARMA model of order $p,q$, abbreviated as $\mathrm{ARMA}(p,q)$, is defined as:
 
 $$
 x_t=\phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q}
@@ -553,126 +553,126 @@ $$
 \Phi_p(B)x_t=\Theta_q(B)w_t
 $$
 
-## Modelli MA e PACF
+## MA models and PACF
 
 :::columns
 
 :::column
-Confrontando sia ACF che PACF
+Comparing both ACF and PACF
 
-* puro rumore: ACF e PACF sono nulle per *lag* maggiore di 0
-* $AR(p)$: ACF decresce lentamente, PACF non-nulla per *lag* minori o uguali a $p$, nulla altrimenti
-* $MA(q)$: ACF mostra $q$ picchi; se $PACF(1) > 0$, PACF oscilla a 0, altrimenti decade geometricamente a 0
-* $ARMA(p,q)$: ACF mostra $q$ picchi; PACF decade geometricamente a 0 solo dopo *lag* $p$
+* pure noise: ACF and PACF are zero for *lag* greater than 0
+* $AR(p)$: ACF decreases slowly, PACF is non-zero for *lags* less than or equal to $p$, zero otherwise
+* $MA(q)$: ACF shows $q$ peaks; if $PACF(1) > 0$, PACF oscillates to 0, otherwise it decays geometrically to 0
+* $ARMA(p,q)$: ACF shows $q$ peaks; PACF decays geometrically to 0 only after *lag* $p$
 :::
 
 :::column
 ```{r}
-forecast::ggtsdisplay(tsma, main="Serie MA")
+forecast::ggtsdisplay(tsma, main="MA Series")
 ```
 :::
 :::
 
 :::aside
-Spesso, in pratica queste indicazioni sono difficili da riscontrare ed è quindi difficile individuare $p,q$ in maniera certa e univoca
+Often, in practice, these indications are hard to observe and it is therefore difficult to identify $p,q$ in a certain and unambiguous way
 :::
 
 
-## Modelli ARIMA
-I processi $\mathrm{ARMA}(p,q)$ sono adatti solo a descrivere serie **stazionarie** in senso ampio
+## ARIMA models
+The $\mathrm{ARMA}(p,q)$ processes are suitable only for describing **stationary** series in the wide sense
 
-Abbiamo visto però che un processo non stazionario può essere reso tale per differenziazione di un opportuno grado $d$
+We have seen, however, that a non-stationary process can be made stationary by differencing of a suitable degree $d$
 
-Un processo $x_t$ è detto $\mathrm{ARIMA}(p,d,q)$ quando $\nabla^d x_t = (1-B)^d x_t$ 2è un processo $\mathrm{ARMA}(p,q)$
+A process $x_t$ is called $\mathrm{ARIMA}(p,d,q)$ when $\nabla^d x_t = (1-B)^d x_t$ is an $\mathrm{ARMA}(p,q)$ process
 
-In generale, quando $E(\nabla^dx_t)=0$ il processo $\mathrm{ARIMA}(p,d,q)$ può essere scritto come:
+In general, when $E(\nabla^dx_t)=0$, the $\mathrm{ARIMA}(p,d,q)$ process can be written as:
 $$
 \Phi_p(B)\nabla^dx_t=\Theta_q(B)w_t
 $$
-Se invece il valore atteso $E(\nabla^dx_t)=\mu$, allora:
+If instead the expected value $E(\nabla^dx_t)=\mu$, then:
 $$
 \Phi_p(B)\nabla^dx_t=\delta + \Theta_q(B)w_t,~~~\delta=\mu(1-\phi_1-\dots-\phi_p)
 $$
 
-## Stabilità e unicità dei modelli
+## Stability and uniqueness of models
 
-Consideriamo un modello $\mathrm{AR}(1)$: possiamo sviluppare la formula ricorsiva come:
+Consider an $\mathrm{AR}(1)$ model: we can expand the recursive formula as:
 $$
 \begin{align}
 x_t =& \phi x_{t-1}+w_t = \phi(\phi x_{t-2}+w_{t-1}) + w_t \\
 =& \sum_{j=0}^{+\infty}\phi^j w_{t-j}
 \end{align}
 $$
-È quindi evidente che la serie temporale $x_t$ **è stabile solo se** $|\phi|<1$
+It is therefore clear that the time series $x_t$ **is stable only if** $|\phi|<1$
 
-Nel caso generale del modello $\mathrm{AR}(p)$, si ha la condizione di stabilità:
+In the general case of the $\mathrm{AR}(p)$ model, the stability condition is:
 $$
 \left|\sum_{i=1}^p \phi_i\right| < 1 \label{eq:ARstab}
 $$
-Un modello AR non stabile è detto anche **anti-causale**, perché si può dimostrare che per essere stabilizzato richiede la conoscenza delle osservazioni future
+An unstable AR model is also called **anti-causal**, because it can be shown that to be stabilized it requires knowledge of future observations
 
-## Stabilità e unicità dei modelli
+## Stability and uniqueness of models
 
-Per un modello $\mathrm{MA}(1)$, invece, consideriamo due modelli:
+For an $\mathrm{MA}(1)$ model, instead, consider two models:
 $$
 \begin{align}
 x_t &= w_t + \theta w_{t-1}, ~w_t\sim\mathcal{N}(0, 1) \\
 y_t &= \nu_t + 1/\theta \nu_{t-1}, ~\nu_t\sim\mathcal{N}(0, \theta^2) 
 \end{align}
 $$
-È evidente che $x_t$ e $\nu_t$ hanno la stessa ACF e sono indistinguibili, dato che noi non conosciamo le innovazioni $w_t$ e $\nu_t$ ma solo le due serie. Si può dimostrare che il risultato è generale (cioè non dipende dell'ordine $q$). 
+It is clear that $x_t$ and $\nu_t$ have the same ACF and are indistinguishable, since we do not know the innovations $w_t$ and $\nu_t$ but only the two series. It can be shown that the result is general, that is, it does not depend on the order $q$. 
 
-È quindi necessario scegliere una delle due forme alternative. Per individuare quale, riscriviamo la serie come $w_t=-\theta x_{t-1}+x_t$, che ha la stessa forma della $\mathrm{AR}(1)$. Possiamo quindi scegliere l'alternativa che rispetta lo stesso criterio di *stabilità*:
+It is therefore necessary to choose one of the two alternative forms. To determine which one, we rewrite the series as $w_t=-\theta x_{t-1}+x_t$, which has the same form as $\mathrm{AR}(1)$. We can then choose the alternative that satisfies the same *stability* criterion:
 $$
 \left|\sum_{i=1}^q \theta_i\right| < 1
 $$
-Tale alternativa si dice **invertibile**
+This alternative is called **invertible**
 
 
-## Stabilità e unicità dei modelli
+## Stability and uniqueness of models
 
-In generale, si può dimostrare che i criteri visti sopra corrispondono a imporre il requisito che le radici complesse dei polinomi 
+In general, it can be shown that the criteria seen above correspond to imposing the requirement that the complex roots of the polynomials 
 $$
 \begin{align}
 \Phi_p(z)&=1-\phi_1 z-\phi_2 z^2 - \dots -\phi_p z^p \\
 \Theta_q(z)&=1+\theta_1 z+\theta_2 z^2 + \dots +\theta_q z^q
 \end{align}
 $$ 
-siano **tutte strettamente fuori dal cerchio unitario** sul piano complesso
+are **all strictly outside the unit circle** in the complex plane
 
-Ad esempio: $\mathrm{ARMA}(2,2)$ con $\Phi_2(z)= 1 + 0.9z + 0.1z^2$ e $\theta_q(z) = 1 + 2z + 15z^2$:
+For example: $\mathrm{ARMA}(2,2)$ with $\Phi_2(z)= 1 + 0.9z + 0.1z^2$ and $\theta_q(z) = 1 + 2z + 15z^2$:
 ```{r echo=T}
 abs(polyroot(c(1, -0.9, -0.1)))
 abs(polyroot(c(1, 2, 15)))
 ```
 
-Cioè il termine AR non è causale e il termine MA non è invertibile (ma lo sarebbe $\theta_q(z) = 1 + 1/2z + 1/15z^2$)
+That is, the AR term is not causal and the MA term is not invertible, but $\theta_q(z) = 1 + 1/2z + 1/15z^2$ would be
 
 
-## Ridondanza
+## Redundancy
 
-Consideriamo il processo $x_t = w_t$, con $w_t\sim\mathcal{N}(0, 1)$: si tratta ovviamente di puro rumore casuale
+Consider the process $x_t = w_t$, with $w_t\sim\mathcal{N}(0, 1)$: this is obviously pure random noise
 
-Moltiplichiamo entrambi i lati per $1-0.5B$ per ottenere:
+Multiply both sides by $1-0.5B$ to obtain:
 $$
 x_t = 0.5x_{t-1}-0.5w_{t-1} + w_t
 $$
-che **sembra** un processo $\mathrm{ARMA}(1,1)$ ma ovviamente è sempre lo stesso rumore casuale. **Come distinguere questi casi?**
+which **looks like** an $\mathrm{ARMA}(1,1)$ process but is obviously still the same random noise. **How do we distinguish these cases?**
 
-* si scompongono in fattori i polinomi $\Phi_p$ e $\Theta_q$
-* si eliminano i **fattori comuni**
-* si sicompongono i fattori per ottenere il **modello non ridondante**
+* factorize the polynomials $\Phi_p$ and $\Theta_q$
+* remove the **common factors**
+* recombine the factors to obtain the **non-redundant model**
 
-In R si può ancora usare `polyroot()`
+In R one can still use `polyroot()`
 
-## Ridondanza
+## Redundancy
 
-Ad esempio, consideriamo il processo $x_t=0.4x_{t-1}+0.45x_{t-2}+w_t + w_{t-1}+0.25w_{t-2}$, che usando l'operatore $B$ diventa:
+For example, consider the process $x_t=0.4x_{t-1}+0.45x_{t-2}+w_t + w_{t-1}+0.25w_{t-2}$, which using the operator $B$ becomes:
 $$
 (1-0.4B-0.45B^2)x_t = (1+B+0.25B^2)w_t.
 $$
 
-In questa forma il processo sembra $\mathrm{ARMA}(2,2)$, tuttavia possiamo scomporre i due polinomi in fattori, usando `polyroot()` per calcolare le radici:
+In this form the process looks like $\mathrm{ARMA}(2,2)$, however we can factor the two polynomials using `polyroot()` to compute the roots:
 ```{r echo=T}
 # per Phi:
 -1/polyroot(c(1, -0.4, -0.45))
@@ -680,12 +680,12 @@ In questa forma il processo sembra $\mathrm{ARMA}(2,2)$, tuttavia possiamo scomp
 -1/polyroot(c(1, 1, 0.25))
 ```
 :::aside
-**Nota**: se $z_i,~ i=1,\dots,n$ sono le radici del polinomio $p(z)$ di grado $n$, allora il polinomio può essere scomposto nei fattori $(1-1/z_1 z)\cdot(1-1/z_2 z)\dots(1-1/z_n z)$.
+**Note**: if $z_i,~ i=1,\dots,n$ are the roots of the polynomial $p(z)$ of degree $n$, then the polynomial can be factorized into $(1-1/z_1 z)\cdot(1-1/z_2 z)\dots(1-1/z_n z)$.
 :::
 
-## Ridondanza
+## Redundancy
 
-Come si vede, si può scrivere 
+As can be seen, one can write 
 $$
 \begin{align}
 \Phi_p(B)&=(1-0.9B)(1+0.5B) \\
@@ -693,72 +693,72 @@ $$
 \end{align}
 $$
 
-Eliminando il fattore comune $(1+0.5B)$ otteniamo il modello 
+Removing the common factor $(1+0.5B)$ we obtain the model 
 $$
 x_t=0.9x_{t-1}+0.5w_{t-1}+w_t
 $$
-che è un $\mathrm{ARMA}(1,1)$.
+which is an $\mathrm{ARMA}(1,1)$.
 
-Quindi ai criteri di **causalità** e di **invertibilità** si aggiunge il criterio di **non ridondanza** dei parametri, che si verifica eliminando ogni fattore comune dalla scomposizione in fattori dei polinomi $\Phi_p(B)$ e $\Theta_q(B)$.
+Therefore, in addition to the criteria of **causality** and **invertibility**, one must add the criterion of **non-redundancy** of the parameters, which is checked by removing every common factor from the factorization of the polynomials $\Phi_p(B)$ and $\Theta_q(B)$.
 
-## Regressione (S)ARIMA
+## (S)ARIMA regression
 
-Per quanto detto sopra, un processo, o serie temporale, $x_t$ può essere regredita mediante un modello ARIMA identificandone i parametri per **minimizzazione degli scarti quadratici**
+From what has been said above, a process, or time series, $x_t$ can be regressed by means of an ARIMA model by identifying its parameters through **minimization of squared deviations**
 
-Tuttavia, prima della regressione è necessario definire gli indici $p, d,q$ adeguati, tali che non si abbia **né sotto- né sovra-adattamento**
+However, before regression it is necessary to define suitable indices $p, d,q$, such that there is **neither underfitting nor overfitting**
 
-In certi casi, inoltre, le serie sono **periodiche**: oltre ad un possibile **trend** sono soggette anche a ciclici andamenti oscillanti. In questi casi:
+In some cases, moreover, series are **periodic**: besides a possible **trend** they are also subject to cyclic oscillating patterns. In these cases:
 
-* si rende la ST stazionaria per differenziazione
-* si separa un contributo a bassa frequenza, chiamato **stagionale**, da un contributo ad alta frequenza
-* si effettua separatamente la regressione del contributo stagionale e del contributo non stagionale come due processi ARIMA distinti e sovrapposti: tale regressione si chiama *Seasonal ARIMA* o **SARIMA**
+* the time series is made stationary by differencing
+* a low-frequency contribution, called **seasonal**, is separated from a high-frequency contribution
+* the seasonal and non-seasonal contributions are regressed separately as two distinct and superposed ARIMA processes: this regression is called *Seasonal ARIMA*, or **SARIMA**
 
-## Regressione (S)ARIMA
+## (S)ARIMA regression
 
-Inoltre, abbiamo visto che i modelli ARIMA si basano sull'ipotesi di serie temporali stazionarie in senso ampio
+Moreover, we have seen that ARIMA models are based on the assumption of time series stationary in the wide sense
 
-Quindi, è necessario che sia il **valor medio che la varianza siano costanti nel tempo**
+Therefore, it is necessary that both the **mean value and the variance are constant over time**
 
-* La media si stabilizza per differenziazione
-* La varianza si può stabilizzare mediante **trasformazioni Box-Cox**
+* The mean is stabilized by differencing
+* The variance can be stabilized through **Box-Cox transformations**
 
-Quindi, nel caso più generale il modello è $\mathrm{SARIMA}(p, d, q, p_s, d_s, q_s, \lambda)$
+Therefore, in the most general case, the model is $\mathrm{SARIMA}(p, d, q, p_s, d_s, q_s, \lambda)$
 
-**Prima di eseguire una regressione è quindi necessario definire i valori dei sette parametri, evitando sovra- e sotto-adattamento**
+**Before performing a regression it is therefore necessary to define the values of the seven parameters, avoiding overfitting and underfitting**
 
-* $d, d_s$ possono essere identificati per tentativi, aumentando gradualmente i valori (prima di $d$ e poi di $d_s$) finché la ACF è soddisfacente
-* gli altri termini possono essere individuati verificando la bontà della regressione su una griglia di combinazioni e valutando un opportuno **indice di merito**
+* $d, d_s$ can be identified by trial, gradually increasing the values, first $d$ and then $d_s$, until the ACF is satisfactory
+* the other terms can be identified by checking the goodness of the regression over a grid of combinations and evaluating a suitable **figure of merit**
 
 ## Akaike Information Criterion
 
-L'indice di merito più usato nella regressione SARIMA è l'**Akaike Information Criterion**, o AIC
+The most used figure of merit in SARIMA regression is the **Akaike Information Criterion**, or AIC
 
-In genere la qualità di una regressione con $k$ parametri è misurata dalla somma quadratica dei residui, $SS_E(k)$, normalizzata per la dimensione del campione $n$:
+In general, the quality of a regression with $k$ parameters is measured by the sum of squared residuals, $SS_E(k)$, normalized by the sample size $n$:
 $$
 \hat{\sigma_k^2} = \frac{SS_E(k)}{n}
 $$
-Questo indicatore si chiama ***Maximum Likelihood Estimator*** (MLE). Più questo valore è piccolo, meglio il modello si adatta ai dati
+This indicator is called the ***Maximum Likelihood Estimator***, MLE. The smaller this value is, the better the model fits the data
 
-Tuttavia aumentando $k$ si ha una diminuzione di MLE, a rischio di sovra-adattamento. Per questo motivo Akaike ha proposto di penalizzare MLE con il numero di parametri:
+However, increasing $k$ decreases the MLE, at the risk of overfitting. For this reason, Akaike proposed penalizing the MLE with the number of parameters:
 $$
 \mathrm{AIC}=\log(\hat{\sigma_k^2})+\frac{n+2k}{n}
 $$
-L'AIC va ovviamente **minimizzato**
+The AIC must obviously be **minimized**
 
-## Altri criteri di informazione
+## Other information criteria
 
-Oltre all'AIC esistono anche l'AIC corretto e il *Bayesian Information Criterion*, o BIC:
+Besides the AIC there are also the corrected AIC and the *Bayesian Information Criterion*, or BIC:
 
-* AIC corretto: $\mathrm{AIC}_c = \log(\hat{\sigma_k^2})+\frac{n+k}{n-k-2}$
+* Corrected AIC: $\mathrm{AIC}_c = \log(\hat{\sigma_k^2})+\frac{n+k}{n-k-2}$
 * BIC: $\mathrm{BIC} = \log(\hat{\sigma_k^2})+\frac{k\log(n)}{n}$
 
-Il BIC **penalizza maggiormente la dimensione del modello**, per cui è preferito per campioni molto grandi (migliaia di osservazioni), per i quali AIC e AICc tenderebbero a favorire modelli inutilmente complessi (troppi parametri, sovra-adattamento)
+The BIC **penalizes model size more strongly**, and is therefore preferred for very large samples, thousands of observations, for which AIC and AICc would tend to favor unnecessarily complex models, too many parameters, overfitting
 
-Come l'AIC, anche AICc e BIC vanno **minimizzati**
+Like the AIC, AICc and BIC must also be **minimized**
 
-## Regressione
+## Regression
 
-La libreria R `forecast` fornisce la funzione `auto.arima()` che valuta gli indicatori su una griglia di combinazioni dei sette parametri e fornisce la regressione migliore:
+The R library `forecast` provides the function `auto.arima()`, which evaluates the indicators over a grid of combinations of the seven parameters and returns the best regression:
 
 :::columns
 :::{.column style="font-size: 70%;"}
@@ -770,44 +770,44 @@ forecast::auto.arima(AirPassengers, lambda="auto", trace=T)
 :::column
 
 :::panel-tabset
-### Serie temporale
+### Time series
 ```{r}
 AirPassengers %>% autoplot() +
-  labs(x="Tempo", y="Numero passeggeri", title="Passeggeri compagnie aeree USA")
+  labs(x="Time", y="Number of passengers", title="US Airline Passengers")
 ```
-### Stabilizzata
+### Stabilized
 ```{r}
 diff(AirPassengers^-0.295) %>% autoplot() +
-  labs(x="Tempo", y="Numero passeggeri", title="Passeggeri compagnie aeree USA")
+  labs(x="Time", y="Number of passengers", title="US Airline Passengers")
 ```
 :::
 :::
 :::
 
-## Previsione
+## Forecasting
 
 :::columns
 
 :::column
-Una volta selezionato il modello più adatto (quello con **AIC minimo**) si può procedere a regressione e predizione
+Once the most suitable model has been selected, the one with **minimum AIC**, one can proceed with regression and prediction
 
-La predizione può essere ottenuta con la funzione `forecast()`
+Prediction can be obtained with the `forecast()` function
 
-Tale funzione riporta anche le bande di confidenza al 95%
+This function also reports the 95% confidence bands
 :::
 
 :::column
 :::panel-tabset
-# Predizione
+# Forecast
 ```{r}
 fit <- forecast::auto.arima(AirPassengers, lambda="auto")
 autoplot(forecast::forecast(fit,h=20)) +
   theme(axis.text.x = element_text(angle = 45,
         hjust = 1)) +
-  labs(title="Predizione ARIMA(0,1,1)(0,1,1)[12]", x="Tempo", y="Numero passeggeri")
+  labs(title="ARIMA(0,1,1)(0,1,1)[12] Forecast", x="Time", y="Number of passengers")
 ```
 
-# Dettaglio
+# Detail
 ```{r warning=FALSE}
 fit <- forecast::auto.arima(AirPassengers, lambda="auto")
 forecast::forecast(fit,h=20) %>% 
@@ -819,11 +819,10 @@ forecast::forecast(fit,h=20) %>%
   scale_x_date(limits=c(ymd("1960/1/1"), NA), date_minor_breaks = "1 month")+
   theme(axis.text.x = element_text(angle = 45,
         hjust = 1)) +
-  labs(title="Predizione ARIMA(0,1,1)(0,1,1)[12]", x="Tempo", y="Numero passeggeri")
+  labs(title="ARIMA(0,1,1)(0,1,1)[12] Detail", x="Time", y="Number of passengers")
 ```
 :::
 
 :::
 
 :::
-
