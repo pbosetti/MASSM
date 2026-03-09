@@ -5,3 +5,696 @@ author: "Paolo Bosetti"
 format: revealjs
 ---
 
+
+```{r setup}
+options(width = 60)
+set.seed(0)
+library(latex2exp)
+library(tidyverse)
+library(ggfortify)
+library(patchwork)
+library(e1071)
+theme_set(theme_gray() + theme(legend.position = "bottom"))
+
+n <- 240
+t <- 1:n
+fault_idx <- 151:210
+
+x1 <- cumsum(rnorm(n, 0, 0.06)) + 0.7 * sin(2 * pi * t / 24)
+x2 <- 0.8 * x1 + rnorm(n, 0, 0.18)
+x1[fault_idx] <- x1[fault_idx] + 1.0
+x2[fault_idx] <- -0.2 * x1[fault_idx] + rnorm(length(fault_idx), 0, 0.22) + 0.7
+
+ts_df <- tibble(
+  t = t,
+  x1 = x1,
+  x2 = x2,
+  state = factor(if_else(t %in% fault_idx, "Fault", "Normal"))
+)
+
+pca_fit <- prcomp(ts_df %>% select(x1, x2), center = TRUE, scale. = TRUE)
+scores <- as_tibble(pca_fit$x) %>%
+  mutate(t = ts_df$t, state = ts_df$state)
+
+lambda <- pca_fit$sdev^2
+center_vec <- pca_fit$center
+scale_vec <- pca_fit$scale
+x_scaled <- scale(ts_df %>% select(x1, x2), center = center_vec, scale = scale_vec)
+x_hat <- tcrossprod(pca_fit$x[, 1, drop = FALSE], pca_fit$rotation[, 1, drop = FALSE])
+residuals_mat <- x_scaled - x_hat
+spe <- rowSums(residuals_mat^2)
+t2 <- rowSums((pca_fit$x[, 1:2, drop = FALSE]^2) / matrix(rep(lambda[1:2], each = n), ncol = 2))
+alpha_t2 <- 0.05
+a_t2 <- 2
+n_ref <- sum(ts_df$state == "Normal")
+t2_limit <- a_t2 * (n_ref - 1) / (n_ref - a_t2) *
+  qf(1 - alpha_t2, df1 = a_t2, df2 = n_ref - a_t2)
+
+ts_pca <- ts_df %>%
+  mutate(PC1 = pca_fit$x[, 1],
+         PC2 = pca_fit$x[, 2],
+         SPE = spe,
+         T2 = t2,
+         T2_limit = t2_limit)
+
+svm_fit <- svm(state ~ x1 + x2, data = ts_df,
+               kernel = "radial", cost = 5, gamma = 1,
+               scale = TRUE)
+ts_df$pred <- predict(svm_fit, ts_df)
+acc <- mean(ts_df$pred == ts_df$state)
+
+grid <- expand.grid(
+  x1 = seq(min(ts_df$x1) - 0.3, max(ts_df$x1) + 0.3, length.out = 160),
+  x2 = seq(min(ts_df$x2) - 0.3, max(ts_df$x2) + 0.3, length.out = 160)
+)
+grid$pred <- predict(svm_fit, grid)
+```
+
+# Feature-based time-series analysis
+
+In feature-based analysis, a time series is transformed into a sequence of vectors
+$$
+\mathbf{x}_t \in \mathbb{R}^p,\quad t = 1,\dots,N
+$$
+where each component is either a direct measurement or an extracted descriptor such as RMS, variance, spectral energy, kurtosis, or temperature gradient
+
+The objective is to project, compress, classify, or separate process states in the feature space rather than directly on the raw waveform
+
+Two standard techniques are:
+
+* **PCA**, mainly for dimensionality reduction, monitoring, and latent-structure analysis
+* **SVM**, mainly for supervised classification and margin-based separation
+
+# PCA theory
+
+## PCA: data matrix and centering
+
+Let the feature matrix be
+$$
+\mathbf{X} =
+\begin{bmatrix}
+\mathbf{x}_1^T \\
+\mathbf{x}_2^T \\
+\vdots \\
+\mathbf{x}_N^T
+\end{bmatrix}
+\in \mathbb{R}^{N \times p}
+$$
+where each row is a feature vector extracted at one time instant or from one time window
+
+PCA starts from the centered matrix
+$$
+\mathbf{X}_c = \mathbf{X} - \mathbf{1}\boldsymbol{\mu}^T
+$$
+with sample mean
+$$
+\boldsymbol{\mu} = \frac{1}{N}\sum_{t=1}^{N}\mathbf{x}_t
+$$
+
+If variables have different physical units, one usually standardizes them before PCA
+
+## PCA: covariance matrix and eigenproblem
+
+::: {.columns}
+::: {.column}
+The sample covariance matrix is
+$$
+\mathbf{S} = \frac{1}{N-1}\mathbf{X}_c^T \mathbf{X}_c
+$$
+
+PCA solves the eigenvalue problem
+$$
+\mathbf{S}\mathbf{p}_i = \lambda_i \mathbf{p}_i,
+\quad i = 1,\dots,p
+$$
+
+:::
+::: {.column}
+
+where:
+
+* $\lambda_i$ is the variance explained by the $i$-th principal component
+* $\mathbf{p}_i$ is the corresponding loading vector
+
+The loadings are sorted so that
+$$
+\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_p \ge 0
+$$
+
+:::
+:::
+<!-- end columns -->
+
+## PCA: scores and low-dimensional representation
+
+::: {.columns}
+::: {.column}
+The projection of the data onto the principal axes gives the **scores**
+$$
+\mathbf{T} = \mathbf{X}_c \mathbf{P}
+$$
+where
+$$
+\mathbf{P} = [\mathbf{p}_1,\mathbf{p}_2,\dots,\mathbf{p}_p]
+$$
+
+:::
+::: {.column}
+Using only the first $a < p$ components yields the reduced model
+$$
+\mathbf{X}_c \approx \mathbf{T}_a \mathbf{P}_a^T
+$$
+Or equivalently:
+$$
+\mathbf{T}_a = \mathbf{X}_c \mathbf{P}_a
+$$
+:::
+:::
+<!-- end columns -->
+The explained variance ratio is:
+$$
+\eta_a = \frac{\sum_{i=1}^{a}\lambda_i}{\sum_{i=1}^{p}\lambda_i}
+$$
+
+
+## PCA: reconstruction error and monitoring statistics
+
+::: {.columns}
+::: {.column}
+For process monitoring, PCA separates the observation into:
+$$
+\mathbf{x}_t = \hat{\mathbf{x}}_t + \mathbf{e}_t
+$$
+where $\hat{\mathbf{x}}_t$ lies in the retained latent subspace and $\mathbf{e}_t$ is the residual
+:::
+::: {.column}
+
+Two standard monitoring statistics are:
+
+* Hotelling's $T^2$
+$$
+T_t^2 = \sum_{i=1}^{a}\frac{t_{ti}^2}{\lambda_i}
+$$
+
+* Squared Prediction Error, SPE or $Q$ statistic
+$$
+Q_t = \|\mathbf{e}_t\|_2^2
+$$
+:::
+:::
+<!-- end columns -->
+$T^2$ measures abnormality inside the retained subspace, while $Q_t$ measures lack of fit outside it
+
+## PCA: why it is useful for time series
+
+PCA is applied to time-series analysis after building features from samples or windows
+
+Typical uses are:
+
+* reducing a multivariate signal to a few latent variables
+* detecting operating regimes and structural changes
+* decorrelating strongly coupled measurements
+* identifying dominant directions of variability
+
+For dynamic systems, PCA alone is not a time model. It is a **feature-space model**, and temporal structure enters through the chosen features or through lag embedding
+
+# SVM theory
+
+## SVM: supervised binary classification
+
+Assume labeled feature vectors
+$$
+(\mathbf{x}_i, y_i),\quad y_i \in \{-1,+1\},\quad i=1,\dots,N
+$$
+
+The goal is to learn a decision function
+$$
+f(\mathbf{x}) = \mathrm{sign}(g(\mathbf{x}))
+$$
+that separates the two classes with maximum robustness
+
+For the linear case,
+$$
+g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b
+$$
+and the separating boundary is the hyperplane
+$$
+\mathbf{w}^T \mathbf{x} + b = 0
+$$
+
+## SVM: maximum-margin principle
+
+If the classes are linearly separable, the hard-margin SVM solves:
+$$
+\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2
+$$
+subject to
+$$
+y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1,\quad i=1,\dots,N
+$$
+
+The geometric margin is
+$$
+\gamma = \frac{2}{\|\mathbf{w}\|_2}
+$$
+
+Therefore, minimizing $\|\mathbf{w}\|_2^2$ is equivalent to maximizing the separation margin
+
+## SVM: soft margin and hinge loss
+
+Real process data are noisy, overlapping, and rarely perfectly separable
+
+The soft-margin formulation introduces slack variables $\xi_i \ge 0$:
+$$
+\min_{\mathbf{w},b,\boldsymbol{\xi}}
+\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i
+$$
+subject to
+$$
+y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
+$$
+
+Equivalent empirical-risk view:
+$$
+\min_{\mathbf{w},b}
+\frac{1}{2}\|\mathbf{w}\|_2^2 +
+C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))
+$$
+
+The parameter $C$ balances margin width against classification violations
+
+## SVM: dual problem and kernel trick
+
+::: {.columns}
+::: {.column}
+
+The dual formulation is
+$$
+\max_{\boldsymbol{\alpha}}
+\sum_{i=1}^{N}\alpha_i -
+\frac{1}{2}\sum_{i=1}^{N}\sum_{j=1}^{N}
+\alpha_i\alpha_j y_i y_j K(\mathbf{x}_i,\mathbf{x}_j)
+$$
+with constraints
+$$
+\alpha_i \ge 0,\qquad
+\sum_{i=1}^{N}\alpha_i y_i = 0
+$$
+
+:::
+::: {.column}
+
+The kernel function
+$$
+K(\mathbf{x}_i,\mathbf{x}_j)=\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
+$$
+allows nonlinear separation in the original space through linear separation in a transformed feature space
+
+Common kernels:
+
+* linear: $K(\mathbf{x},\mathbf{z})=\mathbf{x}^T\mathbf{z}$
+* polynomial
+* radial basis function, RBF:
+$$
+K(\mathbf{x},\mathbf{z})=\exp(-\gamma\|\mathbf{x}-\mathbf{z}\|_2^2)
+$$
+
+:::
+:::
+<!-- end columns -->
+
+## SVM: decision function and time-series use
+
+After training, the decision function is
+$$
+g(\mathbf{x}) = \sum_{i \in SV}\alpha_i y_i K(\mathbf{x}_i,\mathbf{x}) + b
+$$
+where only the **support vectors** contribute
+
+For time-series analysis, SVM is applied to features extracted from samples or windows, for example:
+
+* direct multivariate measurements $(x_{1,t},x_{2,t},\dots)$
+* lagged vectors $(x_t,x_{t-1},\dots,x_{t-L})$
+* statistical and spectral features over a window
+
+SVM is therefore a classification rule in feature space, not a stochastic time model
+
+# PCA example in R
+
+## Synthetic bivariate time series
+
+:::columns
+:::column
+We construct a bivariate time series with two process variables:
+
+* a **normal** regime with strong positive correlation
+* a **fault** regime with mean shift and changed covariance structure
+
+This is enough to illustrate how PCA detects changes in latent structure
+:::
+
+:::column
+```{r}
+p1 <- ggplot(ts_df, aes(x = t, y = x1)) +
+  geom_line(aes(color="Normal")) +
+  geom_line(aes(color="Fault"), data = filter(ts_df, state == "Fault"), linewidth = 1) +
+  labs(x = "Time index", y = "x1")
+
+p2 <- ggplot(ts_df, aes(x = t, y = x2)) +
+  geom_line(aes(color="Normal")) +
+  geom_line(aes(color="Fault"), data = filter(ts_df, state == "Fault"), linewidth = 1) +
+  labs(x = "Time index", y = "x2")
+
+p1 / p2
+```
+:::
+:::
+
+## PCA on the bivariate series
+
+:::columns
+:::column
+We apply PCA to the standardized two-variable feature matrix
+
+Since $p=2$, the model is simple enough to visualize directly:
+
+* **loadings** describe the principal directions
+* **scores** show how observations evolve in the latent space
+* **explained variance** quantifies dimensional compression
+:::
+
+:::column
+```{r}
+summary(pca_fit)
+round(pca_fit$rotation, 3)
+```
+
+```{r}
+autoplot(pca_fit, data = ts_df, colour = "state",
+         loadings = TRUE, loadings.label = TRUE,
+         loadings.label.size = 3) +
+  labs(title = "PCA score plot with loadings")
+```
+:::
+:::
+
+## PCA monitoring statistics
+
+:::columns
+:::column
+For each time instant we compute:
+
+* score coordinates PC1 and PC2
+* SPE, squared prediction error
+* Hotelling's $T^2$
+
+For $T^2$ we can define a control limit associated with a false-alarm probability $\alpha$:
+$$
+T^2_{\alpha} =
+\frac{a(n-1)}{n-a}F_{a,n-a;1-\alpha}
+$$
+where $a$ is the number of retained components and $n$ is the reference sample size
+
+:::
+
+:::column
+```{r}
+p1 <- ggplot(ts_pca, aes(x = t)) +
+  geom_line(aes(y = PC1, color = "Normal")) +
+  geom_line(aes(y = PC2, color = "Normal"), alpha = 0.5) +
+  geom_line(aes(y = PC1, color = "Fault"), data = filter(ts_pca, state == "Fault"), linewidth = 1) +
+  geom_line(aes(y = PC2, color = "Fault"), data = filter(ts_pca, state == "Fault"), linewidth = 1, alpha = 0.5) +
+  labs(x = "Time index", y = "PC1/PC2") + 
+  theme(legend.position = "none")
+
+p2 <- ggplot(ts_pca, aes(x = t, y = SPE)) +
+  geom_line(aes(color = "Normal")) +
+  geom_line(aes(color = "Fault"), data = filter(ts_pca, state == "Fault"), linewidth = 1) +
+  labs(x = "Time index", y = "SPE") +
+  theme(legend.position = "none")
+
+p3 <- ggplot(ts_pca, aes(x = t, y = T2)) +
+  geom_line(aes(color = "Normal")) +
+  geom_line(aes(color = "Fault"), data = filter(ts_pca, state == "Fault"), linewidth = 1) +
+  geom_hline(yintercept = t2_limit, color = "blue", linetype = 2) +
+  labs(x = "Time index", y = TeX("$T^2$"))
+
+p1 / p2 / p3
+```
+:::
+:::
+
+:::aside
+In this synthetic example, PCA is mainly used as an exploratory and monitoring tool: it reveals the regime change without using class labels during training.
+:::
+
+# SVM example in R
+
+## SVM on the same bivariate time series
+
+:::columns
+:::column
+Now we use the same observations, but with labels `Normal` and `Fault`
+
+The feature vector is simply
+$$
+\mathbf{x}_t = [x_{1,t},x_{2,t}]^T
+$$
+
+An RBF-kernel SVM is trained to separate the two states
+:::
+
+:::column
+```{r}
+svm_fit
+acc
+```
+
+```{r}
+ggplot() +
+  geom_tile(data = grid,
+            aes(x = x1, y = x2, fill = pred),
+            alpha = 0.25) +
+  geom_point(data = ts_df,
+             aes(x = x1, y = x2, color = state),
+             size = 1.8) +
+  labs(x = "x1", y = "x2",
+       title = "SVM decision regions on the feature space")
+```
+:::
+:::
+
+## SVM predicted labels over time
+
+:::columns
+:::column
+The decision boundary is learned in feature space, but the output can be mapped back to time
+
+This makes it possible to compare:
+
+* true process state
+* SVM predicted state
+* classification errors and transition regions
+:::
+
+:::column
+```{r}
+ggplot(ts_df, aes(x = t)) +
+  geom_line(aes(y = as.numeric(state), color = "True"), linewidth = 1) +
+  geom_line(aes(y = as.numeric(pred), color = "Predicted"),
+            linewidth = 0.9, linetype = 2) +
+  scale_y_continuous(breaks = c(1, 2),
+                     labels = levels(ts_df$state)) +
+  labs(x = "Time index", y = "Class",
+       color = "", title = "True and predicted labels")
+```
+:::
+:::
+
+## Python example: same synthetic dataset
+
+The same bivariate time series can be generated in Python with `numpy` and stored in a `pandas` data frame
+
+```python
+import numpy as np
+import pandas as pd
+
+np.random.seed(0)
+
+n = 240
+t = np.arange(1, n + 1)
+fault_idx = np.arange(150, 210)
+
+x1 = np.cumsum(np.random.normal(0, 0.06, n)) \
+     + 0.7 * np.sin(2 * np.pi * t / 24)
+x2 = 0.8 * x1 + np.random.normal(0, 0.18, n)
+
+x1[fault_idx] = x1[fault_idx] + 1.0
+x2[fault_idx] = -0.2 * x1[fault_idx] \
+                + np.random.normal(0, 0.22, len(fault_idx)) + 0.7
+
+state = np.where(np.isin(t, fault_idx + 1), "Fault", "Normal")
+
+df = pd.DataFrame({
+    "t": t,
+    "x1": x1,
+    "x2": x2,
+    "state": state
+})
+```
+
+# PCA example in Python
+
+## PCA on the bivariate series in Python
+
+:::columns
+:::column
+The PCA workflow in Python is analogous to the R one:
+
+* standardize the variables
+* fit a PCA model
+* inspect explained variance and loadings
+* project the observations to obtain principal scores
+:::
+
+:::column
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+X = df[["x1", "x2"]].to_numpy()
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+pca = PCA(n_components=2)
+scores = pca.fit_transform(X_scaled)
+
+df["PC1"] = scores[:, 0]
+df["PC2"] = scores[:, 1]
+
+print(pca.explained_variance_ratio_)
+print(pca.components_)
+```
+:::
+:::
+
+## PCA monitoring statistics in Python
+
+:::columns
+:::column
+As in R, we can reconstruct the retained subspace and compute:
+
+* the score trajectories
+* Hotelling's $T^2$
+* the residual SPE statistic
+
+This provides a direct parallel with the PCA monitoring slide shown earlier
+:::
+
+:::column
+```python
+import numpy as np
+
+lam = pca.explained_variance_
+X_hat = scores @ pca.components_
+E = X_scaled - X_hat
+
+df["SPE"] = np.sum(E**2, axis=1)
+df["T2"] = np.sum((scores**2) / lam, axis=1)
+```
+
+```python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(2, 1, figsize=(8, 5), sharex=True)
+ax[0].plot(df["t"], df["PC1"])
+ax[0].set_ylabel("PC1")
+ax[1].plot(df["t"], df["SPE"])
+ax[1].set_ylabel("SPE")
+ax[1].set_xlabel("Time index")
+```
+:::
+:::
+
+# SVM example in Python
+
+## SVM on the same bivariate time series in Python
+
+:::columns
+:::column
+Using `scikit-learn`, the same classification problem is solved by fitting an RBF-kernel SVM to the two features
+
+The workflow is:
+
+* build `X` and class labels `y`
+* fit `SVC`
+* predict the class of each observation
+* evaluate accuracy and inspect the decision regions
+:::
+
+:::column
+```python
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+X = df[["x1", "x2"]].to_numpy()
+y = df["state"].to_numpy()
+
+svc = SVC(kernel="rbf", C=5.0, gamma=1.0)
+svc.fit(X, y)
+
+df["pred"] = svc.predict(X)
+acc = accuracy_score(y, df["pred"])
+print(acc)
+```
+:::
+:::
+
+## SVM decision regions and predicted labels in Python
+
+:::columns
+:::column
+The decision map in feature space can be visualized by evaluating the classifier on a regular grid
+
+The predicted labels can then be plotted back against time exactly as done in the R example
+:::
+
+:::column
+```python
+x1g = np.linspace(df["x1"].min() - 0.3, df["x1"].max() + 0.3, 160)
+x2g = np.linspace(df["x2"].min() - 0.3, df["x2"].max() + 0.3, 160)
+xx1, xx2 = np.meshgrid(x1g, x2g)
+Xg = np.column_stack([xx1.ravel(), xx2.ravel()])
+zg = svc.predict(Xg).reshape(xx1.shape)
+```
+
+```python
+fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+ax[0].contourf(xx1, xx2, (zg == "Fault").astype(float), alpha=0.25)
+ax[0].scatter(df["x1"], df["x2"], c=(df["state"] == "Fault"))
+ax[0].set_xlabel("x1")
+ax[0].set_ylabel("x2")
+
+ax[1].plot(df["t"], df["state"].eq("Fault").astype(int), label="True")
+ax[1].plot(df["t"], df["pred"].eq("Fault").astype(int), "--",
+           label="Predicted")
+ax[1].set_xlabel("Time index")
+ax[1].legend()
+```
+:::
+:::
+
+## PCA and SVM: complementary roles
+
+PCA and SVM serve different purposes:
+
+* PCA is **unsupervised** and looks for directions of maximum variance
+* SVM is **supervised** and looks for a boundary that best separates known classes
+
+In practice they are often combined:
+
+* PCA for denoising or dimensionality reduction
+* SVM for classification on the retained principal scores
+
+For high-dimensional time-series features this PCA plus SVM pipeline is often more stable than direct classification on raw variables alone

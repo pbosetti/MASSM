@@ -17,7 +17,7 @@ format: revealjs
 1. Distributed data acquisition **architectures** and edge computing [{{< bi file-slides >}}](/slides/0_distributed_daq.html)
 1. **Time series** of stochastic process variables [{{< bi file-slides >}}](/slides/1_time_series.html)
 1. Time-domain: **ARIMA** [{{< bi file-slides >}}](/slides/2_time_domain.html)
-1. Feature-based: **PCA**, SVM [{{< bi file-slides >}}](/slides/3_feature_based.html)
+1. Feature-based: **PCA**, **SVM** [{{< bi file-slides >}}](/slides/3_feature_based.html)
 1. Frequency-domain: **Fast Fourier Transform** [{{< bi file-slides >}}](/slides/4_frequency_domain.html)
 
 
