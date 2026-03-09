@@ -5,3 +5,479 @@ author: "Paolo Bosetti"
 format: revealjs
 ---
 
+
+```{r setup}
+options(width = 60)
+set.seed(0)
+library(tidyverse)
+library(xts)
+library(lubridate)
+library(tsbox)
+library(ggfortify)
+library(ggpubr)
+theme_set(theme_gray()+theme(legend.position = "bottom"))
+
+sample_time <- ymd_hms("2026-03-09 08:00:00", tz = "UTC") +
+  c(0, 5, 8, 15, 23, 31) * 60
+sample_value <- c(20.0, 20.4, 20.1, 20.8, 21.2, 21.0)
+sensor_xts <- xts(sample_value, order.by = sample_time)
+sensor_df <- tibble(timestamp = sample_time, value = sample_value)
+```
+
+# Time and timestamps
+
+In a time series, each observation is paired with a **time coordinate** that gives order, spacing, and physical meaning to the data
+
+The same physical instant can be stored in different ways: readable text, numeric offset from an epoch, or a native date-time object provided by the language or the operating system
+
+Choosing the wrong representation can create ambiguities in time zone, resolution, clock drift, or query semantics
+
+## Storing time
+
+Two common representations are used in practice:
+
+* **ISO date-time string**, for example `2026-03-09T08:15:30.125Z`
+* **Numeric offset from an epoch**, for example seconds or milliseconds from a reference instant
+
+ISO strings are readable, self-describing, and easy to exchange between systems, especially when they include time zone information
+
+Epoch-based values are compact and fast for storage, sorting, and arithmetic, but they require agreement on the epoch, units, and time zone convention
+
+In industrial applications, timestamps are often stored with **millisecond resolution**, although sensor acquisition may internally use finer clocks
+
+## Epoch conventions and clocks
+
+:::columns
+:::column
+An **epoch** is the reference instant from which a numeric timestamp is measured
+
+Common conventions include:
+
+* Unix epoch: `1970-01-01 00:00:00 UTC`
+* GPS epoch: `1980-01-06 00:00:00 UTC`
+* Other software-specific origins, used by spreadsheets, PLCs, or proprietary databases
+
+If the epoch changes, the same numeric value refers to a different physical instant
+:::
+
+:::column
+Operating systems expose different clocks:
+
+* **System clock**: returns civil time and can jump because of NTP, manual updates, or daylight-saving adjustments
+* **Monotonic clock**: only increases and is used to measure elapsed time reliably
+
+Therefore:
+
+* use the **system clock** for timestamps attached to data
+* use a **monotonic clock** for latency, timeout, and sampling-period measurements
+:::
+:::
+
+:::aside
+Never compute elapsed time by subtracting two readings of the wall-clock if the clock can be corrected while the program is running.
+:::
+
+## Monotonic clock limitations
+
+The **monotonic clock** is usually referenced to an internal origin that depends on the current operating-system session, typically the **last boot time**
+
+Therefore, its zero is not a civil date and is generally different on each machine, even if the devices are nominally synchronized on the network
+
+As a consequence, monotonic time is excellent for measuring:
+
+* elapsed time
+* latency
+* timeout intervals
+* local acquisition jitter
+
+However, it **cannot be used to synchronize measurements collected on different devices**, because the timestamps do not share a common physical epoch
+
+To align data acquired by multiple systems, one needs timestamps derived from a shared wall-clock reference, typically UTC, distributed for example by NTP, PTP, or GNSS
+
+## Time in R
+
+R provides several complementary tools for time handling:
+
+* `Date`: stores calendar dates without time-of-day
+* `POSIXct`: stores date-time as seconds from the Unix epoch
+* `ts`: for **regularly sampled** series with known frequency
+* `xts`: for indexed time series, especially convenient for date-time filtering and irregular sampling
+* `lubridate`: simplifies parsing, rounding, shifting, and extracting date-time components
+
+The choice depends on whether time is regular, irregular, or mainly used for querying
+
+## Regular series with `ts`
+
+:::columns
+:::column
+The `ts` class is designed for **regular sampling**, such as monthly production, daily energy use, or hourly average demand
+
+It does not store a full timestamp per sample. Instead, it stores:
+
+* a start instant
+* a frequency
+* the ordered values
+
+This is efficient and works very well with classical time-series models
+:::
+
+:::column
+```{r}
+ap <- AirPassengers
+autoplot(ap) +
+  labs(x = "Year", y = "Passengers",
+       title = "Monthly series stored with ts")
+```
+
+```{r}
+frequency(ap)
+start(ap)
+end(ap)
+```
+:::
+:::
+
+## Indexed series with `xts`
+
+:::columns
+:::column
+The `xts` class is more convenient when timestamps are explicit and may be irregular
+
+Each observation is paired with a time index, typically `Date` or `POSIXct`
+
+This is useful for:
+
+* sensor logs
+* event streams
+* asynchronous acquisition
+* filtering by calendar date or time window
+:::
+
+:::column
+```{r}
+sensor_xts
+```
+
+```{r}
+autoplot(sensor_xts) +
+  labs(x = "Timestamp", y = "Value",
+       title = "An xts object with explicit timestamps")
+```
+:::
+:::
+
+## Querying `xts` with date ranges
+
+:::columns
+:::column
+One of the strengths of `xts` is its compact indexing syntax
+
+Examples:
+
+* one day: `x["2026-03-09"]`
+* one range: `x["2026-03-09/2026-03-10"]`
+* from an instant onward: `x["2026-03-09 08:10:00/"]`
+* up to an instant: `x["/2026-03-09 08:15:00"]`
+
+This is often faster to read and write than manual logical filtering
+:::
+
+:::column
+```{r}
+sensor_xts["2026-03-09 08:05:00/2026-03-09 08:20:00"]
+```
+
+```{r}
+sensor_xts["/2026-03-09 08:08:00"]
+```
+:::
+:::
+
+## `lubridate` for parsing and filtering
+
+:::columns
+:::column
+`lubridate` helps create robust pipelines for date-time handling
+
+Typical tasks include:
+
+* parsing strings with `ymd_hms()`
+* changing time zone with `with_tz()` or `force_tz()`
+* rounding with `floor_date()` and `ceiling_date()`
+* extracting fields such as `year()`, `month()`, `wday()`, `hour()`
+
+This is especially useful before converting tabular data to `xts`
+:::
+
+:::column
+```{r}
+sensor_df %>%
+  mutate(minute_bin = floor_date(timestamp, "10 minutes"),
+         hour = hour(timestamp))
+```
+
+```{r}
+sensor_df %>%
+  filter(timestamp >= ymd_hms("2026-03-09 08:05:00", tz = "UTC"),
+         timestamp <  ymd_hms("2026-03-09 08:25:00", tz = "UTC"))
+```
+:::
+:::
+
+## From data frame to `xts`
+
+To work efficiently with time series in R, a common workflow is:
+
+1. import tabular data
+2. parse the `timestamp` column as `POSIXct`
+3. sort by time
+4. convert to `xts`
+5. query and aggregate
+
+```{r}
+sensor_tbl <- tibble(
+  timestamp = c("2026-03-09 08:00:00",
+                "2026-03-09 08:05:00",
+                "2026-03-09 08:08:00"),
+  temperature = c(20.0, 20.4, 20.1)
+)
+
+sensor_tbl2 <- sensor_tbl %>%
+  mutate(timestamp = ymd_hms(timestamp, tz = "UTC")) %>%
+  arrange(timestamp)
+
+sensor_xts2 <- xts::xts(x = sensor_tbl2$temperature,
+                        order.by = sensor_tbl2$timestamp)
+
+sensor_xts2
+```
+
+## Time series in Python
+
+Python offers libraries with roles similar to those seen in R:
+
+* `datetime`: basic date-time objects, time zones, timedeltas
+* `pandas`: indexed time series, resampling, rolling windows, filtering by date range
+* `numpy`: efficient numerical arrays and vectorized operations
+* `statsmodels`: AR, MA, ARIMA, seasonal models, ACF and PACF
+* `polars`: fast tabular processing, useful before conversion to time-indexed data
+* `xarray`: labeled multi-dimensional arrays, useful for sensor grids and scientific data
+
+In practice, `pandas` plays a role similar to a combination of `data.frame`, `xts`, and part of `lubridate`
+
+## Time series in Python
+
+:::columns
+:::column
+Typical workflow in Python:
+
+* parse timestamps with `pd.to_datetime()`
+* set the timestamp as index
+* sort the index
+* slice by date or time range
+* resample or aggregate if needed
+
+This is very close to the `xts` workflow in R
+:::
+
+:::column
+```python
+import pandas as pd
+
+df = pd.DataFrame({
+    "timestamp": [
+        "2026-03-09T08:00:00Z",
+        "2026-03-09T08:05:00Z",
+        "2026-03-09T08:08:00Z"
+    ],
+    "value": [20.0, 20.4, 20.1]
+})
+
+df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
+df = df.sort_values("timestamp").set_index("timestamp")
+
+window = df.loc["2026-03-09 08:00:00":"2026-03-09 08:06:00"]
+```
+:::
+:::
+
+## R and Python correspondence
+
+:::columns
+:::column
+Useful parallels are:
+
+* `ts` in R and `statsmodels` regular-series tools in Python
+* `xts` in R and `pandas` with `DatetimeIndex` in Python
+* `lubridate` in R and `pandas` date-time accessors, plus `datetime`, in Python
+
+The conceptual workflow is almost the same:
+
+* parse
+* index
+* filter
+* resample
+* model
+:::
+
+:::column
+```python
+# resample every 10 minutes
+agg = df.resample("10min").mean()
+
+# rolling mean
+smooth = df["value"].rolling(3).mean()
+
+# month and hour extraction
+df["hour"] = df.index.hour
+df["day"] = df.index.day
+```
+:::
+:::
+
+# Time-series queries in MongoDB
+
+A common document structure for process data in MongoDB is:
+
+```javascript
+{
+  machine_id: "M01",
+  timestamp: ISODate("2026-03-09T08:15:30.125Z"),
+  temperature: 20.8,
+  vibration: 0.031
+}
+```
+
+The key point is that all documents share a `timestamp` field stored as an **ISO date**, typically with millisecond resolution
+
+## Querying a time range in MongoDB
+
+The standard pattern is:
+
+* inclusive lower bound: `$gte`
+* exclusive upper bound: `$lt`
+
+This avoids overlap when adjacent windows are queried one after another
+
+```javascript
+db.measurements.find({
+  timestamp: {
+    $gte: ISODate("2026-03-09T08:00:00.000Z"),
+    $lt:  ISODate("2026-03-09T09:00:00.000Z")
+  }
+}).sort({ timestamp: 1 })
+```
+
+:::aside
+For performance, a range query on `timestamp` should be supported by an index on the same field, or by a compound index such as `{ machine_id: 1, timestamp: 1 }`.
+:::
+
+## MongoDB query in JavaScript
+
+```javascript
+const t0 = ISODate("2026-03-09T08:00:00.000Z");
+const t1 = ISODate("2026-03-09T09:00:00.000Z");
+
+db.measurements.find(
+  {
+    machine_id: "M01",
+    timestamp: { $gte: t0, $lt: t1 }
+  },
+  {
+    _id: 0,
+    machine_id: 1,
+    timestamp: 1,
+    temperature: 1,
+    vibration: 1
+  }
+).sort({ timestamp: 1 });
+```
+
+## MongoDB query in Python
+
+```python
+from datetime import datetime, timezone
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017")
+db = client["plant"]
+col = db["measurements"]
+
+t0 = datetime(2026, 3, 9, 8, 0, 0, tzinfo=timezone.utc)
+t1 = datetime(2026, 3, 9, 9, 0, 0, tzinfo=timezone.utc)
+
+cursor = col.find(
+    {
+        "machine_id": "M01",
+        "timestamp": {"$gte": t0, "$lt": t1}
+    },
+    {
+        "_id": 0,
+        "machine_id": 1,
+        "timestamp": 1,
+        "temperature": 1,
+        "vibration": 1
+    }
+).sort("timestamp", 1)
+
+rows = list(cursor)
+```
+
+## MongoDB query in R
+
+```r
+library(mongolite)
+library(glue)
+
+m <- mongo(collection = "measurements",
+           db = "plant",
+           url = "mongodb://localhost:27017")
+
+t0 <- "2026-03-09T08:00:00.000Z"
+t1 <- "2026-03-09T09:00:00.000Z"
+
+query <- glue(
+'{{
+  "machine_id": "M01",
+  "timestamp": {{
+    "$gte": {{"$date": "{t0}"}},
+    "$lt":  {{"$date": "{t1}"}}
+  }}
+}}'
+)
+
+fields <- '{"_id": 0, "machine_id": 1,
+            "timestamp": 1, "temperature": 1,
+            "vibration": 1}'
+
+df <- m$find(query = query, fields = fields,
+             sort = '{"timestamp": 1}')
+```
+
+## From MongoDB query to time series
+
+Once the query result is available, the workflow is again the same:
+
+* parse the returned `timestamp`
+* sort rows by time
+* convert to a time-indexed object
+* analyze or visualize the selected window
+
+```{r}
+sensor_df %>%
+  arrange(timestamp) %>%
+  ggplot(aes(x = timestamp, y = value)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Timestamp", y = "Value",
+       title = "Selected time window ready for analysis")
+```
+
+## Summary
+
+* Time can be stored as readable ISO text or as numeric offset from an epoch
+* Epoch convention, time zone, and clock type must be known to avoid semantic errors
+* In R, `ts` is convenient for regular series, while `xts` is preferable for explicit timestamp indexing
+* In Python, `pandas` provides the closest workflow to `xts` plus data-frame filtering
+* MongoDB range queries on ISO dates are naturally expressed with `$gte` and `$lt`
+* Once data are extracted, the main tasks are always parse, index, filter, aggregate, and model
