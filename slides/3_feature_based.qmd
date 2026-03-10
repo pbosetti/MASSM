@@ -72,13 +72,13 @@ grid$pred <- predict(svm_fit, grid)
 
 # Feature-based time-series analysis
 
-In feature-based analysis, a time series is transformed into a sequence of vectors
+In feature-based analysis, a multivariate time series in $p$ dimensions is transformed into a sequence of vectors
 $$
 \mathbf{x}_t \in \mathbb{R}^p,\quad t = 1,\dots,N
 $$
 where each component is either a direct measurement or an extracted descriptor such as RMS, variance, spectral energy, kurtosis, or temperature gradient
 
-The objective is to project, compress, classify, or separate process states in the feature space rather than directly on the raw waveform
+The objective is to **project, compress, classify**, or separate process states in the feature space rather than directly on the raw waveform
 
 Two standard techniques are:
 
@@ -88,8 +88,9 @@ Two standard techniques are:
 # PCA theory
 
 ## PCA: data matrix and centering
-
-Let the feature matrix be
+::: {.columns}
+::: {.column}
+Let the **feature matrix** of a MVTS be
 $$
 \mathbf{X} =
 \begin{bmatrix}
@@ -100,29 +101,33 @@ $$
 \end{bmatrix}
 \in \mathbb{R}^{N \times p}
 $$
-where each row is a feature vector extracted at one time instant or from one time window
-
-PCA starts from the centered matrix
+where each row is a **feature vector** extracted at one time instant or from one time window statistics
+:::
+::: {.column}
+PCA starts from the centered matrix $\mathbf{X}_c$:
 $$
-\mathbf{X}_c = \mathbf{X} - \mathbf{1}\boldsymbol{\mu}^T
+\mathbf{X}_c = \mathbf{X} - \boldsymbol{\mu}^T
 $$
-with sample mean
+with sample means vector:
 $$
 \boldsymbol{\mu} = \frac{1}{N}\sum_{t=1}^{N}\mathbf{x}_t
 $$
 
-If variables have different physical units, one usually standardizes them before PCA
+If variables have different physical units, one usually **standardizes** them before PCA
+:::
+:::
+<!-- end columns -->
 
 ## PCA: covariance matrix and eigenproblem
 
 ::: {.columns}
 ::: {.column}
-The sample covariance matrix is
+The sample covariance matrix ($p\times p$)is:
 $$
 \mathbf{S} = \frac{1}{N-1}\mathbf{X}_c^T \mathbf{X}_c
 $$
 
-PCA solves the eigenvalue problem
+PCA solves the eigenvalue problem:
 $$
 \mathbf{S}\mathbf{p}_i = \lambda_i \mathbf{p}_i,
 \quad i = 1,\dots,p
@@ -134,9 +139,9 @@ $$
 where:
 
 * $\lambda_i$ is the variance explained by the $i$-th principal component
-* $\mathbf{p}_i$ is the corresponding loading vector
+* $\mathbf{p}_i$ is the corresponding eigenvector, or **loading vector**
 
-The loadings are sorted so that
+The indexes $i$ are sorted so that:
 $$
 \lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_p \ge 0
 $$
@@ -145,15 +150,20 @@ $$
 :::
 <!-- end columns -->
 
+::: {.callout-note}
+The eigenvectors $\mathbf{p}_i$ are orthogonal and form a new coordinate system in feature space, where the first axis captures the largest variance, the second axis captures the largest remaining variance, and so on.
+:::
+
+
 ## PCA: scores and low-dimensional representation
 
 ::: {.columns}
 ::: {.column}
-The projection of the data onto the principal axes gives the **scores**
+The projection of the data onto the principal axes gives the **scores matrix** ($N\times p$):
 $$
 \mathbf{T} = \mathbf{X}_c \mathbf{P}
 $$
-where
+where:
 $$
 \mathbf{P} = [\mathbf{p}_1,\mathbf{p}_2,\dots,\mathbf{p}_p]
 $$
@@ -164,46 +174,64 @@ Using only the first $a < p$ components yields the reduced model
 $$
 \mathbf{X}_c \approx \mathbf{T}_a \mathbf{P}_a^T
 $$
-Or equivalently:
+where:
 $$
 \mathbf{T}_a = \mathbf{X}_c \mathbf{P}_a
 $$
 :::
 :::
 <!-- end columns -->
-The explained variance ratio is:
-$$
-\eta_a = \frac{\sum_{i=1}^{a}\lambda_i}{\sum_{i=1}^{p}\lambda_i}
-$$
 
+::: {.callout-note}
+For a given subset of principal components $a$, the **explained variance ratio** is:
+$\eta_a = \frac{\sum_{i=1}^{a}\lambda_i}{\sum_{i=1}^{p}\lambda_i}$. This can be used to select the number of components to retain, for example by setting a threshold such as $\eta_a \ge 0.95$.
+:::
+
+:::aside
+**Note**: We can use transpose rather than inverse because $\mathbf{P}$ is an orthonormal matrix, so $\mathbf{P}^{-1} = \mathbf{P}^T$.
+:::
 
 ## PCA: reconstruction error and monitoring statistics
 
 ::: {.columns}
 ::: {.column}
-For process monitoring, PCA separates the observation into:
+For one centered observation vector $\mathbf{x}_{c,t}$, PCA first computes the score vector
 $$
-\mathbf{x}_t = \hat{\mathbf{x}}_t + \mathbf{e}_t
+\mathbf{t}_t = \mathbf{P}_a^T \mathbf{x}_{c,t}
 $$
-where $\hat{\mathbf{x}}_t$ lies in the retained latent subspace and $\mathbf{e}_t$ is the residual
+and then reconstructs it in feature space as
+$$
+\hat{\mathbf{x}}_{c,t} = \mathbf{P}_a \mathbf{t}_t
+$$
+
+Therefore the residual decomposition is:
+$$
+\mathbf{x}_{c,t} = \hat{\mathbf{x}}_{c,t} + \mathbf{\varepsilon}_t
+$$
+where $\hat{\mathbf{x}}_{c,t}$ lies in the retained **latent subspace** and $\mathbf{\varepsilon}_t$ is the residual vector
 :::
 ::: {.column}
 
-Two standard monitoring statistics are:
+Two standard **monitoring statistics** are:
 
-* Hotelling's $T^2$
+* Hotelling's $T^2$:
 $$
 T_t^2 = \sum_{i=1}^{a}\frac{t_{ti}^2}{\lambda_i}
 $$
 
-* Squared Prediction Error, SPE or $Q$ statistic
+* Squared Prediction Error, SPE or $Q$ statistic:
 $$
-Q_t = \|\mathbf{e}_t\|_2^2
+Q_t = \|\mathbf{\varepsilon}_t\|_2^2
+    = \sum_{j=1}^{p}\varepsilon_{tj}^2
 $$
 :::
 :::
 <!-- end columns -->
+
+::: {.callout-note}
 $T^2$ measures abnormality inside the retained subspace, while $Q_t$ measures lack of fit outside it
+:::
+
 
 ## PCA: why it is useful for time series
 
@@ -393,7 +421,8 @@ round(pca_fit$rotation, 3)
 autoplot(pca_fit, data = ts_df, colour = "state",
          loadings = TRUE, loadings.label = TRUE,
          loadings.label.size = 3) +
-  labs(title = "PCA score plot with loadings")
+  labs(title = "PCA score plot with loadings") +
+  coord_fixed()
 ```
 :::
 :::

@@ -36,7 +36,7 @@ Choosing the wrong representation can create ambiguities in time zone, resolutio
 
 Two common representations are used in practice:
 
-* **ISO date-time string**, for example `2026-03-09T08:15:30.125Z`
+* **ISO8601 date-time string**, for example `2026-03-09T08:15:30.125Z`
 * **Numeric offset from an epoch**, for example seconds or milliseconds from a reference instant
 
 ISO strings are readable, self-describing, and easy to exchange between systems, especially when they include time zone information
@@ -128,12 +128,6 @@ autoplot(ap) +
   labs(x = "Year", y = "Passengers",
        title = "Monthly series stored with ts")
 ```
-
-```{r}
-frequency(ap)
-start(ap)
-end(ap)
-```
 :::
 :::
 
@@ -154,22 +148,29 @@ This is useful for:
 :::
 
 :::column
-```{r}
-sensor_xts
-```
 
+:::panel-tabset
+## Plot
 ```{r}
 autoplot(sensor_xts) +
   labs(x = "Timestamp", y = "Value",
        title = "An xts object with explicit timestamps")
 ```
+
+## Data
+```{r}
+sensor_xts %>% 
+  fortify() %>%
+  knitr::kable(row.names = TRUE)
+```
+:::
 :::
 :::
 
 ## Querying `xts` with date ranges
 
 :::columns
-:::column
+:::{.column width="45%"}
 One of the strengths of `xts` is its compact indexing syntax
 
 Examples:
@@ -178,20 +179,20 @@ Examples:
 * one range: `x["2026-03-09/2026-03-10"]`
 * from an instant onward: `x["2026-03-09 08:10:00/"]`
 * up to an instant: `x["/2026-03-09 08:15:00"]`
-
-This is often faster to read and write than manual logical filtering
 :::
 
-:::column
-```{r}
+:::{.column width="55%"}
+```{r echo=TRUE}
 sensor_xts["2026-03-09 08:05:00/2026-03-09 08:20:00"]
 ```
 
-```{r}
+```{r echo=TRUE}
 sensor_xts["/2026-03-09 08:08:00"]
 ```
 :::
 :::
+
+This is often faster to read and write than manual logical filtering
 
 ## `lubridate` for parsing and filtering
 
@@ -205,36 +206,42 @@ Typical tasks include:
 * changing time zone with `with_tz()` or `force_tz()`
 * rounding with `floor_date()` and `ceiling_date()`
 * extracting fields such as `year()`, `month()`, `wday()`, `hour()`
-
-This is especially useful before converting tabular data to `xts`
 :::
 
 :::column
-```{r}
+```{r echo=TRUE}
 sensor_df %>%
-  mutate(minute_bin = floor_date(timestamp, "10 minutes"),
-         hour = hour(timestamp))
+  mutate(
+    minute_bin = floor_date(timestamp, "10 min"),
+    hour = hour(timestamp))
 ```
 
-```{r}
-sensor_df %>%
-  filter(timestamp >= ymd_hms("2026-03-09 08:05:00", tz = "UTC"),
-         timestamp <  ymd_hms("2026-03-09 08:25:00", tz = "UTC"))
+```{r echo=TRUE}
+sensor_df %>% filter(
+  timestamp >= ymd_hms("2026-03-09 08:05:00"),
+  timestamp <  ymd_hms("2026-03-09 08:25:00"))
 ```
 :::
+:::
+
+:::{.callout-note}
+This is especially useful before converting tabular data to `xts`
 :::
 
 ## From data frame to `xts`
 
 To work efficiently with time series in R, a common workflow is:
 
+::: {.columns}
+::: {.column}
 1. import tabular data
 2. parse the `timestamp` column as `POSIXct`
 3. sort by time
 4. convert to `xts`
 5. query and aggregate
-
-```{r}
+:::
+::: {.column}
+```{r echo=TRUE}
 sensor_tbl <- tibble(
   timestamp = c("2026-03-09 08:00:00",
                 "2026-03-09 08:05:00",
@@ -243,14 +250,19 @@ sensor_tbl <- tibble(
 )
 
 sensor_tbl2 <- sensor_tbl %>%
-  mutate(timestamp = ymd_hms(timestamp, tz = "UTC")) %>%
+  mutate(timestamp = ymd_hms(timestamp)) %>%
   arrange(timestamp)
 
-sensor_xts2 <- xts::xts(x = sensor_tbl2$temperature,
-                        order.by = sensor_tbl2$timestamp)
+sensor_xts2 <- xts::xts(
+  x = sensor_tbl2$temperature,
+  order.by = sensor_tbl2$timestamp
+)
 
 sensor_xts2
 ```
+:::
+:::
+<!-- end columns -->
 
 ## Time series in Python
 
@@ -294,7 +306,8 @@ df = pd.DataFrame({
 })
 
 df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
-df = df.sort_values("timestamp").set_index("timestamp")
+df = df.sort_values("timestamp")
+df = df.set_index("timestamp")
 
 window = df.loc["2026-03-09 08:00:00":"2026-03-09 08:06:00"]
 ```
@@ -310,14 +323,6 @@ Useful parallels are:
 * `ts` in R and `statsmodels` regular-series tools in Python
 * `xts` in R and `pandas` with `DatetimeIndex` in Python
 * `lubridate` in R and `pandas` date-time accessors, plus `datetime`, in Python
-
-The conceptual workflow is almost the same:
-
-* parse
-* index
-* filter
-* resample
-* model
 :::
 
 :::column
@@ -333,6 +338,12 @@ df["hour"] = df.index.hour
 df["day"] = df.index.day
 ```
 :::
+:::
+
+::: {.callout-note}
+The conceptual workflow is almost the same:
+
+parse {{< bi caret-right-fill >}} index {{< bi caret-right-fill >}} filter {{< bi caret-right-fill >}} resample {{< bi caret-right-fill >}} model
 :::
 
 # Time-series queries in MongoDB
@@ -352,6 +363,33 @@ The key point is that all documents share a `timestamp` field stored as an **ISO
 
 ## Querying a time range in MongoDB
 
+::: {.columns}
+::: {.column}
+```json
+{
+  "_id": {
+    "$oid": "698afb51c3b4084d840b9c85"
+  },
+  "timestamp": {
+    "$date": "2026-02-10T09:33:05.344Z"
+  },
+  "measure": {
+    "back_bend": -0.5168184041976929,
+    "back_flex": -1.20260488986969,
+    "back_rot": 1.749389410018921,
+    "cervical_flex": 17.3467960357666,
+    "horiz_reach_left": 0.20939064025878906,
+    "horiz_reach_right": 0.20467370748519897,
+    "hostname": "nuc3",
+    "stability_margin": 0.11027171462774277,
+    "timecode": 37985.2,
+    "vert_reach_left": 14.016213417053223,
+    "vert_reach_right": 10.769205093383789
+  }
+}
+```
+:::
+::: {.column}
 The standard pattern is:
 
 * inclusive lower bound: `$gte`
@@ -362,11 +400,15 @@ This avoids overlap when adjacent windows are queried one after another
 ```javascript
 db.measurements.find({
   timestamp: {
-    $gte: ISODate("2026-03-09T08:00:00.000Z"),
-    $lt:  ISODate("2026-03-09T09:00:00.000Z")
+    $gte: ISODate("2026-02-10T08:00:00.000Z"),
+    $lt:  ISODate("2026-02-10T10:00:00.000Z")
   }
 }).sort({ timestamp: 1 })
 ```
+:::
+:::
+<!-- end columns -->
+
 
 :::aside
 For performance, a range query on `timestamp` should be supported by an index on the same field, or by a compound index such as `{ machine_id: 1, timestamp: 1 }`.
@@ -398,14 +440,11 @@ db.measurements.find(
 ```python
 from datetime import datetime, timezone
 from pymongo import MongoClient
-
 client = MongoClient("mongodb://localhost:27017")
 db = client["plant"]
 col = db["measurements"]
-
 t0 = datetime(2026, 3, 9, 8, 0, 0, tzinfo=timezone.utc)
 t1 = datetime(2026, 3, 9, 9, 0, 0, tzinfo=timezone.utc)
-
 cursor = col.find(
     {
         "machine_id": "M01",
@@ -419,7 +458,6 @@ cursor = col.find(
         "vibration": 1
     }
 ).sort("timestamp", 1)
-
 rows = list(cursor)
 ```
 
@@ -428,14 +466,9 @@ rows = list(cursor)
 ```r
 library(mongolite)
 library(glue)
-
-m <- mongo(collection = "measurements",
-           db = "plant",
-           url = "mongodb://localhost:27017")
-
+m <- mongo(collection = "measurements", db = "plant", url = "mongodb://localhost:27017")
 t0 <- "2026-03-09T08:00:00.000Z"
 t1 <- "2026-03-09T09:00:00.000Z"
-
 query <- glue(
 '{{
   "machine_id": "M01",
@@ -445,13 +478,10 @@ query <- glue(
   }}
 }}'
 )
-
 fields <- '{"_id": 0, "machine_id": 1,
             "timestamp": 1, "temperature": 1,
             "vibration": 1}'
-
-df <- m$find(query = query, fields = fields,
-             sort = '{"timestamp": 1}')
+df <- m$find(query = query, fields = fields, sort = '{"timestamp": 1}')
 ```
 
 ## From MongoDB query to time series
@@ -464,13 +494,16 @@ Once the query result is available, the workflow is again the same:
 * analyze or visualize the selected window
 
 ```{r}
+#| echo: TRUE
+#| output-location: column
+#| fig-height: 2
 sensor_df %>%
   arrange(timestamp) %>%
   ggplot(aes(x = timestamp, y = value)) +
   geom_line() +
   geom_point() +
   labs(x = "Timestamp", y = "Value",
-       title = "Selected time window ready for analysis")
+       title = "Selected time window")
 ```
 
 ## Summary
