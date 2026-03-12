@@ -1,0 +1,702 @@
+[
+  {
+    "objectID": "slides/3_feature_based.html#pca-data-matrix-and-centering",
+    "href": "slides/3_feature_based.html#pca-data-matrix-and-centering",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: data matrix and centering",
+    "text": "PCA: data matrix and centering\n\n\nLet the feature matrix of a MVTS be \\[\n\\mathbf{X} =\n\\begin{bmatrix}\n\\mathbf{x}_1^T \\\\\n\\mathbf{x}_2^T \\\\\n\\vdots \\\\\n\\mathbf{x}_N^T\n\\end{bmatrix}\n\\in \\mathbb{R}^{N \\times p}\n\\] where each row is a feature vector extracted at one time instant or from one time window statistics\n\nPCA starts from the centered matrix \\(\\mathbf{X}_c\\): \\[\n\\mathbf{X}_c = \\mathbf{X} - \\boldsymbol{\\mu}^T\n\\] with sample means vector: \\[\n\\boldsymbol{\\mu} = \\frac{1}{N}\\sum_{t=1}^{N}\\mathbf{x}_t\n\\]\nIf variables have different physical units, one usually standardizes them before PCA"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-covariance-matrix-and-eigenproblem",
+    "href": "slides/3_feature_based.html#pca-covariance-matrix-and-eigenproblem",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: covariance matrix and eigenproblem",
+    "text": "PCA: covariance matrix and eigenproblem\n\n\nThe sample covariance matrix (\\(p\\times p\\))is: \\[\n\\mathbf{S} = \\frac{1}{N-1}\\mathbf{X}_c^T \\mathbf{X}_c\n\\]\nPCA solves the eigenvalue problem: \\[\n\\mathbf{S}\\mathbf{p}_i = \\lambda_i \\mathbf{p}_i,\n\\quad i = 1,\\dots,p\n\\]\n\nwhere:\n\n\\(\\lambda_i\\) is the variance explained by the \\(i\\)-th principal component\n\\(\\mathbf{p}_i\\) is the corresponding eigenvector, or loading vector\n\nThe indexes \\(i\\) are sorted so that: \\[\n\\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge \\lambda_p \\ge 0\n\\]\n\n\n\n\n\n\n\n\nNote\n\n\nThe eigenvectors \\(\\mathbf{p}_i\\) are orthogonal and form a new coordinate system in feature space, where the first axis captures the largest variance, the second axis captures the largest remaining variance, and so on."
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-scores-and-low-dimensional-representation",
+    "href": "slides/3_feature_based.html#pca-scores-and-low-dimensional-representation",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: scores and low-dimensional representation",
+    "text": "PCA: scores and low-dimensional representation\n\n\nThe projection of the data onto the principal axes gives the scores matrix (\\(N\\times p\\)): \\[\n\\mathbf{T} = \\mathbf{X}_c \\mathbf{P}\n\\] where: \\[\n\\mathbf{P} = [\\mathbf{p}_1,\\mathbf{p}_2,\\dots,\\mathbf{p}_p]\n\\]\n\nUsing only the first \\(a &lt; p\\) components yields the reduced model \\[\n\\mathbf{X}_c \\approx \\mathbf{T}_a \\mathbf{P}_a^T\n\\] where: \\[\n\\mathbf{T}_a = \\mathbf{X}_c \\mathbf{P}_a\n\\]\n\n\n\n\n\n\n\n\nNote\n\n\nFor a given subset of principal components \\(a\\), the explained variance ratio is: \\(\\eta_a = \\frac{\\sum_{i=1}^{a}\\lambda_i}{\\sum_{i=1}^{p}\\lambda_i}\\). This can be used to select the number of components to retain, for example by setting a threshold such as \\(\\eta_a \\ge 0.95\\).\n\n\n\n\n\nNote: We can use transpose rather than inverse because \\(\\mathbf{P}\\) is an orthonormal matrix, so \\(\\mathbf{P}^{-1} = \\mathbf{P}^T\\)."
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-reconstruction-error-and-monitoring-statistics",
+    "href": "slides/3_feature_based.html#pca-reconstruction-error-and-monitoring-statistics",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: reconstruction error and monitoring statistics",
+    "text": "PCA: reconstruction error and monitoring statistics\n\n\nFor one centered observation vector \\(\\mathbf{x}_{c,t}\\), PCA first computes the score vector \\[\n\\mathbf{t}_t = \\mathbf{P}_a^T \\mathbf{x}_{c,t}\n\\] and then reconstructs it in feature space as \\[\n\\hat{\\mathbf{x}}_{c,t} = \\mathbf{P}_a \\mathbf{t}_t\n\\]\nTherefore the residual decomposition is: \\[\n\\mathbf{x}_{c,t} = \\hat{\\mathbf{x}}_{c,t} + \\mathbf{\\varepsilon}_t\n\\] where \\(\\hat{\\mathbf{x}}_{c,t}\\) lies in the retained latent subspace and \\(\\mathbf{\\varepsilon}_t\\) is the residual vector\n\nTwo standard monitoring statistics are:\n\nHotelling’s \\(T^2\\) : \\[\nT_t^2 = \\sum_{i=1}^{a}\\frac{t_{ti}^2}{\\lambda_i}\n\\]\nSquared Prediction Error, SPE or \\(Q\\) statistic: \\[\nQ_t = \\|\\mathbf{\\varepsilon}_t\\|_2^2\n  = \\sum_{j=1}^{p}\\varepsilon_{tj}^2\n\\]\n\n\n\n\n\n\n\n\n\nNote\n\n\n\\(T^2\\) measures abnormality inside the retained subspace, while \\(Q_t\\) measures lack of fit outside it"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-why-it-is-useful-for-time-series",
+    "href": "slides/3_feature_based.html#pca-why-it-is-useful-for-time-series",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: why it is useful for time series",
+    "text": "PCA: why it is useful for time series\nPCA is applied to time-series analysis after building features from samples or windows\nTypical uses are:\n\nreducing a multivariate signal to a few latent variables\ndetecting operating regimes and structural changes\ndecorrelating strongly coupled measurements\nidentifying dominant directions of variability\n\nFor dynamic systems, PCA alone is not a time model. It is a feature-space model, and temporal structure enters through the chosen features or through lag embedding"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-supervised-binary-classification",
+    "href": "slides/3_feature_based.html#svm-supervised-binary-classification",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: supervised binary classification",
+    "text": "SVM: supervised binary classification\n\n\nAssume labeled feature vectors, where \\(\\mathbf{x_i}\\) is the vector of observations and \\(y_i\\) is the class label: \\[\n(\\mathbf{x}_i, y_i),\\quad y_i \\in \\{-1,+1\\},\\quad i=1,\\dots,N\n\\]\nThe goal is to learn a decision function \\[\nf(\\mathbf{x}) = \\mathrm{sign}(g(\\mathbf{x}))\n\\] that separates the two classes with maximum robustness\nFor the linear case, \\(g(\\mathbf{x}) = \\mathbf{w}^T \\mathbf{x} + b\\) and the separating boundary is the hyperplane \\(\\mathbf{w}^T \\mathbf{x} + b = 0\\)\n\n\n\n\nSVM example in 2-D"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-maximum-margin-principle",
+    "href": "slides/3_feature_based.html#svm-maximum-margin-principle",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: maximum-margin principle",
+    "text": "SVM: maximum-margin principle\nIf the classes are linearly separable, the hard-margin SVM solves: \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2\n\\] subject to \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1,\\quad i=1,\\dots,N\n\\]\nThe geometric margin is \\[\n\\gamma = \\frac{2}{\\|\\mathbf{w}\\|_2}\n\\]\nTherefore, minimizing \\(\\|\\mathbf{w}\\|_2^2\\) is equivalent to maximizing the separation margin"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
+    "href": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: soft margin and hinge loss",
+    "text": "SVM: soft margin and hinge loss\n\n\nReal process data are noisy, overlapping, and rarely perfectly separable\nThe soft-margin formulation introduces slack variables \\(\\xi_i \\ge 0\\): \\[\n\\min_{\\mathbf{w},b,\\boldsymbol{\\xi}}\n\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\xi_i\n\\] subject to \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1-\\xi_i\n\\]\n\n\n\n\nSoft-margin SVM\n\n\n\n\nEquivalent empirical-risk view: \\(\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\)\nThe parameter \\(C\\) balances margin width against classification violations"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
+    "href": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: dual problem and kernel trick",
+    "text": "SVM: dual problem and kernel trick\n\n\nThe dual formulation is \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j K(\\mathbf{x}_i,\\mathbf{x}_j)\n\\] with constraints \\[\n\\alpha_i \\ge 0,\\qquad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\n\nThe kernel function \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] allows nonlinear separation in the original space through linear separation in a transformed feature space\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function, RBF: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
+    "href": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: decision function and time-series use",
+    "text": "SVM: decision function and time-series use\nAfter training, the decision function is \\[\ng(\\mathbf{x}) = \\sum_{i \\in SV}\\alpha_i y_i K(\\mathbf{x}_i,\\mathbf{x}) + b\n\\] where only the support vectors contribute\nFor time-series analysis, SVM is applied to features extracted from samples or windows, for example:\n\ndirect multivariate measurements \\((x_{1,t},x_{2,t},\\dots)\\)\nlagged vectors \\((x_t,x_{t-1},\\dots,x_{t-L})\\)\nstatistical and spectral features over a window\n\nSVM is therefore a classification rule in feature space, not a stochastic time model"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#synthetic-bivariate-time-series",
+    "href": "slides/3_feature_based.html#synthetic-bivariate-time-series",
+    "title": "Feature-based analysis of time series",
+    "section": "Synthetic bivariate time series",
+    "text": "Synthetic bivariate time series\n\n\nWe construct a bivariate time series with two process variables:\n\na normal regime with strong positive correlation\na fault regime with mean shift and changed covariance structure\n\nThis is enough to illustrate how PCA detects changes in latent structure"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-on-the-bivariate-series",
+    "href": "slides/3_feature_based.html#pca-on-the-bivariate-series",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA on the bivariate series",
+    "text": "PCA on the bivariate series\n\n\nWe apply PCA to the standardized two-variable feature matrix\nSince \\(p=2\\), the model is simple enough to visualize directly:\n\nloadings describe the principal directions\nscores show how observations evolve in the latent space\nexplained variance quantifies dimensional compression\n\n\n\n\n\n\n\nNote\n\n\nThis is called a biplot. Another useful visualization is the screeplot, which shows the explained variance ratio \\(\\eta_a\\) as a function of the number of retained components \\(a\\).\n\n\n\n\n\n\nImportance of components:\n                          PC1    PC2\nStandard deviation     1.3272 0.4884\nProportion of Variance 0.8808 0.1192\nCumulative Proportion  0.8808 1.0000\n\n\n      PC1    PC2\nx1 -0.707 -0.707\nx2 -0.707  0.707"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-monitoring-statistics",
+    "href": "slides/3_feature_based.html#pca-monitoring-statistics",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA monitoring statistics",
+    "text": "PCA monitoring statistics\n\n\nFor each time instant we compute:\n\nscore coordinates PC1 and PC2\nSPE, squared prediction error\nHotelling’s \\(T^2\\)\n\nFor \\(T^2\\) we can define a control limit associated with a false-alarm probability \\(\\alpha\\): \\[\nT^2_{\\alpha} =\n\\frac{a(n-1)}{n-a}F_{a,n-a;1-\\alpha}\n\\] where \\(a\\) is the number of retained components and \\(n\\) is the reference sample size\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn this synthetic example, PCA is mainly used as an exploratory and monitoring tool: it reveals the regime change without using class labels during training."
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series",
+    "href": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM on the same bivariate time series",
+    "text": "SVM on the same bivariate time series\n\n\nNow we use the same observations, but with labels Normal and Fault\nThe feature vector is simply \\[\n\\mathbf{x}_t = [x_{1,t},x_{2,t}]^T\n\\]\nAn RBF-kernel SVM is trained to separate the two states\n\n\n\n\nCall:\nsvm(formula = state ~ x1 + x2, data = ts_df, kernel = \"radial\", \n    cost = 5, gamma = 1, scale = TRUE)\n\n\nParameters:\n   SVM-Type:  C-classification \n SVM-Kernel:  radial \n       cost:  5 \n\nNumber of Support Vectors:  65\n\n\n[1] 0.9125"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-predicted-labels-over-time",
+    "href": "slides/3_feature_based.html#svm-predicted-labels-over-time",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM predicted labels over time",
+    "text": "SVM predicted labels over time\n\n\nThe decision boundary is learned in feature space, but the output can be mapped back to time\nThis makes it possible to compare:\n\ntrue process state\nSVM predicted state\nclassification errors and transition regions"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#python-example-same-synthetic-dataset",
+    "href": "slides/3_feature_based.html#python-example-same-synthetic-dataset",
+    "title": "Feature-based analysis of time series",
+    "section": "Python example: same synthetic dataset",
+    "text": "Python example: same synthetic dataset\nThe same bivariate time series can be generated in Python with numpy and stored in a pandas data frame\nimport numpy as np\nimport pandas as pd\n\nnp.random.seed(0)\n\nn = 240\nt = np.arange(1, n + 1)\nfault_idx = np.arange(150, 210)\n\nx1 = np.cumsum(np.random.normal(0, 0.06, n)) \\\n     + 0.7 * np.sin(2 * np.pi * t / 24)\nx2 = 0.8 * x1 + np.random.normal(0, 0.18, n)\n\nx1[fault_idx] = x1[fault_idx] + 1.0\nx2[fault_idx] = -0.2 * x1[fault_idx] \\\n                + np.random.normal(0, 0.22, len(fault_idx)) + 0.7\n\nstate = np.where(np.isin(t, fault_idx + 1), \"Fault\", \"Normal\")\n\ndf = pd.DataFrame({\n    \"t\": t,\n    \"x1\": x1,\n    \"x2\": x2,\n    \"state\": state\n})"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-on-the-bivariate-series-in-python",
+    "href": "slides/3_feature_based.html#pca-on-the-bivariate-series-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA on the bivariate series in Python",
+    "text": "PCA on the bivariate series in Python\n\n\nThe PCA workflow in Python is analogous to the R one:\n\nstandardize the variables\nfit a PCA model\ninspect explained variance and loadings\nproject the observations to obtain principal scores\n\n\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\nX = df[[\"x1\", \"x2\"]].to_numpy()\n\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\npca = PCA(n_components=2)\nscores = pca.fit_transform(X_scaled)\n\ndf[\"PC1\"] = scores[:, 0]\ndf[\"PC2\"] = scores[:, 1]\n\nprint(pca.explained_variance_ratio_)\nprint(pca.components_)"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-monitoring-statistics-in-python",
+    "href": "slides/3_feature_based.html#pca-monitoring-statistics-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA monitoring statistics in Python",
+    "text": "PCA monitoring statistics in Python\n\n\nAs in R, we can reconstruct the retained subspace and compute:\n\nthe score trajectories\nHotelling’s \\(T^2\\)\nthe residual SPE statistic\n\nThis provides a direct parallel with the PCA monitoring slide shown earlier\n\nimport numpy as np\n\nlam = pca.explained_variance_\nX_hat = scores @ pca.components_\nE = X_scaled - X_hat\n\ndf[\"SPE\"] = np.sum(E**2, axis=1)\ndf[\"T2\"] = np.sum((scores**2) / lam, axis=1)\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(2, 1, figsize=(8, 5), sharex=True)\nax[0].plot(df[\"t\"], df[\"PC1\"])\nax[0].set_ylabel(\"PC1\")\nax[1].plot(df[\"t\"], df[\"SPE\"])\nax[1].set_ylabel(\"SPE\")\nax[1].set_xlabel(\"Time index\")"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series-in-python",
+    "href": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM on the same bivariate time series in Python",
+    "text": "SVM on the same bivariate time series in Python\n\n\nUsing scikit-learn, the same classification problem is solved by fitting an RBF-kernel SVM to the two features\nThe workflow is:\n\nbuild X and class labels y\nfit SVC\npredict the class of each observation\nevaluate accuracy and inspect the decision regions\n\n\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\nX = df[[\"x1\", \"x2\"]].to_numpy()\ny = df[\"state\"].to_numpy()\n\nsvc = SVC(kernel=\"rbf\", C=5.0, gamma=1.0)\nsvc.fit(X, y)\n\ndf[\"pred\"] = svc.predict(X)\nacc = accuracy_score(y, df[\"pred\"])\nprint(acc)"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#svm-decision-regions-and-predicted-labels-in-python",
+    "href": "slides/3_feature_based.html#svm-decision-regions-and-predicted-labels-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM decision regions and predicted labels in Python",
+    "text": "SVM decision regions and predicted labels in Python\n\n\nThe decision map in feature space can be visualized by evaluating the classifier on a regular grid\nThe predicted labels can then be plotted back against time exactly as done in the R example\n\nx1g = np.linspace(df[\"x1\"].min() - 0.3, df[\"x1\"].max() + 0.3, 160)\nx2g = np.linspace(df[\"x2\"].min() - 0.3, df[\"x2\"].max() + 0.3, 160)\nxx1, xx2 = np.meshgrid(x1g, x2g)\nXg = np.column_stack([xx1.ravel(), xx2.ravel()])\nzg = svc.predict(Xg).reshape(xx1.shape)\nfig, ax = plt.subplots(1, 2, figsize=(10, 4))\nax[0].contourf(xx1, xx2, (zg == \"Fault\").astype(float), alpha=0.25)\nax[0].scatter(df[\"x1\"], df[\"x2\"], c=(df[\"state\"] == \"Fault\"))\nax[0].set_xlabel(\"x1\")\nax[0].set_ylabel(\"x2\")\n\nax[1].plot(df[\"t\"], df[\"state\"].eq(\"Fault\").astype(int), label=\"True\")\nax[1].plot(df[\"t\"], df[\"pred\"].eq(\"Fault\").astype(int), \"--\",\n           label=\"Predicted\")\nax[1].set_xlabel(\"Time index\")\nax[1].legend()"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#pca-and-svm-complementary-roles",
+    "href": "slides/3_feature_based.html#pca-and-svm-complementary-roles",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA and SVM: complementary roles",
+    "text": "PCA and SVM: complementary roles\nPCA and SVM serve different purposes:\n\nPCA is unsupervised and looks for directions of maximum variance\nSVM is supervised and looks for a boundary that best separates known classes\n\nIn practice they are often combined:\n\nPCA for denoising or dimensionality reduction\nSVM for classification on the retained principal scores\n\nFor high-dimensional time-series features this PCA plus SVM pipeline is often more stable than direct classification on raw variables alone"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#hotellings-t2-distribution",
+    "href": "slides/3_feature_based.html#hotellings-t2-distribution",
+    "title": "Feature-based analysis of time series",
+    "section": "Hotelling’s \\(T^2\\) distribution",
+    "text": "Hotelling’s \\(T^2\\) distribution\nHotelling’s \\(T^2\\) is the multivariate extension of Student’s \\(t\\) test when the parameter of interest is a mean vector rather than a scalar mean\nIf \\[\n\\mathbf{x}_1,\\dots,\\mathbf{x}_n \\in \\mathbb{R}^p\n\\] are independent observations from a multivariate normal population, the one-sample null hypothesis is \\[\nH_0:\\boldsymbol{\\mu}=\\boldsymbol{\\mu}_0\n\\]\nThe sample mean vector and covariance matrix are \\[\n\\bar{\\mathbf{x}}=\\frac{1}{n}\\sum_{i=1}^{n}\\mathbf{x}_i,\n\\qquad\n\\mathbf{S}=\\frac{1}{n-1}\\sum_{i=1}^{n}\n(\\mathbf{x}_i-\\bar{\\mathbf{x}})\n(\\mathbf{x}_i-\\bar{\\mathbf{x}})^T\n\\]"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#one-sample-hotellings-t2",
+    "href": "slides/3_feature_based.html#one-sample-hotellings-t2",
+    "title": "Feature-based analysis of time series",
+    "section": "One-sample Hotelling’s \\(T^2\\)",
+    "text": "One-sample Hotelling’s \\(T^2\\)\nThe test statistic is \\[\nT^2 = n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)^T\n\\mathbf{S}^{-1}\n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)\n\\]\nInterpretation:\n\n\\((\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)\\) is the deviation from the target mean vector\n\\(\\mathbf{S}^{-1}\\) scales that deviation by the covariance structure\nlarge values of \\(T^2\\) indicate that the observed mean is too far from the target to be explained by normal variability\n\nFor \\(p=1\\), this reduces to the usual Student’s \\(t^2\\)"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#relation-with-the-f-distribution",
+    "href": "slides/3_feature_based.html#relation-with-the-f-distribution",
+    "title": "Feature-based analysis of time series",
+    "section": "Relation with the F distribution",
+    "text": "Relation with the F distribution\nUnder multivariate normality and under \\(H_0\\), the statistic can be converted into an F test: \\[\nF = \\frac{n-p}{p(n-1)}T^2\n\\] with \\[\nF \\sim F_{p,n-p}\n\\]\nTherefore, at significance level \\(\\alpha\\), we reject \\(H_0\\) when \\[\nT^2 &gt;\n\\frac{p(n-1)}{n-p}F_{p,n-p;1-\\alpha}\n\\]\nThis gives an exact critical region for the one-sample test"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#two-sample-hotellings-t2",
+    "href": "slides/3_feature_based.html#two-sample-hotellings-t2",
+    "title": "Feature-based analysis of time series",
+    "section": "Two-sample Hotelling’s \\(T^2\\)",
+    "text": "Two-sample Hotelling’s \\(T^2\\)\nIf two independent populations are compared, \\[\nH_0:\\boldsymbol{\\mu}_1=\\boldsymbol{\\mu}_2\n\\] the pooled-covariance version of the statistic is \\[\nT^2 =\n\\frac{n_1 n_2}{n_1+n_2}\n(\\bar{\\mathbf{x}}_1-\\bar{\\mathbf{x}}_2)^T\n\\mathbf{S}_p^{-1}\n(\\bar{\\mathbf{x}}_1-\\bar{\\mathbf{x}}_2)\n\\] where \\[\n\\mathbf{S}_p =\n\\frac{(n_1-1)\\mathbf{S}_1 + (n_2-1)\\mathbf{S}_2}\n{n_1+n_2-2}\n\\]\nThis is the multivariate analogue of the classical two-sample t test"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#assumptions-and-interpretation",
+    "href": "slides/3_feature_based.html#assumptions-and-interpretation",
+    "title": "Feature-based analysis of time series",
+    "section": "Assumptions and interpretation",
+    "text": "Assumptions and interpretation\nHotelling’s \\(T^2\\) is appropriate when:\n\nobservations are independent\nthe population is approximately multivariate normal\nthe covariance matrix is nonsingular\n\nIts main advantage over multiple univariate t tests is that it tests the mean vector jointly, accounting for correlation between variables\nThis avoids contradictory conclusions caused by ignoring covariance structure"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-quality-control-test-on-a-batch",
+    "href": "slides/3_feature_based.html#example-quality-control-test-on-a-batch",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: quality-control test on a batch",
+    "text": "Example: quality-control test on a batch\nConsider a batch of machined parts. For each part we measure two variables:\n\nlength\nweight\n\nThe design target is the mean vector \\[\n\\boldsymbol{\\mu}_0 =\n\\begin{bmatrix}\n50.0 \\\\\n100.0\n\\end{bmatrix}\n\\]\nWe want to test whether the batch mean is statistically compatible with this target, using a multivariate one-sample test"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-data-cloud-and-target-point",
+    "href": "slides/3_feature_based.html#example-data-cloud-and-target-point",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: data cloud and target point",
+    "text": "Example: data cloud and target point\n\n\nThis is not a time series problem:\n\neach point is one manufactured part\nthe two measured variables are correlated\nthe question concerns the joint mean of the batch\n\nThe red point is the target mean \\(\\boldsymbol{\\mu}_0\\), while the blue point is the sample mean\n\n\nPlotData\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# A tibble: 40 × 2\n   length weight\n    &lt;dbl&gt;  &lt;dbl&gt;\n 1   50.3  100. \n 2   50.2  100. \n 3   48.7   99.2\n 4   51.4  101. \n 5   49.3   99.5\n 6   50.3   99.6\n 7   51.1  102. \n 8   50.0  100. \n 9   51.3   99.9\n10   50.7  102. \n# ℹ 30 more rows"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-manual-calculation-of-hotellings-t2",
+    "href": "slides/3_feature_based.html#example-manual-calculation-of-hotellings-t2",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: manual calculation of Hotelling’s \\(T^2\\)",
+    "text": "Example: manual calculation of Hotelling’s \\(T^2\\)\n\n\nThe manual workflow is:\n\ncompute the sample mean vector \\(\\bar{\\mathbf{x}}\\)\ncompute the sample covariance matrix \\(\\mathbf{S}\\)\ncompute \\(T^2\\)\nconvert it to an F statistic\nobtain the p-value\n\n\n\n(xbar &lt;- colMeans(batch_x))\n\n[1]  50.42717 100.67922\n\n(s &lt;- cov(batch_x))\n\n          [,1]      [,2]\n[1,] 0.6610439 0.3443915\n[2,] 0.3443915 1.3580291\n\n(t2 &lt;- as.numeric(batch_n *\n  t(xbar - mu0) %*% solve(s) %*% (xbar - mu0)))\n\n[1] 18.11943\n\n(f &lt;- (n - p) / (p * (n - 1)) * t2)\n\n[1] 8.827413\n\n(p.value &lt;- 1 - pf(f, df1 = p, df2 = n - p))\n\n[1] 0.0007101244\n\n\n\n\n\n\n\n\n\nNote\n\n\nIf the p-value is smaller than the chosen significance level, the batch mean is declared significantly different from the design target in the joint two-variable sense."
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-the-same-test-with-desctools",
+    "href": "slides/3_feature_based.html#example-the-same-test-with-desctools",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: the same test with DescTools",
+    "text": "Example: the same test with DescTools\nIf DescTools is available, the same test can be run directly:\n\nlibrary(DescTools)\n\nHotellingsT2Test(\n  x = as.matrix(batch_df),\n  mu = mu0\n)\n\n\n    Hotelling's one sample T2-test\n\ndata:  as.matrix(batch_df)\nT.2 = 8.8274, df1 = 2, df2 = 38, p-value = 0.0007101\nalternative hypothesis: true location is not equal to c(50,100)\n\n\nThis is the most compact way to perform the one-sample test in R, but the underlying quantity remains the same statistic defined earlier"
+  },
+  {
+    "objectID": "index.html#part-1-fundamentals-p.-bosetti-10h",
+    "href": "index.html#part-1-fundamentals-p.-bosetti-10h",
+    "title": "Multi-agent system for smart machining, part II",
+    "section": "Part 1 — Fundamentals (P. Bosetti, 10h)",
+    "text": "Part 1 — Fundamentals (P. Bosetti, 10h)\n\nDistributed data acquisition architectures and edge computing \nTime series of stochastic process variables \nTime-domain: ARIMA \nFeature-based: PCA, SVM \nFrequency-domain: Fast Fourier Transform"
+  },
+  {
+    "objectID": "index.html#part-2-algorithms-d.-fontanelli-20h",
+    "href": "index.html#part-2-algorithms-d.-fontanelli-20h",
+    "title": "Multi-agent system for smart machining, part II",
+    "section": "Part 2 — Algorithms (D. Fontanelli, 20h)",
+    "text": "Part 2 — Algorithms (D. Fontanelli, 20h)\n\nFundamentals and evolution of maintenance management, including failures, faults, maintenance activities, and decision-making.\nScheduling and execution of maintenance actions, including breakdown, time-based, opportunity-based, and degradation-based policies.\nCondition monitoring, PHM, diagnostics, prognostics, P/F curve, and Remaining Useful Life estimation.\nDetection theory foundations: binary and multiple hypothesis testing, false alarms, missed detections, ROC curves, and likelihood-ratio tests.\nNeyman-Pearson, Bayesian, and GLRT approaches for detection under known or uncertain model parameters.\nClassification of process data using Bayes classifiers, logistic regression, neural networks, temporal models, HMM/CRF methods, and risk minimization.\nAnomaly and non-conformity detection in time-series process data, including control charts, PCA, autoencoders, LSTMs, threshold tuning, drift detection, deployment, and industrial case studies."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#time-series-statistics",
+    "href": "slides/2_time_domain.html#time-series-statistics",
+    "title": "Time-domain analysis of time series",
+    "section": "Time-series statistics",
+    "text": "Time-series statistics\nAll regression methods seen so far are based on the assumption that the random variable is \\(x\\overset{IID}\\sim \\mathcal{N}(\\mu, \\sigma^2)\\). That is, all observations must be uncorrelated\nThis assumption is, among other things, the basis for the recommendation to randomize the operating sequence\nSuppose we can treat a measurement as a time-dependent signal. It is clear that by reducing the signal sampling interval, sooner or later each sample will be correlated with the previous one\nThere is therefore a maximum sampling frequency above which every measurement turns out to be autocorrelated, that is, the observations of \\(x\\) are no longer IID\nThis situation occurs when the dynamics of the measuring instrument or of the measurand itself, which are always finite, are slower than the time interval at which measurements are taken"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#time-series-statistics-1",
+    "href": "slides/2_time_domain.html#time-series-statistics-1",
+    "title": "Time-domain analysis of time series",
+    "section": "Time-series statistics",
+    "text": "Time-series statistics\n\n\nConsider, for example, the time series in the figure, which reports the difference between the mean temperature of land areas and the corresponding mean value over the period 1951–1980\nIt is clear that nearby observations are more correlated than distant ones\nMoreover, it is clear, and relevant, to evaluate the dependence of the random variable on time in order to make future predictions"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#autocovariance-and-autocorrelation",
+    "href": "slides/2_time_domain.html#autocovariance-and-autocorrelation",
+    "title": "Time-domain analysis of time series",
+    "section": "Autocovariance and autocorrelation",
+    "text": "Autocovariance and autocorrelation\nWe have seen how the covariance and correlation operators are used to estimate the independence of two samples\nConsidering a time-dependent signal \\(x=x(t)\\), it is interesting to consider the covariance of the signal with itself, shifted in time\nWe define the autocovariance function \\(\\gamma(s,t)\\) as the function that evaluates the covariance of a time signal with itself evaluated starting at times \\(s\\) and \\(t\\): \\[\n\\gamma_x(s, t) = \\sigma_{x_s, x_t} = E[(x_s-\\mu_s)(x_t-\\mu_t)]\n\\]\nIt is clear that \\(\\gamma_x(s,s)=\\sigma^2(x_s)\\)\nThe autocorrelation function (ACF), consequently, is defined as: \\[\n\\rho_x(s, t) = \\frac{\\gamma_x(s,t)}{\\sqrt{\\gamma_x(s,s)\\gamma_x(t,t)}}\n\\] and has the advantage of always lying in \\([-1,1]\\). It is also clear that \\(\\rho_x(s,s)=1\\)"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#autocorrelation",
+    "href": "slides/2_time_domain.html#autocorrelation",
+    "title": "Time-domain analysis of time series",
+    "section": "Autocorrelation",
+    "text": "Autocorrelation\nIf we sample a continuous signal at fixed intervals \\(\\Delta t\\) over a total duration \\(T\\), we obtain a finite time series of \\(N=T/\\Delta t\\) observations: \\(x_{0}=\\left&lt;x_1, x_2, \\dots, x_N\\right&gt;\\)\nWe can extend the definition by setting \\(s=t_0 = 0\\) as the initial instant of the series and \\(t=s+\\tau\\) as a generic later instant such that \\[\n\\tau = \\ell \\Delta t\n\\] where \\(\\ell\\) is the delay or lag, and then the autocovariance and autocorrelation for a finite time series become: \\[\n\\gamma_x(\\ell) = \\frac{\\sum_{i=1}^{N-\\ell} (x_i - \\bar x_0) (x_{i+\\ell}-\\bar x_\\ell) }{N-\\ell-2},\\quad \\rho_x(\\ell) = \\frac{\\gamma_x(\\ell)}{\\sqrt{\\sigma_x(0)\\sigma_x(\\ell)}}\n\\] where \\[\n\\bar x_0=\\frac{1}{N-\\ell}\\sum\\nolimits_{i=1}^{N-\\ell} x_i,\\quad \\bar x_\\ell=\\frac{1}{N-\\ell}\\sum\\nolimits_{i=\\ell}^{N} x_i\n\\]"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#autocorrelogram-acf",
+    "href": "slides/2_time_domain.html#autocorrelogram-acf",
+    "title": "Time-domain analysis of time series",
+    "section": "Autocorrelogram (ACF)",
+    "text": "Autocorrelogram (ACF)\n\n\n\n\n\n\n\n\n\n\n\n\nTo construct the ACF plot of a time series, the axis is shifted by \\(\\ell\\) samples, neglecting the first \\(\\ell\\) samples in the unshifted series and the last \\(\\ell\\) samples in the shifted one\nThen the autocorrelation between the two series is computed\nThe process is repeated for \\(\\ell=0, 1, \\dots, n\\), with \\(n\\) chosen as a function of the series length, typically at least 50 and in any case no more than half the length of the time series"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#autocorrelogram-acf-1",
+    "href": "slides/2_time_domain.html#autocorrelogram-acf-1",
+    "title": "Time-domain analysis of time series",
+    "section": "Autocorrelogram (ACF)",
+    "text": "Autocorrelogram (ACF)\n\n\nThe autocorrelation function \\(\\rho_x(\\ell)\\), which is a discrete-valued function, can be plotted to study the maximum lag beyond which the historical series \\(x\\) is no longer autocorrelated\nThe figure shows the signal of a microphone recording the sound “AAHH”. The series is clearly periodic every 0.01 s\nThe autocorrelogram shows high autocorrelation up to \\(\\ell=4\\). Then the pattern is periodic, confirming that the time series is autocorrelated with itself about every 10 lags\n\n\nTime seriesACF\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nACF stands for Auto-Correlation Function; the blue highlighted band is the 95% confidence interval. Also, in general, \\(\\rho_x(0)=1\\) always holds"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#autocorrelogram-acf-2",
+    "href": "slides/2_time_domain.html#autocorrelogram-acf-2",
+    "title": "Time-domain analysis of time series",
+    "section": "Autocorrelogram (ACF)",
+    "text": "Autocorrelogram (ACF)\n\n\nConsider the same data as the previous time series, but sampled at random instants\nThen \\(y\\overset{IID}\\sim \\mathcal{N}(\\mu, \\sigma^2)\\) and therefore \\(\\rho_y(\\ell) = 0~\\forall \\ell&gt;0\\)\nAs expected, the only ACF value outside the confidence interval is \\(\\rho_x(0)\\)\nIn this case one also says that the time series is a random walk\n\n\nTime seriesACF"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stationary-time-series",
+    "href": "slides/2_time_domain.html#stationary-time-series",
+    "title": "Time-domain analysis of time series",
+    "section": "Stationary time series",
+    "text": "Stationary time series\nA time series may or may not be stationary. The following are defined:\n\nTime series stationary in the wide sense\n\nIt is a time series for which the probabilistic behavior of any collection of values \\(\\left&lt;x_{t_1}, x_{t_2},\\dots, x_{t_k}\\right&gt;\\) is identical to that of the shifted collection \\(\\left&lt;x_{t_1+h}, x_{t_2+h},\\dots, x_{t_k+h}\\right&gt;\\), that is: \\[\n\\mathrm{Pr}(x_{t_1}\\leq c_1, \\dots, x_{t_k}\\leq c_k) = \\mathrm{Pr}(x_{t_1+h}\\leq c_1, \\dots, x_{t_k+h}\\leq c_k).\n\\]\n\nTime series stationary in the strict sense\n\nIt is a time series for which the mean value of the series is constant, independent of time, and the autocovariance function \\(\\gamma(s,t)\\) depends on \\(s\\) and \\(t\\) only through their difference \\(|s-t|\\)\n\n\nFor a wide-sense stationary series one may assume \\(\\sigma_x(0)=\\sigma_x(\\ell)=\\sigma_x\\) and \\(\\bar x_0=\\bar x_\\ell\\) and, therefore, \\(\\rho_x(\\ell) = \\gamma_x(\\ell)/\\sigma_x\\)"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stabilization",
+    "href": "slides/2_time_domain.html#stabilization",
+    "title": "Time-domain analysis of time series",
+    "section": "Stabilization",
+    "text": "Stabilization\n\nTime series stationary at least in the wide sense are easier to handle\nIt is therefore useful to try to stabilize the time series by separating it into a trend term \\(x_t\\) plus a stationary term \\(x_s\\)\nstabilization can be done in two ways:\n\ndetrending by linear regression: \\(x_t = x_{l,t} + x_{s,t}\\), where \\(x_{l,t} = a + bt\\) and, therefore, \\(x_{s,t}\\) is the residual series of the linear regression of \\(x_t\\)\ndetrending by differencing\n\nThe stabilized time series can then be analyzed and then transformed back by the inverse operation:\n\nadding the trend term\nintegration, that is cumulative sum"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stabilization-example",
+    "href": "slides/2_time_domain.html#stabilization-example",
+    "title": "Time-domain analysis of time series",
+    "section": "Stabilization (example)",
+    "text": "Stabilization (example)"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#differencing-operators",
+    "href": "slides/2_time_domain.html#differencing-operators",
+    "title": "Time-domain analysis of time series",
+    "section": "Differencing operators",
+    "text": "Differencing operators\nIn general, stabilization by differencing gives better results and is also more practical: if the differenced time series is not stable, the differencing order can be increased until stability is reached\nHow is a time series differenced?\nThe following are defined:\n\nBackshift operator: this is the operator \\(B^n\\) such that \\(B^n x_t := x_{t-n}\\)\nDifference operator: this is the operator \\(\\nabla\\) such that \\(\\nabla x_t := x_t - x_{t-1}=(1-B)x_t\\). It follows that \\(\\nabla^dx_t=(1-B)^dx_t\\), and therefore for example \\(\\nabla^2x_t=(1-B)^2x_t=x_t-2x_{t-1}+x_{t-2}\\)\n\nSo, for example, differencing \\(\\nabla^2x_t\\) is the discrete equivalent of the second derivative \\(\\frac{d^2}{dt^2}x(t)\\) for the continuous function \\(x(t)\\)"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stabilization-and-acf",
+    "href": "slides/2_time_domain.html#stabilization-and-acf",
+    "title": "Time-domain analysis of time series",
+    "section": "Stabilization and ACF",
+    "text": "Stabilization and ACF"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stabilization-and-acf-1",
+    "href": "slides/2_time_domain.html#stabilization-and-acf-1",
+    "title": "Time-domain analysis of time series",
+    "section": "Stabilization and ACF",
+    "text": "Stabilization and ACF\n\n\n\nThe ACF of a non-stabilized series always shows correlation even at high lags\nThe ACF of the residual series from a linear regression decreases faster, but still keeps correlation even at high lags\nThe ACF of the differenced series, moreover, damps out very quickly, the lags 1, 2, 3, … should be exponential, after which it shows harmonic oscillations, indicating a periodicity in the original time series\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can therefore say that the historical chicken price series shows a trend that stabilizes at first-order differencing, has dynamics that show autocorrelation up to the previous three points, and a periodic pattern with period equal to 12 lags."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ar-models-definition",
+    "href": "slides/2_time_domain.html#ar-models-definition",
+    "title": "Time-domain analysis of time series",
+    "section": "AR models — definition",
+    "text": "AR models — definition\nAn Auto-Regressive (AR) model expresses a given observation \\(x_t\\) at time \\(t\\) as a linear combination of \\(p\\) previous values \\(x_{t-1}, x_{t-2},\\dots,x_{t-p}\\). An AR model of order \\(p\\), abbreviated as \\(\\mathrm{AR}(p)\\), has the form: \\[\nx_t=\\phi_1 x_{t-1} + \\phi_2 x_{t-2}+\\dots+\\phi_p x_{t-p} + w_t \\label{eq:AR}\n\\]\n\n\\(x_t\\) is wide-sense stationary and \\(w_t\\sim\\mathcal{N}(0, \\sigma^2_w)\\)\n\\(\\phi_1, \\phi_2,\\dots,\\phi_p\\) are constants and \\(\\phi_p\\neq0\\)\n\nIf the mean of \\(x_t\\) is not zero, \\(x_t\\) is replaced with \\(x_t - \\mu\\) to obtain: \\[\n\\begin{align}\nx_t-\\mu&=\\phi_1( x_{t-1}-\\mu) + \\phi_2 (x_{t-2}-\\mu)+\\dots+\\phi_p (x_{t-p}-\\mu) + w_t \\\\\nx_t&=\\alpha + \\phi_1 x_{t-1} + \\phi_2 x_{t-2}+\\dots+\\phi_p x_{t-p} + w_t,~~~\\alpha=\\mu(1-\\phi_1-\\phi_2-\\dots-\\phi_p)\n\\end{align}\n\\]\n\n\nThe \\(w_t\\) are also called innovations, since they are the only new contribution of a point with respect to the previous ones."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ar-models-regression",
+    "href": "slides/2_time_domain.html#ar-models-regression",
+    "title": "Time-domain analysis of time series",
+    "section": "AR models — regression",
+    "text": "AR models — regression\nRecalling the definition of the backshift operator, the definition of \\(w_t\\) can be written as:\n\\[\n(1-\\phi_1 B - \\phi_2 B^2 -\\dots-\\phi_p B^p)x_t=w_t\n\\] o ancora più concisamente come:\n\\[\n\\Phi_p(B)x_t=w_t\n\\] where \\(\\Phi_p(B):=1-\\phi_1B-\\phi_2B^2-\\dots-\\phi_pB^p\\) is called the autoregressive operator.\nPerforming the regression of an \\(\\mathrm{AR}(p)\\) model on a historical series \\(x_t\\) therefore means fitting the model \\(\\Phi_p(B)\\hat{ x_t}=w_t\\) by identifying the coefficients of \\(\\Phi_p(B)\\) that minimize the mean squared residuals, where the residuals are \\(\\varepsilon_t = x_t - \\hat{ x_t} = x_t - \\Phi_p^{-1}(B)w_t\\), assuming the inverse \\(\\Phi_p^{-1}(B)\\) exists."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ma-models-definition",
+    "href": "slides/2_time_domain.html#ma-models-definition",
+    "title": "Time-domain analysis of time series",
+    "section": "MA models — definition",
+    "text": "MA models — definition\nAlternatively, one can imagine the case in which the generic observation \\(x_t\\) is expressed as a linear combination of the disturbance acting on the previous \\(q\\) observations. An MA model of order \\(q\\), abbreviated as \\(\\mathrm{MA}(q)\\), is defined as \\[\nx_t = w_t + \\theta_1 w_{t-1} + \\theta_2 w_{t-2} + \\dots + \\theta_q w_{t-q}\n\\]\n\n\\(w_t\\sim\\mathcal{N}(0, \\sigma_w^2)\\)\n\\(\\theta_1, \\theta_2,\\dots,\\theta_q\\) are constant parameters with \\(\\theta_q\\neq0\\)"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ma-models-regression",
+    "href": "slides/2_time_domain.html#ma-models-regression",
+    "title": "Time-domain analysis of time series",
+    "section": "MA models — regression",
+    "text": "MA models — regression\nSimilarly to the \\(\\mathrm{AR}(p)\\) case, for \\(\\mathrm{MA}(q)\\) it is possible to define the moving-average operator of order \\(q\\): \\[\n\\Theta_q(B)=(1+\\theta_1 B+\\theta_2 B^2+\\dots+\\theta_q B^q)\n\\] such that the equation for \\(x_t\\) can be written as:\n\\[\nx_t=\\Theta_q(B)w_t\n\\]\nAs above, regressing an \\(\\mathrm{MA}(q)\\) model onto a historical series \\(x_t\\) means identifying the terms of \\(\\Theta_q(B)\\) that minimize the mean squared residuals, defined as \\(\\varepsilon_t = x_t - \\hat{x_t} = x_t - \\Theta_q(B)\\), note that this time there is no inverse."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ma-models-and-acf",
+    "href": "slides/2_time_domain.html#ma-models-and-acf",
+    "title": "Time-domain analysis of time series",
+    "section": "MA models and ACF",
+    "text": "MA models and ACF\n\n\nAn \\(MA(q)\\) time series has a memory extending up to lag \\(q\\), in the sense that innovations at distances greater than \\(q\\) have no effect on the last observation\nTherefore, given an \\(MA(q)\\) time series, one can often identify the order from its ACF by counting the peaks after the one at lag 0:\n\nthree peaks outside the confidence band mean an \\(MA(3)\\) model\nthe signs of the peaks correspond to the signs of the coefficients"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ma-models-and-acf-1",
+    "href": "slides/2_time_domain.html#ma-models-and-acf-1",
+    "title": "Time-domain analysis of time series",
+    "section": "MA models and ACF",
+    "text": "MA models and ACF\n\n\nIf instead the time series is of type \\(AR(p)\\), each observation depends on the innovation and on all previous observations, recursively\nIn this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ar-models-and-pacf",
+    "href": "slides/2_time_domain.html#ar-models-and-pacf",
+    "title": "Time-domain analysis of time series",
+    "section": "AR models and PACF",
+    "text": "AR models and PACF\nFor models of type \\(AR(p)\\) it is still possible to identify the order through the partial autocorrelation function, or PACF, defined as follows:\n\\[\n\\begin{align}\n\\mathrm{PACF}_1 &= \\mathrm{ACF}(z_{t+1}, z_t) \\\\\n\\mathrm{PACF}_k &= \\mathrm{ACF}(z_{t+k} - \\hat{z_{t+k}}, z_t - \\hat{z_t}),~~~k\\geq2 \\\\\n\\end{align}\n\\] where \\(\\hat{z_{t+k}}\\) and \\(\\hat{z_t}\\) are linear combinations of \\(\\{z_{t+1}, z_{t+2},\\dots,z_{t+k-1}\\}\\) that minimize the mean squared error of \\(z_{t+k}\\) and \\(z_t\\), respectively"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ar-models-and-pacf-1",
+    "href": "slides/2_time_domain.html#ar-models-and-pacf-1",
+    "title": "Time-domain analysis of time series",
+    "section": "AR models and PACF",
+    "text": "AR models and PACF\n\n\nIn general, therefore, if the ACF shows an infinite memory, AR model, and the PACF shows few peaks, the number of peaks is the order of the AR model\nWarning: peaks after the first cut-off are not considered, that is, the lag at which the autocorrelation falls below the confidence limit for the first time\n\n\n\n\n\n\n\n\n\n\n\n\n\nWarning: in these ACF and PACF plots the lag starts from 1."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ma-models-and-pacf",
+    "href": "slides/2_time_domain.html#ma-models-and-pacf",
+    "title": "Time-domain analysis of time series",
+    "section": "MA models and PACF",
+    "text": "MA models and PACF\n\n\nComparing both ACF and PACF\n\npure noise: ACF and PACF are zero for lag greater than 0\n\\(AR(p)\\): ACF decreases slowly, PACF is non-zero for lags less than or equal to \\(p\\), zero otherwise\n\\(MA(q)\\): ACF shows \\(q\\) peaks; if \\(PACF(1) &gt; 0\\), PACF oscillates to 0, otherwise it decays geometrically to 0\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOften, in practice, these indications are hard to observe and it is therefore difficult to identify \\(p,q\\) in a certain and unambiguous way"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#arma-models",
+    "href": "slides/2_time_domain.html#arma-models",
+    "title": "Time-domain analysis of time series",
+    "section": "ARMA models",
+    "text": "ARMA models\nThe obvious extension comes from combining the \\(\\mathrm{AR}(p)\\) and \\(\\mathrm{MA}(q)\\) models\nAn ARMA model of order \\(p,q\\), abbreviated as \\(\\mathrm{ARMA}(p,q)\\), is defined as:\n\\[\nx_t=\\phi_1 x_{t-1} + \\phi_2 x_{t-2}+\\dots+\\phi_p x_{t-p} + w_t + \\theta_1 w_{t-1} + \\theta_2 w_{t-2} + \\dots + \\theta_q w_{t-q}\n\\] con \\(\\phi_p\\) e \\(\\theta_q\\) non nulli, ovvero, più brevemente: \\[\n\\Phi_p(B)x_t=\\Theta_q(B)w_t\n\\]"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#ma-models-and-pacf-1",
+    "href": "slides/2_time_domain.html#ma-models-and-pacf-1",
+    "title": "Time-domain analysis of time series",
+    "section": "MA models and PACF",
+    "text": "MA models and PACF\n\n\nComparing both ACF and PACF\n\npure noise: ACF and PACF are zero for lag greater than 0\n\\(AR(p)\\): ACF decreases slowly, PACF is non-zero for lags less than or equal to \\(p\\), zero otherwise\n\\(MA(q)\\): ACF shows \\(q\\) peaks; if \\(PACF(1) &gt; 0\\), PACF oscillates to 0, otherwise it decays geometrically to 0\n\\(ARMA(p,q)\\): ACF shows \\(q\\) peaks; PACF decays geometrically to 0 only after lag \\(p\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOften, in practice, these indications are hard to observe and it is therefore difficult to identify \\(p,q\\) in a certain and unambiguous way"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#arima-models",
+    "href": "slides/2_time_domain.html#arima-models",
+    "title": "Time-domain analysis of time series",
+    "section": "ARIMA models",
+    "text": "ARIMA models\nThe \\(\\mathrm{ARMA}(p,q)\\) processes are suitable only for describing stationary series in the wide sense\nWe have seen, however, that a non-stationary process can be made stationary by differencing of a suitable degree \\(d\\)\nA process \\(x_t\\) is called \\(\\mathrm{ARIMA}(p,d,q)\\) when \\(\\nabla^d x_t = (1-B)^d x_t\\) is an \\(\\mathrm{ARMA}(p,q)\\) process\nIn general, when \\(E(\\nabla^dx_t)=0\\), the \\(\\mathrm{ARIMA}(p,d,q)\\) process can be written as: \\[\n\\Phi_p(B)\\nabla^dx_t=\\Theta_q(B)w_t\n\\] If instead the expected value \\(E(\\nabla^dx_t)=\\mu\\), then: \\[\n\\Phi_p(B)\\nabla^dx_t=\\delta + \\Theta_q(B)w_t,~~~\\delta=\\mu(1-\\phi_1-\\dots-\\phi_p)\n\\]"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stability-and-uniqueness-of-models",
+    "href": "slides/2_time_domain.html#stability-and-uniqueness-of-models",
+    "title": "Time-domain analysis of time series",
+    "section": "Stability and uniqueness of models",
+    "text": "Stability and uniqueness of models\nConsider an \\(\\mathrm{AR}(1)\\) model: we can expand the recursive formula as: \\[\n\\begin{align}\nx_t =& \\phi x_{t-1}+w_t = \\phi(\\phi x_{t-2}+w_{t-1}) + w_t \\\\\n=& \\sum_{j=0}^{+\\infty}\\phi^j w_{t-j}\n\\end{align}\n\\] It is therefore clear that the time series \\(x_t\\) is stable only if \\(|\\phi|&lt;1\\)\nIn the general case of the \\(\\mathrm{AR}(p)\\) model, the stability condition is: \\[\n\\left|\\sum_{i=1}^p \\phi_i\\right| &lt; 1 \\label{eq:ARstab}\n\\] An unstable AR model is also called anti-causal, because it can be shown that to be stabilized it requires knowledge of future observations"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stability-and-uniqueness-of-models-1",
+    "href": "slides/2_time_domain.html#stability-and-uniqueness-of-models-1",
+    "title": "Time-domain analysis of time series",
+    "section": "Stability and uniqueness of models",
+    "text": "Stability and uniqueness of models\nFor an \\(\\mathrm{MA}(1)\\) model, instead, consider two models: \\[\n\\begin{align}\nx_t &= w_t + \\theta w_{t-1}, ~w_t\\sim\\mathcal{N}(0, 1) \\\\\ny_t &= \\nu_t + 1/\\theta \\nu_{t-1}, ~\\nu_t\\sim\\mathcal{N}(0, \\theta^2)\n\\end{align}\n\\] It is clear that \\(x_t\\) and \\(\\nu_t\\) have the same ACF and are indistinguishable, since we do not know the innovations \\(w_t\\) and \\(\\nu_t\\) but only the two series. It can be shown that the result is general, that is, it does not depend on the order \\(q\\).\nIt is therefore necessary to choose one of the two alternative forms. To determine which one, we rewrite the series as \\(w_t=-\\theta x_{t-1}+x_t\\), which has the same form as \\(\\mathrm{AR}(1)\\). We can then choose the alternative that satisfies the same stability criterion: \\[\n\\left|\\sum_{i=1}^q \\theta_i\\right| &lt; 1\n\\] This alternative is called invertible"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#stability-and-uniqueness-of-models-2",
+    "href": "slides/2_time_domain.html#stability-and-uniqueness-of-models-2",
+    "title": "Time-domain analysis of time series",
+    "section": "Stability and uniqueness of models",
+    "text": "Stability and uniqueness of models\nIn general, it can be shown that the criteria seen above correspond to imposing the requirement that the complex roots of the polynomials \\[\n\\begin{align}\n\\Phi_p(z)&=1-\\phi_1 z-\\phi_2 z^2 - \\dots -\\phi_p z^p \\\\\n\\Theta_q(z)&=1+\\theta_1 z+\\theta_2 z^2 + \\dots +\\theta_q z^q\n\\end{align}\n\\] are all strictly outside the unit circle in the complex plane\nFor example: \\(\\mathrm{ARMA}(2,2)\\) with \\(\\Phi_2(z)= 1 + 0.9z + 0.1z^2\\) and \\(\\theta_q(z) = 1 + 2z + 15z^2\\):\n\nabs(polyroot(c(1, -0.9, -0.1)))\n\n[1]  1 10\n\nabs(polyroot(c(1, 2, 15)))\n\n[1] 0.2581989 0.2581989\n\n\nThat is, the AR term is not causal and the MA term is not invertible, but \\(\\theta_q(z) = 1 + 1/2z + 1/15z^2\\) would be"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#redundancy",
+    "href": "slides/2_time_domain.html#redundancy",
+    "title": "Time-domain analysis of time series",
+    "section": "Redundancy",
+    "text": "Redundancy\nConsider the process \\(x_t = w_t\\), with \\(w_t\\sim\\mathcal{N}(0, 1)\\): this is obviously pure random noise\nMultiply both sides by \\(1-0.5B\\) to obtain: \\[\nx_t = 0.5x_{t-1}-0.5w_{t-1} + w_t\n\\] which looks like an \\(\\mathrm{ARMA}(1,1)\\) process but is obviously still the same random noise. How do we distinguish these cases?\n\nfactorize the polynomials \\(\\Phi_p\\) and \\(\\Theta_q\\)\nremove the common factors\nrecombine the factors to obtain the non-redundant model\n\nIn R one can still use polyroot()"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#redundancy-1",
+    "href": "slides/2_time_domain.html#redundancy-1",
+    "title": "Time-domain analysis of time series",
+    "section": "Redundancy",
+    "text": "Redundancy\nFor example, consider the process \\(x_t=0.4x_{t-1}+0.45x_{t-2}+w_t + w_{t-1}+0.25w_{t-2}\\), which using the operator \\(B\\) becomes: \\[\n(1-0.4B-0.45B^2)x_t = (1+B+0.25B^2)w_t.\n\\]\nIn this form the process looks like \\(\\mathrm{ARMA}(2,2)\\), however we can factor the two polynomials using polyroot() to compute the roots:\n\n# per Phi:\n-1/polyroot(c(1, -0.4, -0.45))\n\n[1] -0.9-6.887768e-21i  0.5+2.125854e-21i\n\n# per Theta:\n-1/polyroot(c(1, 1, 0.25))\n\n[1] 0.5+0i 0.5+0i\n\n\n\n\nNote: if \\(z_i,~ i=1,\\dots,n\\) are the roots of the polynomial \\(p(z)\\) of degree \\(n\\), then the polynomial can be factorized into \\((1-1/z_1 z)\\cdot(1-1/z_2 z)\\dots(1-1/z_n z)\\)."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#redundancy-2",
+    "href": "slides/2_time_domain.html#redundancy-2",
+    "title": "Time-domain analysis of time series",
+    "section": "Redundancy",
+    "text": "Redundancy\nAs can be seen, one can write \\[\n\\begin{align}\n\\Phi_p(B)&=(1-0.9B)(1+0.5B) \\\\\n\\Theta_q(B)&=(1+0.5B)^2\n\\end{align}\n\\]\nRemoving the common factor \\((1+0.5B)\\) we obtain the model \\[\nx_t=0.9x_{t-1}+0.5w_{t-1}+w_t\n\\] which is an \\(\\mathrm{ARMA}(1,1)\\).\nTherefore, in addition to the criteria of causality and invertibility, one must add the criterion of non-redundancy of the parameters, which is checked by removing every common factor from the factorization of the polynomials \\(\\Phi_p(B)\\) and \\(\\Theta_q(B)\\)."
+  },
+  {
+    "objectID": "slides/2_time_domain.html#sarima-regression",
+    "href": "slides/2_time_domain.html#sarima-regression",
+    "title": "Time-domain analysis of time series",
+    "section": "(S)ARIMA regression",
+    "text": "(S)ARIMA regression\nFrom what has been said above, a process, or time series, \\(x_t\\) can be regressed by means of an ARIMA model by identifying its parameters through minimization of squared deviations\nHowever, before regression it is necessary to define suitable indices \\(p, d,q\\), such that there is neither underfitting nor overfitting\nIn some cases, moreover, series are periodic: besides a possible trend they are also subject to cyclic oscillating patterns. In these cases:\n\nthe time series is made stationary by differencing\na low-frequency contribution, called seasonal, is separated from a high-frequency contribution\nthe seasonal and non-seasonal contributions are regressed separately as two distinct and superposed ARIMA processes: this regression is called Seasonal ARIMA, or SARIMA"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#sarima-regression-1",
+    "href": "slides/2_time_domain.html#sarima-regression-1",
+    "title": "Time-domain analysis of time series",
+    "section": "(S)ARIMA regression",
+    "text": "(S)ARIMA regression\nMoreover, we have seen that ARIMA models are based on the assumption of time series stationary in the wide sense\nTherefore, it is necessary that both the mean value and the variance are constant over time\n\nThe mean is stabilized by differencing\nThe variance can be stabilized through Box-Cox transformations\n\nTherefore, in the most general case, the model is \\(\\mathrm{SARIMA}(p, d, q, p_s, d_s, q_s, \\lambda)\\)\nBefore performing a regression it is therefore necessary to define the values of the seven parameters, avoiding overfitting and underfitting\n\n\\(d, d_s\\) can be identified by trial, gradually increasing the values, first \\(d\\) and then \\(d_s\\), until the ACF is satisfactory\nthe other terms can be identified by checking the goodness of the regression over a grid of combinations and evaluating a suitable figure of merit"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#akaike-information-criterion",
+    "href": "slides/2_time_domain.html#akaike-information-criterion",
+    "title": "Time-domain analysis of time series",
+    "section": "Akaike Information Criterion",
+    "text": "Akaike Information Criterion\nThe most used figure of merit in SARIMA regression is the Akaike Information Criterion, or AIC\nIn general, the quality of a regression with \\(k\\) parameters is measured by the sum of squared residuals, \\(SS_E(k)\\), normalized by the sample size \\(n\\): \\[\n\\hat{\\sigma_k^2} = \\frac{SS_E(k)}{n}\n\\] This indicator is called the Maximum Likelihood Estimator, MLE. The smaller this value is, the better the model fits the data\nHowever, increasing \\(k\\) decreases the MLE, at the risk of overfitting. For this reason, Akaike proposed penalizing the MLE with the number of parameters: \\[\n\\mathrm{AIC}=\\log(\\hat{\\sigma_k^2})+\\frac{n+2k}{n}\n\\] The AIC must obviously be minimized"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#other-information-criteria",
+    "href": "slides/2_time_domain.html#other-information-criteria",
+    "title": "Time-domain analysis of time series",
+    "section": "Other information criteria",
+    "text": "Other information criteria\nBesides the AIC there are also the corrected AIC and the Bayesian Information Criterion, or BIC:\n\nCorrected AIC: \\(\\mathrm{AIC}_c = \\log(\\hat{\\sigma_k^2})+\\frac{n+k}{n-k-2}\\)\nBIC: \\(\\mathrm{BIC} = \\log(\\hat{\\sigma_k^2})+\\frac{k\\log(n)}{n}\\)\n\nThe BIC penalizes model size more strongly, and is therefore preferred for very large samples, thousands of observations, for which AIC and AICc would tend to favor unnecessarily complex models, too many parameters, overfitting\nLike the AIC, AICc and BIC must also be minimized"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#regression",
+    "href": "slides/2_time_domain.html#regression",
+    "title": "Time-domain analysis of time series",
+    "section": "Regression",
+    "text": "Regression\nThe R library forecast provides the function auto.arima(), which evaluates the indicators over a grid of combinations of the seven parameters and returns the best regression:\n\n\n\nforecast::auto.arima(AirPassengers, lambda=\"auto\", trace=T)\n\n\n ARIMA(2,1,2)(1,1,1)[12]                    : -890.0518\n ARIMA(0,1,0)(0,1,0)[12]                    : -845.0766\n ARIMA(1,1,0)(1,1,0)[12]                    : -885.6939\n ARIMA(0,1,1)(0,1,1)[12]                    : -896.9901\n ARIMA(0,1,1)(0,1,0)[12]                    : -860.1426\n ARIMA(0,1,1)(1,1,1)[12]                    : -895.2944\n ARIMA(0,1,1)(0,1,2)[12]                    : -895.3558\n ARIMA(0,1,1)(1,1,0)[12]                    : -889.5331\n ARIMA(0,1,1)(1,1,2)[12]                    : Inf\n ARIMA(0,1,0)(0,1,1)[12]                    : -880.0685\n ARIMA(1,1,1)(0,1,1)[12]                    : -896.1031\n ARIMA(0,1,2)(0,1,1)[12]                    : -895.698\n ARIMA(1,1,0)(0,1,1)[12]                    : -893.2768\n ARIMA(1,1,2)(0,1,1)[12]                    : -894.0835\n\n Best model: ARIMA(0,1,1)(0,1,1)[12]                    \n\n\nSeries: AirPassengers \nARIMA(0,1,1)(0,1,1)[12] \nBox Cox transformation: lambda= -0.2947046 \n\nCoefficients:\n          ma1     sma1\n      -0.4355  -0.5847\ns.e.   0.0908   0.0725\n\nsigma^2 = 5.856e-05:  log likelihood = 451.59\nAIC=-897.18   AICc=-896.99   BIC=-888.55\n\n\n\n\nTime seriesStabilized"
+  },
+  {
+    "objectID": "slides/2_time_domain.html#forecasting",
+    "href": "slides/2_time_domain.html#forecasting",
+    "title": "Time-domain analysis of time series",
+    "section": "Forecasting",
+    "text": "Forecasting\n\n\nOnce the most suitable model has been selected, the one with minimum AIC, one can proceed with regression and prediction\nPrediction can be obtained with the forecast() function\nThis function also reports the 95% confidence bands\n\n\nForecastDetail"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#challenges",
+    "href": "slides/0_distributed_daq.html#challenges",
+    "title": "Distributed data acquisition and processing",
+    "section": "Challenges",
+    "text": "Challenges\nAcquiring multiple data from a variety of sensors and sources in a manufacturing environment poses several challenges:\n\nHeterogeneous data sources and formats\nReal-time processing requirements\nLarge volumes of data: storage and bandwidth constraints\nScalability and reliability\nNetwork- and Device-neutral architectures"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#solutions",
+    "href": "slides/0_distributed_daq.html#solutions",
+    "title": "Distributed data acquisition and processing",
+    "section": "Solutions",
+    "text": "Solutions\n\nEdge computing for local processing and filtering (bandwidth reduction)\nDistributed IIoT data acquisition architectures (e.g., MQTT, ZeroMQ, OPC-UA)\nCloud-based platforms for centralized storage and analysis\nMachine learning models for anomaly detection and predictive maintenance"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#where-to-process-data",
+    "href": "slides/0_distributed_daq.html#where-to-process-data",
+    "title": "Distributed data acquisition and processing",
+    "section": "Where to process data?",
+    "text": "Where to process data?\nSome measurement have high dimensionality (e.g., vibration spectra, 2-D or 3-Dimages) or high sampling rates (e.g., 10 kHz), which can lead to large data volumes\nEdge computing allows for local processing and filtering of data, reducing the bandwidth requirements for transmitting raw data over networks\nThis can involve techniques such as:\n\nfeature extraction\ndimensionality reduction\nanomaly detection\n\nat the edge, allowing only relevant information to be sent to the cloud or central servers for further analysis."
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#edge-computing---real-time-processing",
+    "href": "slides/0_distributed_daq.html#edge-computing---real-time-processing",
+    "title": "Distributed data acquisition and processing",
+    "section": "Edge Computing - Real-time processing",
+    "text": "Edge Computing - Real-time processing\nEdge computing also can enable hard real-time processing of data (i.e. time-deterministic processing with guaranteed response times, order of 10–100 microseconds)\nSuch kind of processing is not trivial on general-purpose computing platforms (because of multithreading and other OS overheads), but can be achieved with:\n\nReal-time operating systems (e.g., FreeRTOS, RTLinux) (☠️☠️☠️)\nField-programmable gate arrays (FPGAs) (☠️💰💰)\nApplication-specific integrated circuits (ASICs) or digital signal processors (DSPs) (☠️☠️💰)\nbare-metal machine control units (MCUs)\n\n\n\n\n\n\n\nNote\n\n\nBare-metal MCus are microcontrollers without OS, which are small, low-power computing devices that can be used for real-time processing of sensor data in edge computing applications. Some of those (Arduino) are very cheap and quick for prototyping, but they have limited processing power and memory. More powerful MCUs (e.g., STM32, ESP32) can handle more complex tasks and larger data volumes, but they may require more development effort and cost."
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#iiot-protocols",
+    "href": "slides/0_distributed_daq.html#iiot-protocols",
+    "title": "Distributed data acquisition and processing",
+    "section": "IIoT Protocols",
+    "text": "IIoT Protocols\n\n\nNetwork communication happens in a layered fashion, according to the OSI model\nWe are mostly interested in layers 5–7 (host layers):\n\nresponsible for application-level communication and data exchange\neasily customizable at the user level\n\n\n\n\n\nOSI network model\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nMost famous protocols (eg HTTP, FTP, SMTP) are designed for human-in-the-loop applications, are often point-to-point, and are not suitable for machine-to-machine communication, with low latency and high reliability"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#iiot-protocols-requirements",
+    "href": "slides/0_distributed_daq.html#iiot-protocols-requirements",
+    "title": "Distributed data acquisition and processing",
+    "section": "IIoT Protocols requirements",
+    "text": "IIoT Protocols requirements\n\nLow latency\nLow overhead\nSimplified support for complex network topologies (e.g., publish-subscribe, peer-to-peer)\nScalability and reliability\nSecurity features (e.g., encryption, authentication)\n\n\n\n\n\n\n\nImportant\n\n\nIoP communication is focused on Human-to-Machine (H2M) interactions, where the mass of transmitted data is often more important than its frequency (eg a movie or a video stream), and where latency is not critical.\nIn contrast, IIoT communication is focused on Machine-to-Machine (M2M) interactions, where low latency and high reliability are crucial, and where the volume of transmitted data per communication can be limited (eg a single scalar)."
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#network-topologies",
+    "href": "slides/0_distributed_daq.html#network-topologies",
+    "title": "Distributed data acquisition and processing",
+    "section": "Network topologies",
+    "text": "Network topologies\nH2M communication almost always happens in a point-to-point fashion, where a client (e.g., a web browser) requests data from a server (e.g., a web server), and the server responds with the requested data.\nIn contrast, in M2M communication, more complex network topologies are often required, where multiple devices need to communicate with each other in a more flexible and scalable way. Using point-to-point communication in such scenarios can lead to scalability issues, as the number of connections grows exponentially with the number of devices, and keeping track of network addresses can become unmanageable/error prone\n\n\n\n\n\n\nTip\n\n\nCommon network topologies for M2M communication include:\n\nPublish-subscribe: devices can publish data to a topic, and other devices can subscribe to that topic to receive updates; traffic is managed by a central broker that handles message distribution\nDealer-worker: a device (dealer) can distribute messages to multiple, identical other devices (workers) in a round-robin fashion, with or without a central broker"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#publish-subscribe-architectures",
+    "href": "slides/0_distributed_daq.html#publish-subscribe-architectures",
+    "title": "Distributed data acquisition and processing",
+    "section": "Publish-subscribe architectures",
+    "text": "Publish-subscribe architectures\n\n\nPublish-Subscribe architectures are very flexible and suitable for distributed data acquisition\nData producers (publishers) send data to broker, which distributes the data to interested consumers (subscribers) based on subscriptions: no need for direct communication between publishers and subscribers\nOnly the IP address or hostname of the broker needs to be known by devices: simple network management and possible dynamic addition or removal of devices (scalability)\n\n\n\n\n\n\nflowchart LR\n    subgraph PUB[\"Publishers only\"]\n        direction TB\n        P1[\"device_1\"]\n        P2[\"device_2\"]\n    end\n\n    subgraph BOTH[\"Publishers + subscribers\"]\n        direction TB\n        B1[\"device_3\"]\n        B2[\"device_4\"]\n    end\n\n    MB[(\"broker\")]\n\n    subgraph SUB[\"Subscribers only\"]\n        direction TB\n        S1[\"device_5\"]\n        S2[\"device_6\"]\n    end\n\n    style PUB fill:none,stroke:#666,stroke-width:1px\n    style BOTH fill:none,stroke:#666,stroke-width:1px\n    style SUB fill:none,stroke:#666,stroke-width:1px\n\n    P1 --&gt;|\"publish: measure/sens_1\"| MB\n    P2 --&gt;|\"publish: measure/sens_2\"| MB\n\n    B1 --&gt;|\"publish: status/dev_3\"| MB\n    MB --&gt;|\"deliver: cmd/cnt_1\"| B1\n\n    B2 --&gt;|\"publish: event/dev_4\"| MB\n    MB --&gt;|\"deliver: cfg/dev_4\"| B2\n\n    MB --&gt;|\"deliver: measure/sens_1\"| S1\n    MB --&gt;|\"deliver: measure/sens_2\"| S1\n    MB --&gt;|\"deliver: status/dev_3\"| S2\n    MB --&gt;|\"deliver: event/dev_4\"| S2"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#commonly-used-iiot-protocols",
+    "href": "slides/0_distributed_daq.html#commonly-used-iiot-protocols",
+    "title": "Distributed data acquisition and processing",
+    "section": "Commonly used IIoT protocols",
+    "text": "Commonly used IIoT protocols\nThe most commonly used IIoT protocols include:\n\nMQTT (Message Queuing Telemetry Transport): a lightweight publish-subscribe protocol designed for low-bandwidth, high-latency, or unreliable networks; widely used in IIoT applications for its simplicity and efficiency (simple, limited architectures)\nZeroMQ (Zero Message Queue): a high-performance asynchronous messaging library that provides a simple and flexible API for building distributed applications; supports various messaging patterns, including publish-subscribe, request-reply, and dealer-worker; often used in IIoT applications for its scalability and low latency (very flexible)\nOPC-UA (Open Platform Communications, Unified Architecture): a platform-independent, service-oriented architecture for industrial automation; provides a standardized way to access and exchange data between devices and systems in industrial environments; supports both client-server and publish-subscribe communication models (industrial-grade, complex)"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#storage",
+    "href": "slides/0_distributed_daq.html#storage",
+    "title": "Distributed data acquisition and processing",
+    "section": "Storage",
+    "text": "Storage\nA plant can produce a staggering amount of data, which can be difficult to manage and analyze without proper storage strategies\n\nCloud storage: scalable and flexible, but can have latency and security concerns\nOn-premises storage: more control and security, but can be costly and less scalable\nHybrid storage: combines the benefits of both cloud and on-premises storage, allowing for a more flexible and cost-effective solution\n\n\n\n\n\n\n\nImportant\n\n\nRegardless of where data is stored, there are different storeage models to consider:\n\nData lakes: store raw, unstructured data in its native format, allowing for flexibility and scalability; can be more difficult to manage and analyze due to lack of structure\nData warehouses: store structured data in a predefined schema, optimized for querying and analysis; can be less flexible and scalable than data lakes\nData marts: store a subset of data from a data warehouse, focused on a specific business area or function; can provide faster access to relevant data, but can lead to data silos and inconsistencies"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#data-lakes",
+    "href": "slides/0_distributed_daq.html#data-lakes",
+    "title": "Distributed data acquisition and processing",
+    "section": "Data lakes",
+    "text": "Data lakes\nData lakes are designed to store raw, unstructured data in its native format. They can handle a wide variety of data types, including structured, semi-structured, and unstructured data\nShape of data can be freely changed, which leads to flexibility and scalability, but can make data management and analysis more difficult due to lack of structure\nCommonly used technologies for data lakes include:\n\nHadoop Distributed File System (HDFS): a distributed file system that provides scalable and fault-tolerant storage for large volumes of data; often used in conjunction with the Hadoop ecosystem for big data processing\nAmazon S3: a cloud-based object storage service that provides scalable and durable storage\nAzure Data Lake Storage: a cloud-based data lake service that provides scalable and secure storage for big data analytics\nMongoDB: a NoSQL database that can be used as a data lake for storing unstructured data; provides flexibility, scalability, and can run on-premises, but may not be optimized for large-scale analytics. It stores data as collections of JSON documents"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#data-warehouses",
+    "href": "slides/0_distributed_daq.html#data-warehouses",
+    "title": "Distributed data acquisition and processing",
+    "section": "Data warehouses",
+    "text": "Data warehouses\nData warehouses are designed to store structured data in a predefined schema, optimized for querying and analysis\nThis often relies on a relational database management system (RDBMS), which organizes data into tables with rows and columns, and allows for complex queries using SQL\nWrt data lakes, data warehouses can provide faster access to relevant data for analysis, but can be less flexible and scalable due to the need for predefined schemas and the overhead of managing structured data\nAs such, RDBMS-based data warehouses are often used for mature, well-defined data that is used for reporting and analysis, while data lakes are often used for raw, unstructured data that may require more exploration and processing before analysis"
+  },
+  {
+    "objectID": "slides/0_distributed_daq.html#analysis",
+    "href": "slides/0_distributed_daq.html#analysis",
+    "title": "Distributed data acquisition and processing",
+    "section": "Analysis",
+    "text": "Analysis\nSome preliminary analysis and data manipulation can be performed on the data lake or data warehouse.\nFor example, MongoDB provides a powerful query language and aggregation (map-reduce actions) framework that can be used for data analysis and transformation (pipelines), allowing for some level of analysis to be performed directly on the data lake, without the need for a separate data warehouse\nMongoDB pipelines can be set as read-only virtual tables, or views, that can be queried like regular tables, but the underlying data is not duplicated, and the view is updated in real-time as the underlying data changes"
+  },
+  {
+    "objectID": "slides/1_time_series.html#storing-time",
+    "href": "slides/1_time_series.html#storing-time",
+    "title": "Time series of stochastic process variables",
+    "section": "Storing time",
+    "text": "Storing time\nTwo common representations are used in practice:\n\nISO8601 date-time string, for example 2026-03-09T08:15:30.125Z\nNumeric offset from an epoch, for example seconds or milliseconds from a reference instant\n\nISO strings are readable, self-describing, and easy to exchange between systems, especially when they include time zone information\nEpoch-based values are compact and fast for storage, sorting, and arithmetic, but they require agreement on the epoch, units, and time zone convention\nIn industrial applications, timestamps are often stored with millisecond resolution, although sensor acquisition may internally use finer clocks"
+  },
+  {
+    "objectID": "slides/1_time_series.html#epoch-conventions-and-clocks",
+    "href": "slides/1_time_series.html#epoch-conventions-and-clocks",
+    "title": "Time series of stochastic process variables",
+    "section": "Epoch conventions and clocks",
+    "text": "Epoch conventions and clocks\n\n\nAn epoch is the reference instant from which a numeric timestamp is measured\nCommon conventions include:\n\nUnix epoch: 1970-01-01 00:00:00 UTC\nGPS epoch: 1980-01-06 00:00:00 UTC\nOther software-specific origins, used by spreadsheets, PLCs, or proprietary databases\n\nIf the epoch changes, the same numeric value refers to a different physical instant\n\nOperating systems expose different clocks:\n\nSystem clock: returns civil time and can jump because of NTP, manual updates, or daylight-saving adjustments\nMonotonic clock: only increases and is used to measure elapsed time reliably\n\nTherefore:\n\nuse the system clock for timestamps attached to data\nuse a monotonic clock for latency, timeout, and sampling-period measurements\n\n\n\n\nNever compute elapsed time by subtracting two readings of the wall-clock if the clock can be corrected while the program is running."
+  },
+  {
+    "objectID": "slides/1_time_series.html#monotonic-clock-limitations",
+    "href": "slides/1_time_series.html#monotonic-clock-limitations",
+    "title": "Time series of stochastic process variables",
+    "section": "Monotonic clock limitations",
+    "text": "Monotonic clock limitations\nThe monotonic clock is usually referenced to an internal origin that depends on the current operating-system session, typically the last boot time\nTherefore, its zero is not a civil date and is generally different on each machine, even if the devices are nominally synchronized on the network\nAs a consequence, monotonic time is excellent for measuring:\n\nelapsed time\nlatency\ntimeout intervals\nlocal acquisition jitter\n\nHowever, it cannot be used to synchronize measurements collected on different devices, because the timestamps do not share a common physical epoch\nTo align data acquired by multiple systems, one needs timestamps derived from a shared wall-clock reference, typically UTC, distributed for example by NTP, PTP, or GNSS"
+  },
+  {
+    "objectID": "slides/1_time_series.html#time-in-r",
+    "href": "slides/1_time_series.html#time-in-r",
+    "title": "Time series of stochastic process variables",
+    "section": "Time in R",
+    "text": "Time in R\nR provides several complementary tools for time handling:\n\nDate: stores calendar dates without time-of-day\nPOSIXct: stores date-time as seconds from the Unix epoch\nts: for regularly sampled series with known frequency\nxts: for indexed time series, especially convenient for date-time filtering and irregular sampling\nlubridate: simplifies parsing, rounding, shifting, and extracting date-time components\n\nThe choice depends on whether time is regular, irregular, or mainly used for querying"
+  },
+  {
+    "objectID": "slides/1_time_series.html#regular-series-with-ts",
+    "href": "slides/1_time_series.html#regular-series-with-ts",
+    "title": "Time series of stochastic process variables",
+    "section": "Regular series with ts",
+    "text": "Regular series with ts\n\n\nThe ts class is designed for regular sampling, such as monthly production, daily energy use, or hourly average demand\nIt does not store a full timestamp per sample. Instead, it stores:\n\na start instant\na frequency\nthe ordered values\n\nThis is efficient and works very well with classical time-series models"
+  },
+  {
+    "objectID": "slides/1_time_series.html#indexed-series-with-xts",
+    "href": "slides/1_time_series.html#indexed-series-with-xts",
+    "title": "Time series of stochastic process variables",
+    "section": "Indexed series with xts",
+    "text": "Indexed series with xts\n\n\nThe xts class is more convenient when timestamps are explicit and may be irregular\nEach observation is paired with a time index, typically Date or POSIXct\nThis is useful for:\n\nsensor logs\nevent streams\nasynchronous acquisition\nfiltering by calendar date or time window\n\n\n\nPlotData\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIndex\n.\n\n\n\n\n1\n2026-03-09 08:00:00\n20.0\n\n\n2\n2026-03-09 08:05:00\n20.4\n\n\n3\n2026-03-09 08:08:00\n20.1\n\n\n4\n2026-03-09 08:15:00\n20.8\n\n\n5\n2026-03-09 08:23:00\n21.2\n\n\n6\n2026-03-09 08:31:00\n21.0"
+  },
+  {
+    "objectID": "slides/1_time_series.html#querying-xts-with-date-ranges",
+    "href": "slides/1_time_series.html#querying-xts-with-date-ranges",
+    "title": "Time series of stochastic process variables",
+    "section": "Querying xts with date ranges",
+    "text": "Querying xts with date ranges\n\n\nOne of the strengths of xts is its compact indexing syntax\nExamples:\n\none day: x[\"2026-03-09\"]\none range: x[\"2026-03-09/2026-03-10\"]\nfrom an instant onward: x[\"2026-03-09 08:10:00/\"]\nup to an instant: x[\"/2026-03-09 08:15:00\"]\n\n\n\nsensor_xts[\"2026-03-09 08:05:00/2026-03-09 08:20:00\"]\n\n                    [,1]\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1\n2026-03-09 08:15:00 20.8\n\n\n\nsensor_xts[\"/2026-03-09 08:08:00\"]\n\n                    [,1]\n2026-03-09 08:00:00 20.0\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1\n\n\n\nThis is often faster to read and write than manual logical filtering"
+  },
+  {
+    "objectID": "slides/1_time_series.html#lubridate-for-parsing-and-filtering",
+    "href": "slides/1_time_series.html#lubridate-for-parsing-and-filtering",
+    "title": "Time series of stochastic process variables",
+    "section": "lubridate for parsing and filtering",
+    "text": "lubridate for parsing and filtering\n\n\nlubridate helps create robust pipelines for date-time handling\nTypical tasks include:\n\nparsing strings with ymd_hms()\nchanging time zone with with_tz() or force_tz()\nrounding with floor_date() and ceiling_date()\nextracting fields such as year(), month(), wday(), hour()\n\n\n\nsensor_df %&gt;%\n  mutate(\n    minute_bin = floor_date(timestamp, \"10 min\"),\n    hour = hour(timestamp))\n\n# A tibble: 6 × 4\n  timestamp           value minute_bin           hour\n  &lt;dttm&gt;              &lt;dbl&gt; &lt;dttm&gt;              &lt;int&gt;\n1 2026-03-09 08:00:00  20   2026-03-09 08:00:00     8\n2 2026-03-09 08:05:00  20.4 2026-03-09 08:00:00     8\n3 2026-03-09 08:08:00  20.1 2026-03-09 08:00:00     8\n4 2026-03-09 08:15:00  20.8 2026-03-09 08:10:00     8\n5 2026-03-09 08:23:00  21.2 2026-03-09 08:20:00     8\n6 2026-03-09 08:31:00  21   2026-03-09 08:30:00     8\n\n\n\nsensor_df %&gt;% filter(\n  timestamp &gt;= ymd_hms(\"2026-03-09 08:05:00\"),\n  timestamp &lt;  ymd_hms(\"2026-03-09 08:25:00\"))\n\n# A tibble: 4 × 2\n  timestamp           value\n  &lt;dttm&gt;              &lt;dbl&gt;\n1 2026-03-09 08:05:00  20.4\n2 2026-03-09 08:08:00  20.1\n3 2026-03-09 08:15:00  20.8\n4 2026-03-09 08:23:00  21.2\n\n\n\n\n\n\n\n\n\nNote\n\n\nThis is especially useful before converting tabular data to xts"
+  },
+  {
+    "objectID": "slides/1_time_series.html#from-data-frame-to-xts",
+    "href": "slides/1_time_series.html#from-data-frame-to-xts",
+    "title": "Time series of stochastic process variables",
+    "section": "From data frame to xts",
+    "text": "From data frame to xts\nTo work efficiently with time series in R, a common workflow is:\n\n\n\nimport tabular data\nparse the timestamp column as POSIXct\nsort by time\nconvert to xts\nquery and aggregate\n\n\n\nsensor_tbl &lt;- tibble(\n  timestamp = c(\"2026-03-09 08:00:00\",\n                \"2026-03-09 08:05:00\",\n                \"2026-03-09 08:08:00\"),\n  temperature = c(20.0, 20.4, 20.1)\n)\n\nsensor_tbl2 &lt;- sensor_tbl %&gt;%\n  mutate(timestamp = ymd_hms(timestamp)) %&gt;%\n  arrange(timestamp)\n\nsensor_xts2 &lt;- xts::xts(\n  x = sensor_tbl2$temperature,\n  order.by = sensor_tbl2$timestamp\n)\n\nsensor_xts2\n\n                    [,1]\n2026-03-09 08:00:00 20.0\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1"
+  },
+  {
+    "objectID": "slides/1_time_series.html#time-series-in-python",
+    "href": "slides/1_time_series.html#time-series-in-python",
+    "title": "Time series of stochastic process variables",
+    "section": "Time series in Python",
+    "text": "Time series in Python\nPython offers libraries with roles similar to those seen in R:\n\ndatetime: basic date-time objects, time zones, timedeltas\npandas: indexed time series, resampling, rolling windows, filtering by date range\nnumpy: efficient numerical arrays and vectorized operations\nstatsmodels: AR, MA, ARIMA, seasonal models, ACF and PACF\npolars: fast tabular processing, useful before conversion to time-indexed data\nxarray: labeled multi-dimensional arrays, useful for sensor grids and scientific data\n\nIn practice, pandas plays a role similar to a combination of data.frame, xts, and part of lubridate"
+  },
+  {
+    "objectID": "slides/1_time_series.html#time-series-in-python-1",
+    "href": "slides/1_time_series.html#time-series-in-python-1",
+    "title": "Time series of stochastic process variables",
+    "section": "Time series in Python",
+    "text": "Time series in Python\n\n\nTypical workflow in Python:\n\nparse timestamps with pd.to_datetime()\nset the timestamp as index\nsort the index\nslice by date or time range\nresample or aggregate if needed\n\nThis is very close to the xts workflow in R\n\nimport pandas as pd\n\ndf = pd.DataFrame({\n    \"timestamp\": [\n        \"2026-03-09T08:00:00Z\",\n        \"2026-03-09T08:05:00Z\",\n        \"2026-03-09T08:08:00Z\"\n    ],\n    \"value\": [20.0, 20.4, 20.1]\n})\n\ndf[\"timestamp\"] = pd.to_datetime(df[\"timestamp\"], utc=True)\ndf = df.sort_values(\"timestamp\")\ndf = df.set_index(\"timestamp\")\n\nwindow = df.loc[\"2026-03-09 08:00:00\":\"2026-03-09 08:06:00\"]"
+  },
+  {
+    "objectID": "slides/1_time_series.html#r-and-python-correspondence",
+    "href": "slides/1_time_series.html#r-and-python-correspondence",
+    "title": "Time series of stochastic process variables",
+    "section": "R and Python correspondence",
+    "text": "R and Python correspondence\n\n\nUseful parallels are:\n\nts in R and statsmodels regular-series tools in Python\nxts in R and pandas with DatetimeIndex in Python\nlubridate in R and pandas date-time accessors, plus datetime, in Python\n\n\n# resample every 10 minutes\nagg = df.resample(\"10min\").mean()\n\n# rolling mean\nsmooth = df[\"value\"].rolling(3).mean()\n\n# month and hour extraction\ndf[\"hour\"] = df.index.hour\ndf[\"day\"] = df.index.day\n\n\n\n\n\n\n\nNote\n\n\nThe conceptual workflow is almost the same:\nparse  index  filter  resample  model"
+  },
+  {
+    "objectID": "slides/1_time_series.html#querying-a-time-range-in-mongodb",
+    "href": "slides/1_time_series.html#querying-a-time-range-in-mongodb",
+    "title": "Time series of stochastic process variables",
+    "section": "Querying a time range in MongoDB",
+    "text": "Querying a time range in MongoDB\n\n\n{\n  \"_id\": {\n    \"$oid\": \"698afb51c3b4084d840b9c85\"\n  },\n  \"timestamp\": {\n    \"$date\": \"2026-02-10T09:33:05.344Z\"\n  },\n  \"measure\": {\n    \"back_bend\": -0.5168184041976929,\n    \"back_flex\": -1.20260488986969,\n    \"back_rot\": 1.749389410018921,\n    \"cervical_flex\": 17.3467960357666,\n    \"horiz_reach_left\": 0.20939064025878906,\n    \"horiz_reach_right\": 0.20467370748519897,\n    \"hostname\": \"nuc3\",\n    \"stability_margin\": 0.11027171462774277,\n    \"timecode\": 37985.2,\n    \"vert_reach_left\": 14.016213417053223,\n    \"vert_reach_right\": 10.769205093383789\n  }\n}\n\nThe standard pattern is:\n\ninclusive lower bound: $gte\nexclusive upper bound: $lt\n\nThis avoids overlap when adjacent windows are queried one after another\ndb.measurements.find({\n  timestamp: {\n    $gte: ISODate(\"2026-02-10T08:00:00.000Z\"),\n    $lt:  ISODate(\"2026-02-10T10:00:00.000Z\")\n  }\n}).sort({ timestamp: 1 })\n\n\n\n\nFor performance, a range query on timestamp should be supported by an index on the same field, or by a compound index such as { machine_id: 1, timestamp: 1 }."
+  },
+  {
+    "objectID": "slides/1_time_series.html#mongodb-query-in-javascript",
+    "href": "slides/1_time_series.html#mongodb-query-in-javascript",
+    "title": "Time series of stochastic process variables",
+    "section": "MongoDB query in JavaScript",
+    "text": "MongoDB query in JavaScript\nconst t0 = ISODate(\"2026-03-09T08:00:00.000Z\");\nconst t1 = ISODate(\"2026-03-09T09:00:00.000Z\");\n\ndb.measurements.find(\n  {\n    machine_id: \"M01\",\n    timestamp: { $gte: t0, $lt: t1 }\n  },\n  {\n    _id: 0,\n    machine_id: 1,\n    timestamp: 1,\n    temperature: 1,\n    vibration: 1\n  }\n).sort({ timestamp: 1 });"
+  },
+  {
+    "objectID": "slides/1_time_series.html#mongodb-query-in-python",
+    "href": "slides/1_time_series.html#mongodb-query-in-python",
+    "title": "Time series of stochastic process variables",
+    "section": "MongoDB query in Python",
+    "text": "MongoDB query in Python\nfrom datetime import datetime, timezone\nfrom pymongo import MongoClient\nclient = MongoClient(\"mongodb://localhost:27017\")\ndb = client[\"plant\"]\ncol = db[\"measurements\"]\nt0 = datetime(2026, 3, 9, 8, 0, 0, tzinfo=timezone.utc)\nt1 = datetime(2026, 3, 9, 9, 0, 0, tzinfo=timezone.utc)\ncursor = col.find(\n    {\n        \"machine_id\": \"M01\",\n        \"timestamp\": {\"$gte\": t0, \"$lt\": t1}\n    },\n    {\n        \"_id\": 0,\n        \"machine_id\": 1,\n        \"timestamp\": 1,\n        \"temperature\": 1,\n        \"vibration\": 1\n    }\n).sort(\"timestamp\", 1)\nrows = list(cursor)"
+  },
+  {
+    "objectID": "slides/1_time_series.html#mongodb-query-in-r",
+    "href": "slides/1_time_series.html#mongodb-query-in-r",
+    "title": "Time series of stochastic process variables",
+    "section": "MongoDB query in R",
+    "text": "MongoDB query in R\nlibrary(mongolite)\nlibrary(glue)\nm &lt;- mongo(collection = \"measurements\", db = \"plant\", url = \"mongodb://localhost:27017\")\nt0 &lt;- \"2026-03-09T08:00:00.000Z\"\nt1 &lt;- \"2026-03-09T09:00:00.000Z\"\nquery &lt;- glue(\n'{{\n  \"machine_id\": \"M01\",\n  \"timestamp\": {{\n    \"$gte\": {{\"$date\": \"{t0}\"}},\n    \"$lt\":  {{\"$date\": \"{t1}\"}}\n  }}\n}}'\n)\nfields &lt;- '{\"_id\": 0, \"machine_id\": 1,\n            \"timestamp\": 1, \"temperature\": 1,\n            \"vibration\": 1}'\ndf &lt;- m$find(query = query, fields = fields, sort = '{\"timestamp\": 1}')"
+  },
+  {
+    "objectID": "slides/1_time_series.html#from-mongodb-query-to-time-series",
+    "href": "slides/1_time_series.html#from-mongodb-query-to-time-series",
+    "title": "Time series of stochastic process variables",
+    "section": "From MongoDB query to time series",
+    "text": "From MongoDB query to time series\nOnce the query result is available, the workflow is again the same:\n\nparse the returned timestamp\nsort rows by time\nconvert to a time-indexed object\nanalyze or visualize the selected window\n\n\n\nsensor_df %&gt;%\n  arrange(timestamp) %&gt;%\n  ggplot(aes(x = timestamp, y = value)) +\n  geom_line() +\n  geom_point() +\n  labs(x = \"Timestamp\", y = \"Value\",\n       title = \"Selected time window\")"
+  },
+  {
+    "objectID": "slides/1_time_series.html#summary",
+    "href": "slides/1_time_series.html#summary",
+    "title": "Time series of stochastic process variables",
+    "section": "Summary",
+    "text": "Summary\n\nTime can be stored as readable ISO text or as numeric offset from an epoch\nEpoch convention, time zone, and clock type must be known to avoid semantic errors\nIn R, ts is convenient for regular series, while xts is preferable for explicit timestamp indexing\nIn Python, pandas provides the closest workflow to xts plus data-frame filtering\nMongoDB range queries on ISO dates are naturally expressed with $gte and $lt\nOnce data are extracted, the main tasks are always parse, index, filter, aggregate, and model"
+  }
+]

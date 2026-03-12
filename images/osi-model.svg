@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">OSI Model Schematic</title>
+  <desc id="desc">Diagram of the seven OSI layers with names, functions, and protocol examples.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4f7fb"/>
+      <stop offset="100%" stop-color="#e6edf7"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 44px Helvetica, Arial, sans-serif; fill: #152033; }
+      .subtitle { font: 400 22px Helvetica, Arial, sans-serif; fill: #42526b; }
+      .layer-num { font: 700 34px Helvetica, Arial, sans-serif; fill: #ffffff; }
+      .layer-name { font: 700 32px Helvetica, Arial, sans-serif; fill: #152033; }
+      .layer-role { font: 400 22px Helvetica, Arial, sans-serif; fill: #42526b; }
+      .layer-examples { font: 600 20px Helvetica, Arial, sans-serif; fill: #24344d; }
+      .label { font: 700 24px Helvetica, Arial, sans-serif; fill: #152033; }
+      .small { font: 500 18px Helvetica, Arial, sans-serif; fill: #51627d; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)"/>
+  <rect x="50" y="40" width="1300" height="820" rx="32" fill="#ffffff" opacity="0.92"/>
+
+  <text x="100" y="120" class="title">OSI Reference Model</text>
+  <text x="100" y="160" class="subtitle">Seven abstraction layers for end-to-end network communication</text>
+
+  <g transform="translate(100,210)">
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#ffd7c2"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#f07d47"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">7</text>
+      <text x="140" y="34" class="layer-name">Application</text>
+      <text x="140" y="63" class="layer-role">User-facing network services and application protocols</text>
+      <text x="820" y="49" class="layer-examples">HTTPS, DNS, SMTP, MQTT</text>
+    </g>
+
+    <g transform="translate(0,92)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#ffe4b8"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#e2a43d"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">6</text>
+      <text x="140" y="34" class="layer-name">Presentation</text>
+      <text x="140" y="63" class="layer-role">Data format, serialization, compression, encryption</text>
+      <text x="820" y="49" class="layer-examples">TLS, JPEG, JSON, ASCII, MPEG</text>
+    </g>
+
+    <g transform="translate(0,184)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#fff0b5"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#d7b534"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">5</text>
+      <text x="140" y="34" class="layer-name">Session</text>
+      <text x="140" y="63" class="layer-role">Session setup, dialog control, checkpointing</text>
+      <text x="820" y="49" class="layer-examples">RPC, NetBIOS, SIP</text>
+    </g>
+
+    <g transform="translate(0,276)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#d9f0c8"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#74b84f"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">4</text>
+      <text x="140" y="34" class="layer-name">Transport</text>
+      <text x="140" y="63" class="layer-role">End-to-end delivery, reliability, flow and error control</text>
+      <text x="820" y="49" class="layer-examples">TCP, UDP, QUIC</text>
+    </g>
+
+    <g transform="translate(0,368)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#ccecf4"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#3d9fba"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">3</text>
+      <text x="140" y="34" class="layer-name">Network</text>
+      <text x="140" y="63" class="layer-role">Logical addressing, routing, path selection</text>
+      <text x="820" y="49" class="layer-examples">IP, ICMP, IPsec, OSPF</text>
+    </g>
+
+    <g transform="translate(0,460)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#dce2ff"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#5d78d6"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">2</text>
+      <text x="140" y="34" class="layer-name">Data Link</text>
+      <text x="140" y="63" class="layer-role">Framing, MAC addressing, local link reliability</text>
+      <text x="820" y="49" class="layer-examples">Ethernet, Wi-Fi, PPP, VLAN</text>
+    </g>
+
+    <g transform="translate(0,552)">
+      <rect x="0" y="0" width="1120" height="78" rx="18" fill="#ead7fb"/>
+      <rect x="0" y="0" width="110" height="78" rx="18" fill="#8b58c3"/>
+      <text x="55" y="49" text-anchor="middle" class="layer-num">1</text>
+      <text x="140" y="34" class="layer-name">Physical</text>
+      <text x="140" y="63" class="layer-role">Signals, media, connectors, modulation, bit transmission</text>
+      <text x="820" y="49" class="layer-examples">Copper, Fiber, RF, 100BASE-TX</text>
+    </g>
+  </g>
+</svg>
