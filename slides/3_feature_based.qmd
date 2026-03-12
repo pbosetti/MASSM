@@ -214,7 +214,7 @@ where $\hat{\mathbf{x}}_{c,t}$ lies in the retained **latent subspace** and $\ma
 
 Two standard **monitoring statistics** are:
 
-* Hotelling's $T^2$:
+* Hotelling's $T^2$ [{{< bi question-circle-fill >}}](#hotellings-t2-distribution):
 $$
 T_t^2 = \sum_{i=1}^{a}\frac{t_{ti}^2}{\lambda_i}
 $$
@@ -250,7 +250,9 @@ For dynamic systems, PCA alone is not a time model. It is a **feature-space mode
 
 ## SVM: supervised binary classification
 
-Assume labeled feature vectors
+::: {.columns}
+::: {.column}
+Assume **labeled feature vectors**, where $\mathbf{x_i}$ is the vector of observations and $y_i$ is the class label:
 $$
 (\mathbf{x}_i, y_i),\quad y_i \in \{-1,+1\},\quad i=1,\dots,N
 $$
@@ -261,14 +263,14 @@ f(\mathbf{x}) = \mathrm{sign}(g(\mathbf{x}))
 $$
 that separates the two classes with maximum robustness
 
-For the linear case,
-$$
-g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b
-$$
-and the separating boundary is the hyperplane
-$$
-\mathbf{w}^T \mathbf{x} + b = 0
-$$
+For the linear case, $g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b$ 
+and the separating boundary is the hyperplane $\mathbf{w}^T \mathbf{x} + b = 0$
+:::
+::: {.column}
+![SVM example in 2-D](../images/svm-binary-classification.svg)
+:::
+:::
+<!-- end columns -->
 
 ## SVM: maximum-margin principle
 
@@ -290,6 +292,8 @@ Therefore, minimizing $\|\mathbf{w}\|_2^2$ is equivalent to maximizing the separ
 
 ## SVM: soft margin and hinge loss
 
+::: {.columns}
+::: {.column}
 Real process data are noisy, overlapping, and rarely perfectly separable
 
 The soft-margin formulation introduces slack variables $\xi_i \ge 0$:
@@ -301,13 +305,15 @@ subject to
 $$
 y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
 $$
+:::
+::: {.column}
+![Soft-margin SVM](../images/svm-soft-margin.svg)
+:::
+:::
+<!-- end columns -->
 
-Equivalent empirical-risk view:
-$$
-\min_{\mathbf{w},b}
-\frac{1}{2}\|\mathbf{w}\|_2^2 +
-C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))
-$$
+
+Equivalent empirical-risk view: $\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))$
 
 The parameter $C$ balances margin width against classification violations
 
@@ -409,6 +415,11 @@ Since $p=2$, the model is simple enough to visualize directly:
 * **loadings** describe the principal directions
 * **scores** show how observations evolve in the latent space
 * **explained variance** quantifies dimensional compression
+
+::: {.callout-note}
+This is called a **biplot**. Another useful visualization is the **screeplot**, which shows the explained variance ratio $\eta_a$ as a function of the number of retained components $a$.
+:::
+
 :::
 
 :::column
@@ -422,7 +433,8 @@ autoplot(pca_fit, data = ts_df, colour = "state",
          loadings = TRUE, loadings.label = TRUE,
          loadings.label.size = 3) +
   labs(title = "PCA score plot with loadings") +
-  coord_fixed()
+  coord_fixed() +
+  coord_flip()
 ```
 :::
 :::
@@ -727,3 +739,226 @@ In practice they are often combined:
 * SVM for classification on the retained principal scores
 
 For high-dimensional time-series features this PCA plus SVM pipeline is often more stable than direct classification on raw variables alone
+
+
+# Complementary resources
+
+## Hotelling's $T^2$ distribution
+
+Hotelling's $T^2$ is the multivariate extension of Student's $t$ test when the parameter of interest is a **mean vector** rather than a scalar mean
+
+If
+$$
+\mathbf{x}_1,\dots,\mathbf{x}_n \in \mathbb{R}^p
+$$
+are independent observations from a multivariate normal population, the one-sample null hypothesis is
+$$
+H_0:\boldsymbol{\mu}=\boldsymbol{\mu}_0
+$$
+
+The sample mean vector and covariance matrix are
+$$
+\bar{\mathbf{x}}=\frac{1}{n}\sum_{i=1}^{n}\mathbf{x}_i,
+\qquad
+\mathbf{S}=\frac{1}{n-1}\sum_{i=1}^{n}
+(\mathbf{x}_i-\bar{\mathbf{x}})
+(\mathbf{x}_i-\bar{\mathbf{x}})^T
+$$
+
+## One-sample Hotelling's $T^2$
+
+The test statistic is
+$$
+T^2 = n(\bar{\mathbf{x}}-\boldsymbol{\mu}_0)^T
+\mathbf{S}^{-1}
+(\bar{\mathbf{x}}-\boldsymbol{\mu}_0)
+$$
+
+Interpretation:
+
+* $(\bar{\mathbf{x}}-\boldsymbol{\mu}_0)$ is the deviation from the target mean vector
+* $\mathbf{S}^{-1}$ scales that deviation by the covariance structure
+* large values of $T^2$ indicate that the observed mean is too far from the target to be explained by normal variability
+
+For $p=1$, this reduces to the usual Student's $t^2$
+
+## Relation with the F distribution
+
+Under multivariate normality and under $H_0$, the statistic can be converted into an F test:
+$$
+F = \frac{n-p}{p(n-1)}T^2
+$$
+with
+$$
+F \sim F_{p,n-p}
+$$
+
+Therefore, at significance level $\alpha$, we reject $H_0$ when
+$$
+T^2 >
+\frac{p(n-1)}{n-p}F_{p,n-p;1-\alpha}
+$$
+
+This gives an exact critical region for the one-sample test
+
+## Two-sample Hotelling's $T^2$
+
+If two independent populations are compared,
+$$
+H_0:\boldsymbol{\mu}_1=\boldsymbol{\mu}_2
+$$
+the pooled-covariance version of the statistic is
+$$
+T^2 =
+\frac{n_1 n_2}{n_1+n_2}
+(\bar{\mathbf{x}}_1-\bar{\mathbf{x}}_2)^T
+\mathbf{S}_p^{-1}
+(\bar{\mathbf{x}}_1-\bar{\mathbf{x}}_2)
+$$
+where
+$$
+\mathbf{S}_p =
+\frac{(n_1-1)\mathbf{S}_1 + (n_2-1)\mathbf{S}_2}
+{n_1+n_2-2}
+$$
+
+This is the multivariate analogue of the classical two-sample t test
+
+## Assumptions and interpretation
+
+Hotelling's $T^2$ is appropriate when:
+
+* observations are independent
+* the population is approximately multivariate normal
+* the covariance matrix is nonsingular
+
+Its main advantage over multiple univariate t tests is that it tests the mean vector **jointly**, accounting for correlation between variables
+
+This avoids contradictory conclusions caused by ignoring covariance structure
+
+## Example: quality-control test on a batch
+
+Consider a batch of machined parts. For each part we measure two variables:
+
+* `length`
+* `weight`
+
+The design target is the mean vector
+$$
+\boldsymbol{\mu}_0 =
+\begin{bmatrix}
+50.0 \\
+100.0
+\end{bmatrix}
+$$
+
+We want to test whether the batch mean is statistically compatible with this target, using a **multivariate one-sample test**
+
+## Example: data cloud and target point
+
+```{r}
+# Hotelling's T^2 test for the batch data
+batch_n <- 40
+mu0 <- c(50.0, 100.0)
+Sigma_batch <- matrix(c(1.0, 0.7,
+                        0.7, 1.6), nrow = 2, byrow = TRUE)
+z_batch <- matrix(rnorm(2 * batch_n), ncol = 2)
+batch_x <- sweep(z_batch %*% chol(Sigma_batch), 2,
+                 c(50.55, 100.95), "+")
+
+batch_df <- tibble(
+  length = batch_x[, 1],
+  weight = batch_x[, 2]
+)
+xbar_batch <- colMeans(batch_x)
+```
+
+:::columns
+:::column
+This is **not** a time series problem:
+
+* each point is one manufactured part
+* the two measured variables are correlated
+* the question concerns the joint mean of the batch
+
+The red point is the target mean $\boldsymbol{\mu}_0$, while the blue point is the sample mean
+:::
+
+:::column
+
+:::panel-tabset
+## Plot
+```{r}
+ggplot(batch_df, aes(x = length, y = weight)) +
+  geom_point(color = gray(0.45), alpha = 0.8) +
+  geom_point(aes(x = mu0[1], y = mu0[2]),
+             color = "red", size = 3) +
+  geom_point(aes(x = xbar_batch[1], y = xbar_batch[2]),
+             color = "blue", size = 3) +
+  labs(x = "Length", y = "Weight",
+       title = "Batch measurements, target and sample mean")
+```
+## Data
+```{r}
+batch_df
+```
+:::
+:::
+:::
+
+## Example: manual calculation of Hotelling's $T^2$
+
+```{r}
+s_batch <- cov(batch_x)
+p_batch <- ncol(batch_x)
+t2_batch <- as.numeric(batch_n *
+  t(xbar_batch - mu0) %*% solve(s_batch) %*% (xbar_batch - mu0))
+f_batch <- (batch_n - p_batch) / (p_batch * (batch_n - 1)) * t2_batch
+pval_batch <- 1 - pf(f_batch, df1 = p_batch, df2 = batch_n - p_batch)
+n <- batch_n
+p <- p_batch
+```
+
+:::columns
+:::column
+The manual workflow is:
+
+1. compute the sample mean vector $\bar{\mathbf{x}}$
+2. compute the sample covariance matrix $\mathbf{S}$
+3. compute $T^2$
+4. convert it to an F statistic
+5. obtain the p-value
+:::
+
+:::column
+```{r}
+#| echo: true
+(xbar <- colMeans(batch_x))
+(s <- cov(batch_x))
+(t2 <- as.numeric(batch_n *
+  t(xbar - mu0) %*% solve(s) %*% (xbar - mu0)))
+(f <- (n - p) / (p * (n - 1)) * t2)
+(p.value <- 1 - pf(f, df1 = p, df2 = n - p))
+```
+:::
+:::
+
+:::callout-note
+If the p-value is smaller than the chosen significance level, the batch mean is declared significantly different from the design target in the **joint** two-variable sense.
+:::
+
+## Example: the same test with `DescTools`
+
+If `DescTools` is available, the same test can be run directly:
+
+```{r}
+#| echo: true
+library(DescTools)
+
+HotellingsT2Test(
+  x = as.matrix(batch_df),
+  mu = mu0
+)
+```
+
+This is the most compact way to perform the one-sample test in R, but the underlying quantity remains the same statistic defined earlier

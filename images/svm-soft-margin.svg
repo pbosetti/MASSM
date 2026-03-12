@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Qualitative SVM soft-margin diagram</title>
+  <desc id="desc">Overlapping classes in feature space with decision boundary, margins, and samples violating the margin.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7f6f2"/>
+      <stop offset="100%" stop-color="#ece8de"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 42px Helvetica, Arial, sans-serif; fill: #16212f; }
+      .subtitle { font: 400 22px Helvetica, Arial, sans-serif; fill: #42536b; }
+      .label { font: 700 24px Helvetica, Arial, sans-serif; fill: #16212f; }
+      .small { font: 500 18px Helvetica, Arial, sans-serif; fill: #44566f; }
+      .overlay { font: 700 20px Helvetica, Arial, sans-serif; fill: #16212f; }
+      .axis { stroke: #16212f; stroke-width: 4; stroke-linecap: round; }
+      .boundary { stroke: #16212f; stroke-width: 6; stroke-linecap: round; }
+      .margin { stroke: #68788f; stroke-width: 4; stroke-dasharray: 12 10; stroke-linecap: round; }
+      .slack { stroke: #c43c2f; stroke-width: 4; stroke-dasharray: 8 8; stroke-linecap: round; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)"/>
+  <rect x="40" y="40" width="1320" height="820" rx="28" fill="#ffffff" opacity="0.94"/>
+
+  <text x="90" y="115" class="title">Soft-Margin SVM: Qualitative View</text>
+  <text x="90" y="152" class="subtitle">Margin violations are tolerated through slack variables when the classes overlap</text>
+
+  <g transform="translate(120,220)">
+    <rect x="0" y="0" width="920" height="560" rx="20" fill="#fafbfd" stroke="#d7dde6" stroke-width="2"/>
+
+    <path d="M90 500 L90 70" class="axis"/>
+    <path d="M90 500 L840 500" class="axis"/>
+    <path d="M90 70 L78 92" class="axis"/>
+    <path d="M90 70 L102 92" class="axis"/>
+    <path d="M840 500 L818 488" class="axis"/>
+    <path d="M840 500 L818 512" class="axis"/>
+
+    <text x="850" y="512" class="label">x1</text>
+    <text x="60" y="62" class="label">x2</text>
+
+    <path d="M300 500 L665 135" class="margin"/>
+    <path d="M390 500 L755 135" class="boundary"/>
+    <path d="M480 500 L845 135" class="margin"/>
+
+    <g fill="#2b7bbb" stroke="#ffffff" stroke-width="4">
+      <circle cx="180" cy="420" r="16"/>
+      <circle cx="220" cy="365" r="16"/>
+      <circle cx="270" cy="438" r="16"/>
+      <circle cx="312" cy="338" r="16"/>
+      <circle cx="350" cy="398" r="16"/>
+      <circle cx="245" cy="290" r="16"/>
+      <circle cx="405" cy="388" r="20"/>
+      <circle cx="330" cy="230" r="20"/>
+      <circle cx="430" cy="300" r="20"/>
+      <circle cx="520" cy="340" r="20" fill="#2b7bbb"/>
+    </g>
+
+    <g fill="#df6b39" stroke="#ffffff" stroke-width="4">
+      <rect x="575" y="250" width="30" height="30" rx="6"/>
+      <rect x="635" y="200" width="30" height="30" rx="6"/>
+      <rect x="690" y="270" width="30" height="30" rx="6"/>
+      <rect x="720" y="165" width="30" height="30" rx="6"/>
+      <rect x="755" y="235" width="30" height="30" rx="6"/>
+      <rect x="620" y="330" width="30" height="30" rx="6"/>
+      <rect x="500" y="365" width="38" height="38" rx="8"/>
+      <rect x="560" y="150" width="38" height="38" rx="8"/>
+      <rect x="505" y="275" width="38" height="38" rx="8"/>
+      <rect x="455" y="335" width="38" height="38" rx="8" fill="#df6b39"/>
+    </g>
+
+    <path d="M520 340 L569 291" class="slack"/>
+    <path d="M474 354 L428 308" class="slack"/>
+
+    <g>
+      <rect x="655" y="246" width="130" height="34" rx="10" fill="#ffffff" opacity="0.9"/>
+      <text x="720" y="269" text-anchor="middle" class="overlay">wᵀx + b = 0</text>
+
+      <rect x="592" y="182" width="148" height="54" rx="12" fill="#ffffff" opacity="0.9"/>
+      <text x="666" y="204" text-anchor="middle" class="small">margin</text>
+      <text x="666" y="225" text-anchor="middle" class="small">boundaries</text>
+
+      <rect x="442" y="608" width="158" height="32" rx="10" fill="#ffffff" opacity="0.9"/>
+      <text x="521" y="629" text-anchor="middle" class="small">reduced margin</text>
+
+      <rect x="505" y="250" width="116" height="52" rx="12" fill="#ffffff" opacity="0.9"/>
+      <text x="563" y="272" text-anchor="middle" class="small">slack variable</text>
+      <text x="563" y="293" text-anchor="middle" class="small">ξ &gt; 0</text>
+    </g>
+  </g>
+
+  <g transform="translate(1075,240)">
+    <rect x="0" y="0" width="250" height="270" rx="20" fill="#f7f9fc" stroke="#d7dde6" stroke-width="2"/>
+    <text x="26" y="44" class="label">Legend</text>
+    <circle cx="42" cy="88" r="14" fill="#2b7bbb"/>
+    <text x="72" y="95" class="small">Class y = -1</text>
+    <rect x="28" y="122" width="28" height="28" rx="6" fill="#df6b39"/>
+    <text x="72" y="142" class="small">Class y = +1</text>
+    <line x1="28" y1="184" x2="92" y2="184" class="boundary"/>
+    <text x="108" y="191" class="small">decision boundary</text>
+    <line x1="28" y1="215" x2="92" y2="215" class="margin"/>
+    <text x="108" y="222" class="small">margin boundary</text>
+    <line x1="28" y1="246" x2="92" y2="246" class="slack"/>
+    <text x="108" y="253" class="small">slack distance</text>
+  </g>
+
+  <g transform="translate(1075,555)">
+    <rect x="0" y="0" width="250" height="155" rx="20" fill="#f7f9fc" stroke="#d7dde6" stroke-width="2"/>
+    <text x="26" y="44" class="label">Idea</text>
+    <text x="26" y="82" class="small">Penalize violations</text>
+    <text x="26" y="112" class="small">instead of forcing</text>
+    <text x="26" y="142" class="small">perfect separation.</text>
+  </g>
+</svg>

@@ -13,7 +13,7 @@ format:
     code-annotations: below
     preview-links: auto
     chalkboard: true
-    footer: "MASSM --- [Index](/)"
+    footer: "MASSM --- [{{< bi house-fill >}} Home](/) --- [{{< bi file-earmark-text-fill >}} Index](/#/part-1-fundamentals-p.-bosetti-10h)"
     fig-width: 5
     fig-height: 4
     fig-dpi: 300
