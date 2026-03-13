@@ -243,6 +243,7 @@ Paolo Bosetti
 \end{bmatrix}
 \in \mathbb{R}^{N \times p}
 \]</span> where each row is a <strong>feature vector</strong> extracted at one time instant or from one time window statistics</p>
+<p>In other words, uppercase <span class="math inline">\(\mathbf{X}\)</span> collects all observations, while lowercase <span class="math inline">\(\mathbf{x}_t\)</span> denotes the feature vector of the <span class="math inline">\(t\)</span>-th observation</p>
 </div><div class="column">
 <p>PCA starts from the centered matrix <span class="math inline">\(\mathbf{X}_c\)</span>: <span class="math display">\[
 \mathbf{X}_c = \mathbf{X} - \boldsymbol{\mu}^T
@@ -291,12 +292,21 @@ Paolo Bosetti
 </section>
 <section id="pca-scores-and-low-dimensional-representation" class="slide level2">
 <h2>PCA: scores and low-dimensional representation</h2>
+<div class="smaller">
 <div class="columns">
 <div class="column">
 <p>The projection of the data onto the principal axes gives the <strong>scores matrix</strong> (<span class="math inline">\(N\times p\)</span>): <span class="math display">\[
 \mathbf{T} = \mathbf{X}_c \mathbf{P}
-\]</span> where: <span class="math display">\[
-\mathbf{P} = [\mathbf{p}_1,\mathbf{p}_2,\dots,\mathbf{p}_p]
+\]</span> that is, <span class="math display">\[
+\mathbf{T} =
+\begin{bmatrix}
+\mathbf{t}_1^T \\
+\mathbf{t}_2^T \\
+\vdots \\
+\mathbf{t}_N^T
+\end{bmatrix},
+~~~
+\mathbf{t}_t^T = \mathbf{x}_{c,t}^T \mathbf{P},~~~\mathbf{P} = [\mathbf{p}_1,\mathbf{p}_2,\dots,\mathbf{p}_p]
 \]</span></p>
 </div><div class="column">
 <p>Using only the first <span class="math inline">\(a &lt; p\)</span> components yields the reduced model <span class="math display">\[
@@ -306,6 +316,7 @@ Paolo Bosetti
 \]</span></p>
 </div></div>
 <!-- end columns -->
+</div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -325,16 +336,17 @@ Paolo Bosetti
 </div></aside></section>
 <section id="pca-reconstruction-error-and-monitoring-statistics" class="slide level2">
 <h2>PCA: reconstruction error and monitoring statistics</h2>
+<div class="smaller">
 <div class="columns">
 <div class="column">
-<p>For one centered observation vector <span class="math inline">\(\mathbf{x}_{c,t}\)</span>, PCA first computes the score vector <span class="math display">\[
-\mathbf{t}_t = \mathbf{P}_a^T \mathbf{x}_{c,t}
+<p>For centered observation row <span class="math inline">\(\mathbf{x}_{c,t}^T\)</span>, PCA computes the score row <span class="math display">\[
+\mathbf{t}_t^T = \mathbf{x}_{c,t}^T \mathbf{P}_a
 \]</span> and then reconstructs it in feature space as <span class="math display">\[
-\hat{\mathbf{x}}_{c,t} = \mathbf{P}_a \mathbf{t}_t
+\hat{\mathbf{x}}_{c,t}^T = \mathbf{t}_t^T \mathbf{P}_a^T
 \]</span></p>
 <p>Therefore the residual decomposition is: <span class="math display">\[
-\mathbf{x}_{c,t} = \hat{\mathbf{x}}_{c,t} + \mathbf{\varepsilon}_t
-\]</span> where <span class="math inline">\(\hat{\mathbf{x}}_{c,t}\)</span> lies in the retained <strong>latent subspace</strong> and <span class="math inline">\(\mathbf{\varepsilon}_t\)</span> is the residual vector</p>
+\mathbf{x}_{c,t}^T = \hat{\mathbf{x}}_{c,t}^T + \boldsymbol{\varepsilon}_t^T
+\]</span> where <span class="math inline">\(\hat{\mathbf{x}}_{c,t}^T\)</span> lies in the retained <strong>latent subspace</strong> and <span class="math inline">\(\boldsymbol{\varepsilon}_t^T\)</span> is the residual row</p>
 </div><div class="column">
 <p>Two standard <strong>monitoring statistics</strong> are:</p>
 <ul>
@@ -348,6 +360,7 @@ Q_t = \|\mathbf{\varepsilon}_t\|_2^2
 </ul>
 </div></div>
 <!-- end columns -->
+</div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -367,12 +380,24 @@ Q_t = \|\mathbf{\varepsilon}_t\|_2^2
 <p>PCA is applied to time-series analysis after building features from samples or windows</p>
 <p>Typical uses are:</p>
 <ul>
-<li>reducing a multivariate signal to a few latent variables</li>
+<li>reducing a multivariate signal to a few <strong>latent variables</strong></li>
 <li>detecting operating regimes and structural changes</li>
 <li>decorrelating strongly coupled measurements</li>
 <li>identifying dominant directions of variability</li>
 </ul>
-<p>For dynamic systems, PCA alone is not a time model. It is a <strong>feature-space model</strong>, and temporal structure enters through the chosen features or through lag embedding</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>For dynamic systems, PCA by itself does not describe how the system evolves over time. It only summarizes the data in feature space; any temporal information must be introduced explicitly, for example through window-based features or lagged variables, that is, past values of the same signal such as <span class="math inline">\(x_{t-1}\)</span>, <span class="math inline">\(x_{t-2}\)</span>, and so on, used together with the current value <span class="math inline">\(x_t\)</span> to capture the temporal dynamics</p>
+</div>
+</div>
+</div>
 </section></section>
 <section>
 <section id="svm-theory" class="title-slide slide level1 center">
@@ -389,7 +414,6 @@ Q_t = \|\mathbf{\varepsilon}_t\|_2^2
 <p>The goal is to learn a decision function <span class="math display">\[
 f(\mathbf{x}) = \mathrm{sign}(g(\mathbf{x}))
 \]</span> that separates the two classes with maximum robustness</p>
-<p>For the linear case, <span class="math inline">\(g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b\)</span> and the separating boundary is the hyperplane <span class="math inline">\(\mathbf{w}^T \mathbf{x} + b = 0\)</span></p>
 </div><div class="column">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -399,6 +423,7 @@ f(\mathbf{x}) = \mathrm{sign}(g(\mathbf{x}))
 </div>
 </div></div>
 <!-- end columns -->
+<p>For the linear case, <span class="math inline">\(g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b\)</span> and the separating boundary is the hyperplane <span class="math inline">\(\mathbf{w}^T \mathbf{x} + b = 0\)</span></p>
 </section>
 <section id="svm-maximum-margin-principle" class="slide level2">
 <h2>SVM: maximum-margin principle</h2>
@@ -412,17 +437,87 @@ y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1,\quad i=1,\dots,N
 \]</span></p>
 <p>Therefore, minimizing <span class="math inline">\(\|\mathbf{w}\|_2^2\)</span> is equivalent to maximizing the separation margin</p>
 </section>
+<section id="svm-interactive-example" class="slide level2">
+<h2>SVM: Interactive Example</h2>
+<div class="columns">
+<div class="column">
+<div class="smaller">
+<ul>
+<li>We select as decision boundary <span class="math inline">\(\mathbf{w} = [\cos(\theta), \sin(\theta)]^T\)</span></li>
+<li><span class="math inline">\(||\mathbf w||_2 = 1\)</span> (it is a <strong>unit vector</strong>)</li>
+<li><span class="math inline">\(b\)</span> the intercept with the vertical axis</li>
+</ul>
+<p>The margin width is then <span class="math inline">\(2/\|\mathbf{w}\|_2 = 2\)</span> and the support vectors are those that satisfy <span class="math inline">\(y_i(\mathbf{w}^T\mathbf{x}_i+b) = 1\)</span></p>
+<p>Try and find <span class="math inline">\(\theta, b\)</span> that <strong>maximize the margin</strong> while correctly classifying all points</p>
+</div>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>With the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin.</p>
+</div>
+</div>
+</div>
+</div><div class="column">
+<iframe scrolling="no" title="taglio ortogonale" src="https://www.geogebra.org/material/iframe/id/rdtebds9/width/600/height/500/border/ffffff/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/false/rc/false/ld/false/sdz/false/ctl/false" width="600px" height="500px" style="border:1px solid black; margin-bottom: -20px;">
+</iframe>
+</div></div>
+<!-- end columns -->
+</section>
+<section id="svm-interactive-example-r-version" class="slide level2">
+<h2>SVM: Interactive Example (R version)</h2>
+<div class="columns">
+<div class="column">
+<p>We do a <strong>linear SVM</strong> classification and add predictions to it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>fit <span class="ot">&lt;-</span> <span class="fu">svm</span>(</span>
+<span id="cb1-2"><a></a>  state <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">data =</span> df, </span>
+<span id="cb1-3"><a></a>  <span class="at">scale =</span> <span class="cn">FALSE</span>, <span class="at">kernel =</span> <span class="st">"linear"</span></span>
+<span id="cb1-4"><a></a>)</span>
+<span id="cb1-5"><a></a></span>
+<span id="cb1-6"><a></a>df <span class="ot">&lt;-</span>  df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
+<span id="cb1-7"><a></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>(),</span>
+<span id="cb1-8"><a></a>  <span class="at">pred =</span> <span class="fu">predict</span>(fit, .),</span>
+<span id="cb1-9"><a></a>  <span class="at">sv =</span> <span class="fu">if_else</span>(id <span class="sc">%in%</span> fit<span class="sc">$</span>index, <span class="st">"SV"</span>, <span class="st">"Other"</span>)</span>
+<span id="cb1-10"><a></a>)</span>
+<span id="cb1-11"><a></a><span class="fu">coef</span>(fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)          x1          x2 
+       -0.2        -0.8         0.4 </code></pre>
+</div>
+</div>
+<p>Coefficients are <span class="math inline">\(b\)</span>, <span class="math inline">\(w_1\)</span>, and <span class="math inline">\(w_2\)</span> in the decision function <span class="math inline">\(g(\mathbf{x}) = w_1 x_1 + w_2 x_2 + b\)</span></p>
+</div><div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-3-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+</section>
 <section id="svm-soft-margin-and-hinge-loss" class="slide level2">
 <h2>SVM: soft margin and hinge loss</h2>
 <div class="columns">
 <div class="column">
+<div class="smaller">
 <p>Real process data are noisy, overlapping, and rarely perfectly separable</p>
-<p>The soft-margin formulation introduces slack variables <span class="math inline">\(\xi_i \ge 0\)</span>: <span class="math display">\[
+<p>The soft-margin formulation introduces <strong>slack variables</strong> <span class="math inline">\(\xi_i \ge 0\)</span>: <span class="math display">\[
 \min_{\mathbf{w},b,\boldsymbol{\xi}}
 \frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i
-\]</span> subject to <span class="math display">\[
+\]</span> subject to: <span class="math display">\[
 y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
 \]</span></p>
+</div>
 </div><div class="column">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -432,8 +527,51 @@ y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
 </div>
 </div></div>
 <!-- end columns -->
-<p>Equivalent empirical-risk view: <span class="math inline">\(\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))\)</span></p>
 <p>The parameter <span class="math inline">\(C\)</span> balances margin width against classification violations</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Equivalent empirical-risk view: <span class="math inline">\(\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))\)</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="equivalent-empirical-risk-view" class="slide level2">
+<h2>Equivalent empirical-risk view</h2>
+<div class="columns">
+<div class="column">
+<p>The same soft-margin SVM can be written as <span class="math display">\[
+\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 +
+C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))
+\]</span></p>
+<p>This has the standard machine-learning form <span class="math display">\[
+\text{regularization} + \text{empirical loss}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\frac{1}{2}\|\mathbf{w}\|_2^2\)</span> penalizes complex models and favors a wider margin</li>
+<li><span class="math inline">\(\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))\)</span> is the <strong>hinge loss</strong></li>
+<li><span class="math inline">\(C\)</span> controls the trade-off between margin size and training violations</li>
+</ul>
+</div><div class="column">
+<p>Interpretation:</p>
+<ul>
+<li>if <span class="math inline">\(y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1\)</span>, the point is correctly classified and outside the margin, so the loss is 0</li>
+<li>if <span class="math inline">\(0&lt;y_i(\mathbf{w}^T\mathbf{x}_i+b)&lt;1\)</span>, the point is correctly classified but inside the margin</li>
+<li>if <span class="math inline">\(y_i(\mathbf{w}^T\mathbf{x}_i+b)\le0\)</span>, the point is misclassified</li>
+</ul>
+<p>So this view is <strong>equivalent</strong> to the slack-variable formulation:</p>
+<ul>
+<li>geometric view: maximize margin while allowing violations</li>
+<li>empirical-risk view: minimize regularized hinge loss on the training set</li>
+</ul>
+</div></div>
+<!-- end columns -->
 </section>
 <section id="svm-dual-problem-and-kernel-trick" class="slide level2">
 <h2>SVM: dual problem and kernel trick</h2>
@@ -462,6 +600,86 @@ K(\mathbf{x},\mathbf{z})=\exp(-\gamma\|\mathbf{x}-\mathbf{z}\|_2^2)
 </ul>
 </div></div>
 <!-- end columns -->
+</section>
+<section id="svm-understanding-the-dual-problem" class="slide level2">
+<h2>SVM: understanding the dual problem</h2>
+<div class="smaller">
+<div class="columns">
+<div class="column">
+<p>Instead of optimizing the hyperplane parameters directly, the dual problem optimizes one coefficient <span class="math inline">\(\alpha_i\)</span> for each training sample: <span class="math display">\[
+\max_{\boldsymbol{\alpha}}
+\sum_{i=1}^{N}\alpha_i -
+\frac{1}{2}\sum_{i=1}^{N}\sum_{j=1}^{N}
+\alpha_i\alpha_j y_i y_j \mathbf{x}_i^T\mathbf{x}_j
+\]</span></p>
+<p>For the soft-margin SVM, the constraints are <span class="math display">\[
+0 \le \alpha_i \le C,\qquad
+\sum_{i=1}^{N}\alpha_i y_i = 0
+\]</span></p>
+<p>The primal and dual formulations are equivalent: they lead to the same classifier.</p>
+</div><div class="column">
+<p>Interpretation:</p>
+<ul>
+<li>each <span class="math inline">\(\alpha_i\)</span> measures how much training point <span class="math inline">\(i\)</span> contributes to the solution</li>
+<li>most <span class="math inline">\(\alpha_i\)</span> are zero</li>
+<li>only points with <span class="math inline">\(\alpha_i &gt; 0\)</span> matter: these are the <strong>support vectors</strong></li>
+<li>the upper bound <span class="math inline">\(C\)</span> limits the influence of a single sample</li>
+</ul>
+<p>Why it is useful:</p>
+<ul>
+<li>the data appear only through inner products <span class="math inline">\(\mathbf{x}_i^T\mathbf{x}_j\)</span></li>
+<li>this makes the solution easier to reinterpret in geometric terms</li>
+<li>it prepares the ground for replacing inner products with kernels</li>
+</ul>
+</div></div>
+<!-- end columns -->
+</div>
+</section>
+<section id="svm-the-kernel-trick" class="slide level2">
+<h2>SVM: the kernel trick</h2>
+<div class="smaller">
+<div class="columns">
+<div class="column">
+<p>In the dual problem and in the decision function, the samples appear only through inner products: <span class="math display">\[
+\mathbf{x}_i^T\mathbf{x}_j
+\]</span></p>
+<p>If we first map the data into a feature space <span class="math inline">\(\phi(\mathbf{x})\)</span>, the same algorithm would use <span class="math display">\[
+\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
+\]</span></p>
+<p>The kernel trick replaces this inner product with a kernel function <span class="math display">\[
+K(\mathbf{x}_i,\mathbf{x}_j)=\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
+\]</span> without computing <span class="math inline">\(\phi(\mathbf{x})\)</span> explicitly.</p>
+</div><div class="column">
+<p>Why this matters:</p>
+<ul>
+<li>a linear separator in feature space becomes a nonlinear boundary in the original space</li>
+<li>the optimization problem stays almost unchanged</li>
+<li>prediction still depends only on support vectors</li>
+</ul>
+<p>Common kernels:</p>
+<ul>
+<li>linear: <span class="math inline">\(K(\mathbf{x},\mathbf{z})=\mathbf{x}^T\mathbf{z}\)</span></li>
+<li>polynomial</li>
+<li>radial basis function: <span class="math display">\[
+K(\mathbf{x},\mathbf{z})=\exp(-\gamma\|\mathbf{x}-\mathbf{z}\|_2^2)
+\]</span></li>
+</ul>
+</div></div>
+<!-- end columns -->
+</div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Note:</strong> the dual formulation is what makes kernelized SVMs possible.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="svm-decision-function-and-time-series-use" class="slide level2">
 <h2>SVM: decision function and time-series use</h2>
@@ -496,15 +714,15 @@ g(\mathbf{x}) = \sum_{i \in SV}\alpha_i y_i K(\mathbf{x}_i,\mathbf{x}) + b
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-1-1.png" width="1500"></p>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-5-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
 </section>
-<section id="pca-on-the-bivariate-series" class="slide level2">
-<h2>PCA on the bivariate series</h2>
+<section id="pca-analysis-14" class="slide level2">
+<h2>PCA Analysis 1/4</h2>
 <div class="columns">
 <div class="column">
 <p>We apply PCA to the standardized two-variable feature matrix</p>
@@ -514,6 +732,84 @@ g(\mathbf{x}) = \sum_{i \in SV}\alpha_i y_i K(\mathbf{x}_i,\mathbf{x}) + b
 <li><strong>scores</strong> show how observations evolve in the latent space</li>
 <li><strong>explained variance</strong> quantifies dimensional compression</li>
 </ul>
+</div><div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-6-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="pca-analysis-24" class="slide level2">
+<h2>PCA Analysis 2/4</h2>
+<p>First we do the PCA fit and compute scores <span class="math inline">\([\mathbf{p}_1, \mathbf{p}_2]\)</span>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>pca_fit <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>ts_df, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-2"><a></a><span class="fu">summary</span>(pca_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Importance of components:
+                          PC1    PC2
+Standard deviation     1.3272 0.4884
+Proportion of Variance 0.8808 0.1192
+Cumulative Proportion  0.8808 1.0000</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">round</span>(pca_fit<span class="sc">$</span>rotation, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      PC1    PC2
+x1 -0.707 -0.707
+x2 -0.707  0.707</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>scores <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(pca_fit<span class="sc">$</span>x) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">t =</span> ts_df<span class="sc">$</span>t, <span class="at">state =</span> ts_df<span class="sc">$</span>state)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We also calculate <span class="math inline">\(\mathbf \lambda\)</span> and rescale the data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>(lambda <span class="ot">&lt;-</span> pca_fit<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.761512 0.238488</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>center_vec <span class="ot">&lt;-</span> pca_fit<span class="sc">$</span>center</span>
+<span id="cb10-2"><a></a>scale_vec <span class="ot">&lt;-</span> pca_fit<span class="sc">$</span>scale</span>
+<span id="cb10-3"><a></a>x_scaled <span class="ot">&lt;-</span> <span class="fu">scale</span>(ts_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(x1, x2), <span class="at">center =</span> center_vec, <span class="at">scale =</span> scale_vec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="pca-analysis-34" class="slide level2">
+<h2>PCA Analysis 3/4</h2>
+<p>We calculate the residuals vector <span class="math inline">\(\mathbf\varepsilon = \mathbf{x}_c - \hat{\mathbf{x}}_c\)</span> and the monitoring statistics. Given the <span class="math inline">\(\lambda\)</span> values, we only keep <span class="math inline">\(\mathbf{p}_1\)</span> so:</p>
+<p><span class="math display">\[
+\hat{\mathbf{x}}_{c,t}^T = \mathbf{t}_t^T \mathbf{P}_a^T
+\]</span></p>
+<p>becomes:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>x_hat <span class="ot">&lt;-</span> <span class="fu">tcrossprod</span>(pca_fit<span class="sc">$</span>x[, <span class="dv">1</span>, <span class="at">drop =</span> <span class="cn">FALSE</span>], pca_fit<span class="sc">$</span>rotation[, <span class="dv">1</span>, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb11-2"><a></a>residuals_mat <span class="ot">&lt;-</span> x_scaled <span class="sc">-</span> x_hat</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Finally we can calculate the monitoring statistics:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>spe <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(residuals_mat<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb12-2"><a></a>t2 <span class="ot">&lt;-</span> <span class="fu">rowSums</span>((pca_fit<span class="sc">$</span>x[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">drop =</span> <span class="cn">FALSE</span>]<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(lambda[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">each =</span> n), <span class="at">ncol =</span> <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="pca-analysis-44" class="slide level2">
+<h2>PCA Analysis 4/4</h2>
+<div class="columns">
+<div class="column">
+<p>Finally we make an overall plot:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(</span>
+<span id="cb13-2"><a></a>  pca_fit, <span class="at">data =</span> ts_df, </span>
+<span id="cb13-3"><a></a>  <span class="at">colour =</span> <span class="st">"state"</span>,</span>
+<span id="cb13-4"><a></a>  <span class="at">loadings =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-5"><a></a>  <span class="at">loadings.label =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-6"><a></a>  <span class="at">loadings.label.size =</span> <span class="dv">3</span></span>
+<span id="cb13-7"><a></a>  ) <span class="sc">+</span></span>
+<span id="cb13-8"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PCA score plot with loadings"</span>) <span class="sc">+</span></span>
+<span id="cb13-9"><a></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb13-10"><a></a>  <span class="fu">coord_flip</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -529,24 +825,10 @@ g(\mathbf{x}) = \sum_{i \in SV}\alpha_i y_i K(\mathbf{x}_i,\mathbf{x}) + b
 </div>
 </div><div class="column">
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Importance of components:
-                          PC1    PC2
-Standard deviation     1.3272 0.4884
-Proportion of Variance 0.8808 0.1192
-Cumulative Proportion  0.8808 1.0000</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      PC1    PC2
-x1 -0.707 -0.707
-x2 -0.707  0.707</code></pre>
-</div>
-</div>
-<div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-3-1.png" width="1500"></p>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-13-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
@@ -572,7 +854,7 @@ T^2_{\alpha} =
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-4-1.png" width="1500"></p>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-14-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
@@ -591,13 +873,17 @@ T^2_{\alpha} =
 <h2>SVM on the same bivariate time series</h2>
 <div class="columns">
 <div class="column">
+<div class="smaller">
 <p>Now we use the same observations, but with labels <code>Normal</code> and <code>Fault</code></p>
 <p>The feature vector is simply <span class="math display">\[
 \mathbf{x}_t = [x_{1,t},x_{2,t}]^T
 \]</span></p>
-<p>An RBF-kernel SVM is trained to separate the two states</p>
-</div><div class="column">
+<p>An RBF-kernel SVM is trained to separate the two states:</p>
+</div>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">svm</span>(state <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">data =</span> ts_df,</span>
+<span id="cb14-2"><a></a>    <span class="at">kernel =</span> <span class="st">"radial"</span>, <span class="at">cost =</span> <span class="dv">5</span>, <span class="at">gamma =</span> <span class="dv">1</span>,</span>
+<span id="cb14-3"><a></a>    <span class="at">scale =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -612,15 +898,13 @@ Parameters:
 
 Number of Support Vectors:  65</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9125</code></pre>
 </div>
-</div>
+</div><div class="column">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-6-1.png" width="1500"></p>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-17-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
@@ -638,51 +922,63 @@ Number of Support Vectors:  65</code></pre>
 <li>SVM predicted state</li>
 <li>classification errors and transition regions</li>
 </ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>This scheme can be carried out continuously in an online setting:</p>
+<ul>
+<li>where the SVM is trained on a reference dataset and then applied to new observations as they arrive, providing real-time classification of the process state</li>
+<li>or by chunking the time series into windows and applying the SVM to each window</li>
+</ul>
+</div>
+</div>
+</div>
 </div><div class="column">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-7-1.png" width="1500"></p>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-18-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
-</section>
-<section id="python-example-same-synthetic-dataset" class="slide level2">
-<h2>Python example: same synthetic dataset</h2>
-<p>The same bivariate time series can be generated in Python with <code>numpy</code> and stored in a <code>pandas</code> data frame</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-2"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb5-3"><a></a></span>
-<span id="cb5-4"><a></a>np.random.seed(<span class="dv">0</span>)</span>
-<span id="cb5-5"><a></a></span>
-<span id="cb5-6"><a></a>n <span class="op">=</span> <span class="dv">240</span></span>
-<span id="cb5-7"><a></a>t <span class="op">=</span> np.arange(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb5-8"><a></a>fault_idx <span class="op">=</span> np.arange(<span class="dv">150</span>, <span class="dv">210</span>)</span>
-<span id="cb5-9"><a></a></span>
-<span id="cb5-10"><a></a>x1 <span class="op">=</span> np.cumsum(np.random.normal(<span class="dv">0</span>, <span class="fl">0.06</span>, n)) <span class="op">\</span></span>
-<span id="cb5-11"><a></a>     <span class="op">+</span> <span class="fl">0.7</span> <span class="op">*</span> np.sin(<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> t <span class="op">/</span> <span class="dv">24</span>)</span>
-<span id="cb5-12"><a></a>x2 <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> x1 <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="fl">0.18</span>, n)</span>
-<span id="cb5-13"><a></a></span>
-<span id="cb5-14"><a></a>x1[fault_idx] <span class="op">=</span> x1[fault_idx] <span class="op">+</span> <span class="fl">1.0</span></span>
-<span id="cb5-15"><a></a>x2[fault_idx] <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span> <span class="op">*</span> x1[fault_idx] <span class="op">\</span></span>
-<span id="cb5-16"><a></a>                <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="fl">0.22</span>, <span class="bu">len</span>(fault_idx)) <span class="op">+</span> <span class="fl">0.7</span></span>
-<span id="cb5-17"><a></a></span>
-<span id="cb5-18"><a></a>state <span class="op">=</span> np.where(np.isin(t, fault_idx <span class="op">+</span> <span class="dv">1</span>), <span class="st">"Fault"</span>, <span class="st">"Normal"</span>)</span>
-<span id="cb5-19"><a></a></span>
-<span id="cb5-20"><a></a>df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb5-21"><a></a>    <span class="st">"t"</span>: t,</span>
-<span id="cb5-22"><a></a>    <span class="st">"x1"</span>: x1,</span>
-<span id="cb5-23"><a></a>    <span class="st">"x2"</span>: x2,</span>
-<span id="cb5-24"><a></a>    <span class="st">"state"</span>: state</span>
-<span id="cb5-25"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section></section>
 <section>
 <section id="pca-example-in-python" class="title-slide slide level1 center">
 <h1>PCA example in Python</h1>
 
+</section>
+<section id="python-example-same-synthetic-dataset" class="slide level2">
+<h2>Python example: same synthetic dataset</h2>
+<p>The same bivariate time series can be generated in Python with <code>numpy</code> and stored in a <code>pandas</code> data frame</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb16-2"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb16-3"><a></a></span>
+<span id="cb16-4"><a></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb16-5"><a></a></span>
+<span id="cb16-6"><a></a>n <span class="op">=</span> <span class="dv">240</span></span>
+<span id="cb16-7"><a></a>t <span class="op">=</span> np.arange(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb16-8"><a></a>fault_idx <span class="op">=</span> np.arange(<span class="dv">150</span>, <span class="dv">210</span>)</span>
+<span id="cb16-9"><a></a></span>
+<span id="cb16-10"><a></a>x1 <span class="op">=</span> np.cumsum(np.random.normal(<span class="dv">0</span>, <span class="fl">0.06</span>, n)) <span class="op">\</span></span>
+<span id="cb16-11"><a></a>     <span class="op">+</span> <span class="fl">0.7</span> <span class="op">*</span> np.sin(<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> t <span class="op">/</span> <span class="dv">24</span>)</span>
+<span id="cb16-12"><a></a>x2 <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> x1 <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="fl">0.18</span>, n)</span>
+<span id="cb16-13"><a></a></span>
+<span id="cb16-14"><a></a>x1[fault_idx] <span class="op">=</span> x1[fault_idx] <span class="op">+</span> <span class="fl">1.0</span></span>
+<span id="cb16-15"><a></a>x2[fault_idx] <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span> <span class="op">*</span> x1[fault_idx] <span class="op">\</span></span>
+<span id="cb16-16"><a></a>                <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="fl">0.22</span>, <span class="bu">len</span>(fault_idx)) <span class="op">+</span> <span class="fl">0.7</span></span>
+<span id="cb16-17"><a></a></span>
+<span id="cb16-18"><a></a>state <span class="op">=</span> np.where(np.isin(t, fault_idx <span class="op">+</span> <span class="dv">1</span>), <span class="st">"Fault"</span>, <span class="st">"Normal"</span>)</span>
+<span id="cb16-19"><a></a></span>
+<span id="cb16-20"><a></a>df <span class="op">=</span> pd.DataFrame({<span class="st">"t"</span>: t, <span class="st">"x1"</span>: x1, <span class="st">"x2"</span>: x2, <span class="st">"state"</span>: state})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="pca-on-the-bivariate-series-in-python" class="slide level2">
 <h2>PCA on the bivariate series in Python</h2>
@@ -696,22 +992,22 @@ Number of Support Vectors:  65</code></pre>
 <li>project the observations to obtain principal scores</li>
 </ul>
 </div><div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb6-2"><a></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
-<span id="cb6-3"><a></a></span>
-<span id="cb6-4"><a></a>X <span class="op">=</span> df[[<span class="st">"x1"</span>, <span class="st">"x2"</span>]].to_numpy()</span>
-<span id="cb6-5"><a></a></span>
-<span id="cb6-6"><a></a>scaler <span class="op">=</span> StandardScaler()</span>
-<span id="cb6-7"><a></a>X_scaled <span class="op">=</span> scaler.fit_transform(X)</span>
-<span id="cb6-8"><a></a></span>
-<span id="cb6-9"><a></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb6-10"><a></a>scores <span class="op">=</span> pca.fit_transform(X_scaled)</span>
-<span id="cb6-11"><a></a></span>
-<span id="cb6-12"><a></a>df[<span class="st">"PC1"</span>] <span class="op">=</span> scores[:, <span class="dv">0</span>]</span>
-<span id="cb6-13"><a></a>df[<span class="st">"PC2"</span>] <span class="op">=</span> scores[:, <span class="dv">1</span>]</span>
-<span id="cb6-14"><a></a></span>
-<span id="cb6-15"><a></a><span class="bu">print</span>(pca.explained_variance_ratio_)</span>
-<span id="cb6-16"><a></a><span class="bu">print</span>(pca.components_)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb17-2"><a></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb17-3"><a></a></span>
+<span id="cb17-4"><a></a>X <span class="op">=</span> df[[<span class="st">"x1"</span>, <span class="st">"x2"</span>]].to_numpy()</span>
+<span id="cb17-5"><a></a></span>
+<span id="cb17-6"><a></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb17-7"><a></a>X_scaled <span class="op">=</span> scaler.fit_transform(X)</span>
+<span id="cb17-8"><a></a></span>
+<span id="cb17-9"><a></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb17-10"><a></a>scores <span class="op">=</span> pca.fit_transform(X_scaled)</span>
+<span id="cb17-11"><a></a></span>
+<span id="cb17-12"><a></a>df[<span class="st">"PC1"</span>] <span class="op">=</span> scores[:, <span class="dv">0</span>]</span>
+<span id="cb17-13"><a></a>df[<span class="st">"PC2"</span>] <span class="op">=</span> scores[:, <span class="dv">1</span>]</span>
+<span id="cb17-14"><a></a></span>
+<span id="cb17-15"><a></a><span class="bu">print</span>(pca.explained_variance_ratio_)</span>
+<span id="cb17-16"><a></a><span class="bu">print</span>(pca.components_)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="pca-monitoring-statistics-in-python" class="slide level2">
@@ -726,22 +1022,22 @@ Number of Support Vectors:  65</code></pre>
 </ul>
 <p>This provides a direct parallel with the PCA monitoring slide shown earlier</p>
 </div><div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb7-2"><a></a></span>
-<span id="cb7-3"><a></a>lam <span class="op">=</span> pca.explained_variance_</span>
-<span id="cb7-4"><a></a>X_hat <span class="op">=</span> scores <span class="op">@</span> pca.components_</span>
-<span id="cb7-5"><a></a>E <span class="op">=</span> X_scaled <span class="op">-</span> X_hat</span>
-<span id="cb7-6"><a></a></span>
-<span id="cb7-7"><a></a>df[<span class="st">"SPE"</span>] <span class="op">=</span> np.<span class="bu">sum</span>(E<span class="op">**</span><span class="dv">2</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb7-8"><a></a>df[<span class="st">"T2"</span>] <span class="op">=</span> np.<span class="bu">sum</span>((scores<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> lam, axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb8-2"><a></a></span>
-<span id="cb8-3"><a></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>), sharex<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb8-4"><a></a>ax[<span class="dv">0</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"PC1"</span>])</span>
-<span id="cb8-5"><a></a>ax[<span class="dv">0</span>].set_ylabel(<span class="st">"PC1"</span>)</span>
-<span id="cb8-6"><a></a>ax[<span class="dv">1</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"SPE"</span>])</span>
-<span id="cb8-7"><a></a>ax[<span class="dv">1</span>].set_ylabel(<span class="st">"SPE"</span>)</span>
-<span id="cb8-8"><a></a>ax[<span class="dv">1</span>].set_xlabel(<span class="st">"Time index"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-2"><a></a></span>
+<span id="cb18-3"><a></a>lam <span class="op">=</span> pca.explained_variance_</span>
+<span id="cb18-4"><a></a>X_hat <span class="op">=</span> scores <span class="op">@</span> pca.components_</span>
+<span id="cb18-5"><a></a>E <span class="op">=</span> X_scaled <span class="op">-</span> X_hat</span>
+<span id="cb18-6"><a></a></span>
+<span id="cb18-7"><a></a>df[<span class="st">"SPE"</span>] <span class="op">=</span> np.<span class="bu">sum</span>(E<span class="op">**</span><span class="dv">2</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb18-8"><a></a>df[<span class="st">"T2"</span>] <span class="op">=</span> np.<span class="bu">sum</span>((scores<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> lam, axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-2"><a></a></span>
+<span id="cb19-3"><a></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>), sharex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-4"><a></a>ax[<span class="dv">0</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"PC1"</span>])</span>
+<span id="cb19-5"><a></a>ax[<span class="dv">0</span>].set_ylabel(<span class="st">"PC1"</span>)</span>
+<span id="cb19-6"><a></a>ax[<span class="dv">1</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"SPE"</span>])</span>
+<span id="cb19-7"><a></a>ax[<span class="dv">1</span>].set_ylabel(<span class="st">"SPE"</span>)</span>
+<span id="cb19-8"><a></a>ax[<span class="dv">1</span>].set_xlabel(<span class="st">"Time index"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section></section>
 <section>
@@ -762,18 +1058,18 @@ Number of Support Vectors:  65</code></pre>
 <li>evaluate accuracy and inspect the decision regions</li>
 </ul>
 </div><div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
-<span id="cb9-2"><a></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb9-3"><a></a></span>
-<span id="cb9-4"><a></a>X <span class="op">=</span> df[[<span class="st">"x1"</span>, <span class="st">"x2"</span>]].to_numpy()</span>
-<span id="cb9-5"><a></a>y <span class="op">=</span> df[<span class="st">"state"</span>].to_numpy()</span>
-<span id="cb9-6"><a></a></span>
-<span id="cb9-7"><a></a>svc <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">"rbf"</span>, C<span class="op">=</span><span class="fl">5.0</span>, gamma<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb9-8"><a></a>svc.fit(X, y)</span>
-<span id="cb9-9"><a></a></span>
-<span id="cb9-10"><a></a>df[<span class="st">"pred"</span>] <span class="op">=</span> svc.predict(X)</span>
-<span id="cb9-11"><a></a>acc <span class="op">=</span> accuracy_score(y, df[<span class="st">"pred"</span>])</span>
-<span id="cb9-12"><a></a><span class="bu">print</span>(acc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb20-2"><a></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb20-3"><a></a></span>
+<span id="cb20-4"><a></a>X <span class="op">=</span> df[[<span class="st">"x1"</span>, <span class="st">"x2"</span>]].to_numpy()</span>
+<span id="cb20-5"><a></a>y <span class="op">=</span> df[<span class="st">"state"</span>].to_numpy()</span>
+<span id="cb20-6"><a></a></span>
+<span id="cb20-7"><a></a>svc <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">"rbf"</span>, C<span class="op">=</span><span class="fl">5.0</span>, gamma<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb20-8"><a></a>svc.fit(X, y)</span>
+<span id="cb20-9"><a></a></span>
+<span id="cb20-10"><a></a>df[<span class="st">"pred"</span>] <span class="op">=</span> svc.predict(X)</span>
+<span id="cb20-11"><a></a>acc <span class="op">=</span> accuracy_score(y, df[<span class="st">"pred"</span>])</span>
+<span id="cb20-12"><a></a><span class="bu">print</span>(acc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="svm-decision-regions-and-predicted-labels-in-python" class="slide level2">
@@ -783,22 +1079,22 @@ Number of Support Vectors:  65</code></pre>
 <p>The decision map in feature space can be visualized by evaluating the classifier on a regular grid</p>
 <p>The predicted labels can then be plotted back against time exactly as done in the R example</p>
 </div><div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>x1g <span class="op">=</span> np.linspace(df[<span class="st">"x1"</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="fl">0.3</span>, df[<span class="st">"x1"</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="fl">0.3</span>, <span class="dv">160</span>)</span>
-<span id="cb10-2"><a></a>x2g <span class="op">=</span> np.linspace(df[<span class="st">"x2"</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="fl">0.3</span>, df[<span class="st">"x2"</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="fl">0.3</span>, <span class="dv">160</span>)</span>
-<span id="cb10-3"><a></a>xx1, xx2 <span class="op">=</span> np.meshgrid(x1g, x2g)</span>
-<span id="cb10-4"><a></a>Xg <span class="op">=</span> np.column_stack([xx1.ravel(), xx2.ravel()])</span>
-<span id="cb10-5"><a></a>zg <span class="op">=</span> svc.predict(Xg).reshape(xx1.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
-<span id="cb11-2"><a></a>ax[<span class="dv">0</span>].contourf(xx1, xx2, (zg <span class="op">==</span> <span class="st">"Fault"</span>).astype(<span class="bu">float</span>), alpha<span class="op">=</span><span class="fl">0.25</span>)</span>
-<span id="cb11-3"><a></a>ax[<span class="dv">0</span>].scatter(df[<span class="st">"x1"</span>], df[<span class="st">"x2"</span>], c<span class="op">=</span>(df[<span class="st">"state"</span>] <span class="op">==</span> <span class="st">"Fault"</span>))</span>
-<span id="cb11-4"><a></a>ax[<span class="dv">0</span>].set_xlabel(<span class="st">"x1"</span>)</span>
-<span id="cb11-5"><a></a>ax[<span class="dv">0</span>].set_ylabel(<span class="st">"x2"</span>)</span>
-<span id="cb11-6"><a></a></span>
-<span id="cb11-7"><a></a>ax[<span class="dv">1</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"state"</span>].eq(<span class="st">"Fault"</span>).astype(<span class="bu">int</span>), label<span class="op">=</span><span class="st">"True"</span>)</span>
-<span id="cb11-8"><a></a>ax[<span class="dv">1</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"pred"</span>].eq(<span class="st">"Fault"</span>).astype(<span class="bu">int</span>), <span class="st">"--"</span>,</span>
-<span id="cb11-9"><a></a>           label<span class="op">=</span><span class="st">"Predicted"</span>)</span>
-<span id="cb11-10"><a></a>ax[<span class="dv">1</span>].set_xlabel(<span class="st">"Time index"</span>)</span>
-<span id="cb11-11"><a></a>ax[<span class="dv">1</span>].legend()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>x1g <span class="op">=</span> np.linspace(df[<span class="st">"x1"</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="fl">0.3</span>, df[<span class="st">"x1"</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="fl">0.3</span>, <span class="dv">160</span>)</span>
+<span id="cb21-2"><a></a>x2g <span class="op">=</span> np.linspace(df[<span class="st">"x2"</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="fl">0.3</span>, df[<span class="st">"x2"</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="fl">0.3</span>, <span class="dv">160</span>)</span>
+<span id="cb21-3"><a></a>xx1, xx2 <span class="op">=</span> np.meshgrid(x1g, x2g)</span>
+<span id="cb21-4"><a></a>Xg <span class="op">=</span> np.column_stack([xx1.ravel(), xx2.ravel()])</span>
+<span id="cb21-5"><a></a>zg <span class="op">=</span> svc.predict(Xg).reshape(xx1.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb22-2"><a></a>ax[<span class="dv">0</span>].contourf(xx1, xx2, (zg <span class="op">==</span> <span class="st">"Fault"</span>).astype(<span class="bu">float</span>), alpha<span class="op">=</span><span class="fl">0.25</span>)</span>
+<span id="cb22-3"><a></a>ax[<span class="dv">0</span>].scatter(df[<span class="st">"x1"</span>], df[<span class="st">"x2"</span>], c<span class="op">=</span>(df[<span class="st">"state"</span>] <span class="op">==</span> <span class="st">"Fault"</span>))</span>
+<span id="cb22-4"><a></a>ax[<span class="dv">0</span>].set_xlabel(<span class="st">"x1"</span>)</span>
+<span id="cb22-5"><a></a>ax[<span class="dv">0</span>].set_ylabel(<span class="st">"x2"</span>)</span>
+<span id="cb22-6"><a></a></span>
+<span id="cb22-7"><a></a>ax[<span class="dv">1</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"state"</span>].eq(<span class="st">"Fault"</span>).astype(<span class="bu">int</span>), label<span class="op">=</span><span class="st">"True"</span>)</span>
+<span id="cb22-8"><a></a>ax[<span class="dv">1</span>].plot(df[<span class="st">"t"</span>], df[<span class="st">"pred"</span>].eq(<span class="st">"Fault"</span>).astype(<span class="bu">int</span>), <span class="st">"--"</span>,</span>
+<span id="cb22-9"><a></a>           label<span class="op">=</span><span class="st">"Predicted"</span>)</span>
+<span id="cb22-10"><a></a>ax[<span class="dv">1</span>].set_xlabel(<span class="st">"Time index"</span>)</span>
+<span id="cb22-11"><a></a>ax[<span class="dv">1</span>].legend()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="pca-and-svm-complementary-roles" class="slide level2">
@@ -928,7 +1224,7 @@ T^2 =
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-9-1.png" width="1500"></p>
+<p><img data-src="3_feature_based_files/figure-revealjs/unnamed-chunk-20-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
@@ -972,26 +1268,26 @@ T^2 =
 </ol>
 </div><div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>(xbar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(batch_x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>(xbar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(batch_x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  50.42717 100.67922</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>(s <span class="ot">&lt;-</span> <span class="fu">cov</span>(batch_x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>(s <span class="ot">&lt;-</span> <span class="fu">cov</span>(batch_x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          [,1]      [,2]
 [1,] 0.6610439 0.3443915
 [2,] 0.3443915 1.3580291</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>(t2 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(batch_n <span class="sc">*</span></span>
-<span id="cb17-2"><a></a>  <span class="fu">t</span>(xbar <span class="sc">-</span> mu0) <span class="sc">%*%</span> <span class="fu">solve</span>(s) <span class="sc">%*%</span> (xbar <span class="sc">-</span> mu0)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>(t2 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(batch_n <span class="sc">*</span></span>
+<span id="cb28-2"><a></a>  <span class="fu">t</span>(xbar <span class="sc">-</span> mu0) <span class="sc">%*%</span> <span class="fu">solve</span>(s) <span class="sc">%*%</span> (xbar <span class="sc">-</span> mu0)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 18.11943</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>(f <span class="ot">&lt;-</span> (n <span class="sc">-</span> p) <span class="sc">/</span> (p <span class="sc">*</span> (n <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">*</span> t2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>(f <span class="ot">&lt;-</span> (n <span class="sc">-</span> p) <span class="sc">/</span> (p <span class="sc">*</span> (n <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">*</span> t2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8.827413</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>(p.value <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(f, <span class="at">df1 =</span> p, <span class="at">df2 =</span> n <span class="sc">-</span> p))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>(p.value <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(f, <span class="at">df1 =</span> p, <span class="at">df2 =</span> n <span class="sc">-</span> p))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.0007101244</code></pre>
 </div>
@@ -1015,12 +1311,12 @@ T^2 =
 <h2>Example: the same test with <code>DescTools</code></h2>
 <p>If <code>DescTools</code> is available, the same test can be run directly:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">library</span>(DescTools)</span>
-<span id="cb23-2"><a></a></span>
-<span id="cb23-3"><a></a><span class="fu">HotellingsT2Test</span>(</span>
-<span id="cb23-4"><a></a>  <span class="at">x =</span> <span class="fu">as.matrix</span>(batch_df),</span>
-<span id="cb23-5"><a></a>  <span class="at">mu =</span> mu0</span>
-<span id="cb23-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">library</span>(DescTools)</span>
+<span id="cb34-2"><a></a></span>
+<span id="cb34-3"><a></a><span class="fu">HotellingsT2Test</span>(</span>
+<span id="cb34-4"><a></a>  <span class="at">x =</span> <span class="fu">as.matrix</span>(batch_df),</span>
+<span id="cb34-5"><a></a>  <span class="at">mu =</span> mu0</span>
+<span id="cb34-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Hotelling's one sample T2-test
