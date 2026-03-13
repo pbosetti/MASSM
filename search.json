@@ -217,6 +217,13 @@
     "text": "Analysis\nSome preliminary analysis and data manipulation can be performed on the data lake or data warehouse.\nFor example, MongoDB provides a powerful query language and aggregation (map-reduce actions) framework that can be used for data analysis and transformation (pipelines), allowing for some level of analysis to be performed directly on the data lake, without the need for a separate data warehouse\nMongoDB pipelines can be set as read-only virtual tables, or views, that can be queried like regular tables, but the underlying data is not duplicated, and the view is updated in real-time as the underlying data changes"
   },
   {
+    "objectID": "slides/0_distributed_daq.html#machine-learning-for-anomaly-detection-and-predictive-maintenance",
+    "href": "slides/0_distributed_daq.html#machine-learning-for-anomaly-detection-and-predictive-maintenance",
+    "title": "Distributed data acquisition and processing",
+    "section": "Machine learning for anomaly detection and predictive maintenance",
+    "text": "Machine learning for anomaly detection and predictive maintenance\nMachine learning models can be trained on the data stored in the data lake or data warehouse to later perform tasks such as anomaly detection and predictive maintenance, in real-time\nMachine learning models can be supervised or unsupervised, can be implemented with conventional algorithms (e.g., SVM, PCA) or deep learning architectures (e.g., CNNs, RNNs), and can be deployed on the edge or in the cloud, depending on the requirements of the application"
+  },
+  {
     "objectID": "slides/2_time_domain.html#time-series-statistics",
     "href": "slides/2_time_domain.html#time-series-statistics",
     "title": "Time-domain analysis of time series",
