@@ -6,3 +6,4 @@
 *.pdf
 *.html
 _site
+.Rproj.user
