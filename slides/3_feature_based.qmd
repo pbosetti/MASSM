@@ -16,46 +16,6 @@ library(patchwork)
 library(e1071)
 theme_set(theme_gray() + theme(legend.position = "bottom"))
 
-n <- 240
-t <- 1:n
-fault_idx <- 151:210
-
-x1 <- cumsum(rnorm(n, 0, 0.06)) + 0.7 * sin(2 * pi * t / 24)
-x2 <- 0.8 * x1 + rnorm(n, 0, 0.18)
-x1[fault_idx] <- x1[fault_idx] + 1.0
-x2[fault_idx] <- -0.2 * x1[fault_idx] + rnorm(length(fault_idx), 0, 0.22) + 0.7
-
-ts_df <- tibble(
-  t = t,
-  x1 = x1,
-  x2 = x2,
-  state = factor(if_else(t %in% fault_idx, "Fault", "Normal"))
-)
-
-pca_fit <- prcomp(ts_df %>% select(x1, x2), center = TRUE, scale. = TRUE)
-scores <- as_tibble(pca_fit$x) %>%
-  mutate(t = ts_df$t, state = ts_df$state)
-
-lambda <- pca_fit$sdev^2
-center_vec <- pca_fit$center
-scale_vec <- pca_fit$scale
-x_scaled <- scale(ts_df %>% select(x1, x2), center = center_vec, scale = scale_vec)
-x_hat <- tcrossprod(pca_fit$x[, 1, drop = FALSE], pca_fit$rotation[, 1, drop = FALSE])
-residuals_mat <- x_scaled - x_hat
-spe <- rowSums(residuals_mat^2)
-t2 <- rowSums((pca_fit$x[, 1:2, drop = FALSE]^2) / matrix(rep(lambda[1:2], each = n), ncol = 2))
-alpha_t2 <- 0.05
-a_t2 <- 2
-n_ref <- sum(ts_df$state == "Normal")
-t2_limit <- a_t2 * (n_ref - 1) / (n_ref - a_t2) *
-  qf(1 - alpha_t2, df1 = a_t2, df2 = n_ref - a_t2)
-
-ts_pca <- ts_df %>%
-  mutate(PC1 = pca_fit$x[, 1],
-         PC2 = pca_fit$x[, 2],
-         SPE = spe,
-         T2 = t2,
-         T2_limit = t2_limit)
 ```
 
 # Feature-based time-series analysis
@@ -144,7 +104,7 @@ The eigenvectors $\mathbf{p}_i$ are orthogonal and form a new coordinate system 
 
 
 ## PCA: scores and low-dimensional representation
-
+:::smaller
 ::: {.columns}
 ::: {.column}
 The projection of the data onto the principal axes gives the **scores matrix** ($N\times p$):
@@ -169,6 +129,7 @@ $$
 :::
 :::
 <!-- end columns -->
+:::
 
 ::: {.callout-note}
 For a given subset of principal components $a$, the **explained variance ratio** is:
@@ -180,10 +141,10 @@ $\eta_a = \frac{\sum_{i=1}^{a}\lambda_i}{\sum_{i=1}^{p}\lambda_i}$. This can be 
 :::
 
 ## PCA: reconstruction error and monitoring statistics
-
+:::smaller
 ::: {.columns}
 ::: {.column}
-For one centered observation vector $\mathbf{x}_{c,t}$, PCA first computes the score vector
+For observation vector $\mathbf{x}_{c,t}$, PCA computes the score vector
 $$
 \mathbf{t}_t = \mathbf{P}_a^T \mathbf{x}_{c,t}
 $$
@@ -215,6 +176,7 @@ $$
 :::
 :::
 <!-- end columns -->
+:::
 
 ::: {.callout-note}
 $T^2$ measures abnormality inside the retained subspace, while $Q_t$ measures lack of fit outside it
@@ -253,14 +215,14 @@ f(\mathbf{x}) = \mathrm{sign}(g(\mathbf{x}))
 $$
 that separates the two classes with maximum robustness
 
-For the linear case, $g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b$ 
-and the separating boundary is the hyperplane $\mathbf{w}^T \mathbf{x} + b = 0$
 :::
 ::: {.column}
 ![SVM example in 2-D](../images/svm-binary-classification.svg)
 :::
 :::
 <!-- end columns -->
+For the linear case, $g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b$ 
+and the separating boundary is the hyperplane $\mathbf{w}^T \mathbf{x} + b = 0$
 
 ## SVM: maximum-margin principle
 
@@ -284,6 +246,7 @@ Therefore, minimizing $\|\mathbf{w}\|_2^2$ is equivalent to maximizing the separ
 
 ::: {.columns}
 ::: {.column}
+:::smaller
 * We select as decision boundary $\mathbf{w} = [\cos(\theta), \sin(\theta)]^T$ 
 * $||\mathbf w||_2 = 1$ (it is a **unit vector**) 
 * $b$ the intercept with the vertical axis 
@@ -291,6 +254,7 @@ Therefore, minimizing $\|\mathbf{w}\|_2^2$ is equivalent to maximizing the separ
 The margin width is then $2/\|\mathbf{w}\|_2 = 2$ and the support vectors are those that satisfy $y_i(\mathbf{w}^T\mathbf{x}_i+b) = 1$
 
 Try and find $\theta, b$ that **maximize the margin** while correctly classifying all points
+:::
 
 ::: {.callout-caution}
 With the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin.
@@ -360,6 +324,7 @@ df %>% ggplot(aes(x = x1, y = x2)) +
 
 ::: {.columns}
 ::: {.column}
+:::smaller
 Real process data are noisy, overlapping, and rarely perfectly separable
 
 The soft-margin formulation introduces **slack variables** $\xi_i \ge 0$:
@@ -371,6 +336,7 @@ subject to:
 $$
 y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
 $$
+:::
 :::
 ::: {.column}
 ![Soft-margin SVM](../images/svm-soft-margin.svg)
@@ -460,6 +426,89 @@ $$
 :::
 <!-- end columns -->
 
+## SVM: understanding the dual problem
+:::smaller
+::: {.columns}
+::: {.column}
+Instead of optimizing the hyperplane parameters directly, the dual problem optimizes one coefficient $\alpha_i$ for each training sample:
+$$
+\max_{\boldsymbol{\alpha}}
+\sum_{i=1}^{N}\alpha_i -
+\frac{1}{2}\sum_{i=1}^{N}\sum_{j=1}^{N}
+\alpha_i\alpha_j y_i y_j \mathbf{x}_i^T\mathbf{x}_j
+$$
+
+For the soft-margin SVM, the constraints are
+$$
+0 \le \alpha_i \le C,\qquad
+\sum_{i=1}^{N}\alpha_i y_i = 0
+$$
+
+The primal and dual formulations are equivalent: they lead to the same classifier.
+:::
+::: {.column}
+Interpretation:
+
+* each $\alpha_i$ measures how much training point $i$ contributes to the solution
+* most $\alpha_i$ are zero
+* only points with $\alpha_i > 0$ matter: these are the **support vectors**
+* the upper bound $C$ limits the influence of a single sample
+
+Why it is useful:
+
+* the data appear only through inner products $\mathbf{x}_i^T\mathbf{x}_j$
+* this makes the solution easier to reinterpret in geometric terms
+* it prepares the ground for replacing inner products with kernels
+:::
+:::
+<!-- end columns -->
+:::
+
+## SVM: the kernel trick
+
+:::smaller
+::: {.columns}
+::: {.column}
+In the dual problem and in the decision function, the samples appear only through inner products:
+$$
+\mathbf{x}_i^T\mathbf{x}_j
+$$
+
+If we first map the data into a feature space $\phi(\mathbf{x})$, the same algorithm would use
+$$
+\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
+$$
+
+The kernel trick replaces this inner product with a kernel function
+$$
+K(\mathbf{x}_i,\mathbf{x}_j)=\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
+$$
+without computing $\phi(\mathbf{x})$ explicitly.
+:::
+::: {.column}
+Why this matters:
+
+* a linear separator in feature space becomes a nonlinear boundary in the original space
+* the optimization problem stays almost unchanged
+* prediction still depends only on support vectors
+
+Common kernels:
+
+* linear: $K(\mathbf{x},\mathbf{z})=\mathbf{x}^T\mathbf{z}$
+* polynomial
+* radial basis function:
+$$
+K(\mathbf{x},\mathbf{z})=\exp(-\gamma\|\mathbf{x}-\mathbf{z}\|_2^2)
+$$
+
+:::
+:::
+<!-- end columns -->
+:::
+:::callout-note
+**Note:** the dual formulation is what makes kernelized SVMs possible.
+:::
+
 ## SVM: decision function and time-series use
 
 After training, the decision function is
@@ -477,6 +526,24 @@ For time-series analysis, SVM is applied to features extracted from samples or w
 SVM is therefore a classification rule in feature space, not a stochastic time model
 
 # PCA example in R
+
+```{r}
+n <- 240
+t <- 1:n
+fault_idx <- 151:210
+
+x1 <- cumsum(rnorm(n, 0, 0.06)) + 0.7 * sin(2 * pi * t / 24)
+x2 <- 0.8 * x1 + rnorm(n, 0, 0.18)
+x1[fault_idx] <- x1[fault_idx] + 1.0
+x2[fault_idx] <- -0.2 * x1[fault_idx] + rnorm(length(fault_idx), 0, 0.22) + 0.7
+
+ts_df <- tibble(
+  t = t,
+  x1 = x1,
+  x2 = x2,
+  state = factor(if_else(t %in% fault_idx, "Fault", "Normal"))
+)
+```
 
 ## Synthetic bivariate time series
 
@@ -506,6 +573,63 @@ p1 / p2
 ```
 :::
 :::
+
+## PCA Analysis 1/
+
+First we do the PCA fit and compute scores $[\mathbf{p}_1, \mathbf{p}_2]$:
+
+```{r}
+#| echo: TRUE
+pca_fit <- prcomp(~x1+x2, data=ts_df, center = TRUE, scale. = TRUE)
+summary(pca_fit)
+round(pca_fit$rotation, 3)
+scores <- as_tibble(pca_fit$x) %>% mutate(t = ts_df$t, state = ts_df$state)
+```
+We also rescale the data:
+
+```{r}
+(lambda <- pca_fit$sdev^2)
+center_vec <- pca_fit$center
+scale_vec <- pca_fit$scale
+x_scaled <- scale(ts_df %>% select(x1, x2), center = center_vec, scale = scale_vec)
+```
+
+## PCA Analysis 2/
+
+We calculate the residuals vector $\mathbf\varepsilon = \mathbf{x}_c - \hat{\mathbf{x}}_c$ and the monitoring statistics. Given the $\lambda$ values, we only keep $\mathbf{p}_1$
+
+
+
+```{r}
+#| echo: TRUE
+tcrossprod(pca_fit$x, pca_fit$rotation)
+
+x_hat <- tcrossprod(pca_fit$x[, 1, drop = FALSE], pca_fit$rotation[, 1, drop = FALSE])
+residuals_mat <- x_scaled - x_hat
+```
+
+
+```{r}
+spe <- rowSums(residuals_mat^2)
+t2 <- rowSums((pca_fit$x[, 1:2, drop = FALSE]^2) / matrix(rep(lambda[1:2], each = n), ncol = 2))
+alpha_t2 <- 0.05
+a_t2 <- 2
+n_ref <- sum(ts_df$state == "Normal")
+t2_limit <- a_t2 * (n_ref - 1) / (n_ref - a_t2) *
+  qf(1 - alpha_t2, df1 = a_t2, df2 = n_ref - a_t2)
+
+ts_pca <- ts_df %>%
+  mutate(PC1 = pca_fit$x[, 1],
+         PC2 = pca_fit$x[, 2],
+         SPE = spe,
+         T2 = t2,
+         T2_limit = t2_limit)
+```
+
+
+
+
+
 
 ## PCA on the bivariate series
 
@@ -620,13 +744,13 @@ $$
 $$
 
 An RBF-kernel SVM is trained to separate the two states
+```{r}
+#| echo=TRUE
+svm_fit
+```
 :::
 
 :::column
-```{r}
-svm_fit
-acc
-```
 
 ```{r}
 ggplot() +
@@ -637,7 +761,7 @@ ggplot() +
              aes(x = x1, y = x2, color = state),
              size = 1.8) +
   labs(x = "x1", y = "x2",
-       title = "SVM decision regions on the feature space")
+       title = paste("SVM decision accuracy:", round(acc, 3)))
 ```
 :::
 :::
@@ -693,12 +817,7 @@ x2[fault_idx] = -0.2 * x1[fault_idx] \
 
 state = np.where(np.isin(t, fault_idx + 1), "Fault", "Normal")
 
-df = pd.DataFrame({
-    "t": t,
-    "x1": x1,
-    "x2": x2,
-    "state": state
-})
+df = pd.DataFrame({"t": t, "x1": x1, "x2": x2, "state": state})
 ```
 
 # PCA example in Python
