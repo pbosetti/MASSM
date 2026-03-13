@@ -50,6 +50,8 @@ $$
 \in \mathbb{R}^{N \times p}
 $$
 where each row is a **feature vector** extracted at one time instant or from one time window statistics
+
+In other words, uppercase $\mathbf{X}$ collects all observations, while lowercase $\mathbf{x}_t$ denotes the feature vector of the $t$-th observation
 :::
 ::: {.column}
 PCA starts from the centered matrix $\mathbf{X}_c$:
@@ -111,10 +113,19 @@ The projection of the data onto the principal axes gives the **scores matrix** (
 $$
 \mathbf{T} = \mathbf{X}_c \mathbf{P}
 $$
-where:
+that is,
 $$
-\mathbf{P} = [\mathbf{p}_1,\mathbf{p}_2,\dots,\mathbf{p}_p]
+\mathbf{T} =
+\begin{bmatrix}
+\mathbf{t}_1^T \\
+\mathbf{t}_2^T \\
+\vdots \\
+\mathbf{t}_N^T
+\end{bmatrix},
+~~~
+\mathbf{t}_t^T = \mathbf{x}_{c,t}^T \mathbf{P},~~~\mathbf{P} = [\mathbf{p}_1,\mathbf{p}_2,\dots,\mathbf{p}_p]
 $$
+
 
 :::
 ::: {.column}
@@ -144,20 +155,20 @@ $\eta_a = \frac{\sum_{i=1}^{a}\lambda_i}{\sum_{i=1}^{p}\lambda_i}$. This can be 
 :::smaller
 ::: {.columns}
 ::: {.column}
-For observation vector $\mathbf{x}_{c,t}$, PCA computes the score vector
+For centered observation row $\mathbf{x}_{c,t}^T$, PCA computes the score row
 $$
-\mathbf{t}_t = \mathbf{P}_a^T \mathbf{x}_{c,t}
+\mathbf{t}_t^T = \mathbf{x}_{c,t}^T \mathbf{P}_a
 $$
 and then reconstructs it in feature space as
 $$
-\hat{\mathbf{x}}_{c,t} = \mathbf{P}_a \mathbf{t}_t
+\hat{\mathbf{x}}_{c,t}^T = \mathbf{t}_t^T \mathbf{P}_a^T
 $$
 
 Therefore the residual decomposition is:
 $$
-\mathbf{x}_{c,t} = \hat{\mathbf{x}}_{c,t} + \mathbf{\varepsilon}_t
+\mathbf{x}_{c,t}^T = \hat{\mathbf{x}}_{c,t}^T + \boldsymbol{\varepsilon}_t^T
 $$
-where $\hat{\mathbf{x}}_{c,t}$ lies in the retained **latent subspace** and $\mathbf{\varepsilon}_t$ is the residual vector
+where $\hat{\mathbf{x}}_{c,t}^T$ lies in the retained **latent subspace** and $\boldsymbol{\varepsilon}_t^T$ is the residual row
 :::
 ::: {.column}
 
@@ -574,7 +585,29 @@ p1 / p2
 :::
 :::
 
-## PCA Analysis 1/
+## PCA Analysis 1/4
+
+:::columns
+:::column
+We apply PCA to the standardized two-variable feature matrix
+
+Since $p=2$, the model is simple enough to visualize directly:
+
+* **loadings** describe the principal directions
+* **scores** show how observations evolve in the latent space
+* **explained variance** quantifies dimensional compression
+:::
+:::column
+```{r}
+ts_df %>% ggplot(aes(x = x1, y = x2, color = state)) +
+  geom_point() +
+  labs(x = "x1", y = "x2", title = "Original feature space")
+```
+:::
+:::
+
+
+## PCA Analysis 2/4
 
 First we do the PCA fit and compute scores $[\mathbf{p}_1, \mathbf{p}_2]$:
 
@@ -585,33 +618,42 @@ summary(pca_fit)
 round(pca_fit$rotation, 3)
 scores <- as_tibble(pca_fit$x) %>% mutate(t = ts_df$t, state = ts_df$state)
 ```
-We also rescale the data:
+We also calculate $\mathbf \lambda$ and rescale the data:
 
 ```{r}
+#| echo: TRUE
 (lambda <- pca_fit$sdev^2)
 center_vec <- pca_fit$center
 scale_vec <- pca_fit$scale
 x_scaled <- scale(ts_df %>% select(x1, x2), center = center_vec, scale = scale_vec)
 ```
 
-## PCA Analysis 2/
+## PCA Analysis 3/4
 
-We calculate the residuals vector $\mathbf\varepsilon = \mathbf{x}_c - \hat{\mathbf{x}}_c$ and the monitoring statistics. Given the $\lambda$ values, we only keep $\mathbf{p}_1$
+We calculate the residuals vector $\mathbf\varepsilon = \mathbf{x}_c - \hat{\mathbf{x}}_c$ and the monitoring statistics. Given the $\lambda$ values, we only keep $\mathbf{p}_1$ so:
 
+$$
+\hat{\mathbf{x}}_{c,t}^T = \mathbf{t}_t^T \mathbf{P}_a^T
+$$
 
+becomes:
 
 ```{r}
 #| echo: TRUE
-tcrossprod(pca_fit$x, pca_fit$rotation)
-
 x_hat <- tcrossprod(pca_fit$x[, 1, drop = FALSE], pca_fit$rotation[, 1, drop = FALSE])
 residuals_mat <- x_scaled - x_hat
 ```
 
+Finally we can calculate the monitoring statistics:
 
 ```{r}
+#| echo: TRUE
 spe <- rowSums(residuals_mat^2)
 t2 <- rowSums((pca_fit$x[, 1:2, drop = FALSE]^2) / matrix(rep(lambda[1:2], each = n), ncol = 2))
+```
+
+
+```{r}
 alpha_t2 <- 0.05
 a_t2 <- 2
 n_ref <- sum(ts_df$state == "Normal")
@@ -627,21 +669,25 @@ ts_pca <- ts_df %>%
 ```
 
 
-
-
-
-
-## PCA on the bivariate series
+## PCA Analysis 4/4
 
 :::columns
 :::column
-We apply PCA to the standardized two-variable feature matrix
+Finally we make an overall plot:
 
-Since $p=2$, the model is simple enough to visualize directly:
-
-* **loadings** describe the principal directions
-* **scores** show how observations evolve in the latent space
-* **explained variance** quantifies dimensional compression
+```{r}
+#| echo: TRUE
+p <- autoplot(
+  pca_fit, data = ts_df, 
+  colour = "state",
+  loadings = TRUE,
+  loadings.label = TRUE,
+  loadings.label.size = 3
+  ) +
+  labs(title = "PCA score plot with loadings") +
+  coord_fixed() +
+  coord_flip()
+```
 
 ::: {.callout-note}
 This is called a **biplot**. Another useful visualization is the **screeplot**, which shows the explained variance ratio $\eta_a$ as a function of the number of retained components $a$.
@@ -650,18 +696,9 @@ This is called a **biplot**. Another useful visualization is the **screeplot**, 
 :::
 
 :::column
-```{r}
-summary(pca_fit)
-round(pca_fit$rotation, 3)
-```
 
 ```{r}
-autoplot(pca_fit, data = ts_df, colour = "state",
-         loadings = TRUE, loadings.label = TRUE,
-         loadings.label.size = 3) +
-  labs(title = "PCA score plot with loadings") +
-  coord_fixed() +
-  coord_flip()
+p
 ```
 :::
 :::
@@ -736,6 +773,7 @@ grid$pred <- predict(svm_fit, grid)
 
 :::columns
 :::column
+:::smaller
 Now we use the same observations, but with labels `Normal` and `Fault`
 
 The feature vector is simply
@@ -743,10 +781,13 @@ $$
 \mathbf{x}_t = [x_{1,t},x_{2,t}]^T
 $$
 
-An RBF-kernel SVM is trained to separate the two states
+An RBF-kernel SVM is trained to separate the two states:
+:::
 ```{r}
 #| echo=TRUE
-svm_fit
+svm(state ~ x1 + x2, data = ts_df,
+    kernel = "radial", cost = 5, gamma = 1,
+    scale = TRUE)
 ```
 :::
 
@@ -777,11 +818,18 @@ This makes it possible to compare:
 * true process state
 * SVM predicted state
 * classification errors and transition regions
+
+::: {.callout-note}
+This scheme can be carried out continuously in an online setting:
+
+* where the SVM is trained on a reference dataset and then applied to new observations as they arrive, providing real-time classification of the process state
+* or by chunking the time series into windows and applying the SVM to each window
+:::
 :::
 
 :::column
 ```{r}
-ggplot(ts_df, aes(x = t)) +
+p1 <- ggplot(ts_df, aes(x = t)) +
   geom_line(aes(y = as.numeric(state), color = "True"), linewidth = 1) +
   geom_line(aes(y = as.numeric(pred), color = "Predicted"),
             linewidth = 0.9, linetype = 2) +
@@ -789,9 +837,19 @@ ggplot(ts_df, aes(x = t)) +
                      labels = levels(ts_df$state)) +
   labs(x = "Time index", y = "Class",
        color = "", title = "True and predicted labels")
+p2 <- ts_df %>% 
+  pivot_longer(cols = c(x1, x2), names_to = "variable", values_to = "Value") %>%
+  ggplot(aes(x = t, y = Value, color = variable)) +
+  geom_line() +
+  scale_color_manual(values = c("x1" = "blue", "x2" = "orange")) +
+  theme(legend.position = "none") 
+
+p2 / p1
 ```
 :::
 :::
+
+# PCA example in Python
 
 ## Python example: same synthetic dataset
 
@@ -820,7 +878,6 @@ state = np.where(np.isin(t, fault_idx + 1), "Fault", "Normal")
 df = pd.DataFrame({"t": t, "x1": x1, "x2": x2, "state": state})
 ```
 
-# PCA example in Python
 
 ## PCA on the bivariate series in Python
 
