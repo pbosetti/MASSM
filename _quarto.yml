@@ -1,5 +1,6 @@
 project:
-  title: "AI-PAT"
+  type: website
+  title: "MASSM"
 
 format:
   revealjs:

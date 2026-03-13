@@ -56,18 +56,6 @@ ts_pca <- ts_df %>%
          SPE = spe,
          T2 = t2,
          T2_limit = t2_limit)
-
-svm_fit <- svm(state ~ x1 + x2, data = ts_df,
-               kernel = "radial", cost = 5, gamma = 1,
-               scale = TRUE)
-ts_df$pred <- predict(svm_fit, ts_df)
-acc <- mean(ts_df$pred == ts_df$state)
-
-grid <- expand.grid(
-  x1 = seq(min(ts_df$x1) - 0.3, max(ts_df$x1) + 0.3, length.out = 160),
-  x2 = seq(min(ts_df$x2) - 0.3, max(ts_df$x2) + 0.3, length.out = 160)
-)
-grid$pred <- predict(svm_fit, grid)
 ```
 
 # Feature-based time-series analysis
@@ -239,12 +227,14 @@ PCA is applied to time-series analysis after building features from samples or w
 
 Typical uses are:
 
-* reducing a multivariate signal to a few latent variables
+* reducing a multivariate signal to a few **latent variables**
 * detecting operating regimes and structural changes
 * decorrelating strongly coupled measurements
 * identifying dominant directions of variability
 
-For dynamic systems, PCA alone is not a time model. It is a **feature-space model**, and temporal structure enters through the chosen features or through lag embedding
+::: {.callout-important}
+For dynamic systems, PCA by itself does not describe how the system evolves over time. It only summarizes the data in feature space; any temporal information must be introduced explicitly, for example through window-based features or lagged variables, that is, past values of the same signal such as $x_{t-1}$, $x_{t-2}$, and so on, used together with the current value $x_t$ to capture the temporal dynamics
+:::
 
 # SVM theory
 
@@ -290,18 +280,94 @@ $$
 
 Therefore, minimizing $\|\mathbf{w}\|_2^2$ is equivalent to maximizing the separation margin
 
+## SVM: Interactive Example
+
+::: {.columns}
+::: {.column}
+* We select as decision boundary $\mathbf{w} = [\cos(\theta), \sin(\theta)]^T$ 
+* $||\mathbf w||_2 = 1$ (it is a **unit vector**) 
+* $b$ the intercept with the vertical axis 
+
+The margin width is then $2/\|\mathbf{w}\|_2 = 2$ and the support vectors are those that satisfy $y_i(\mathbf{w}^T\mathbf{x}_i+b) = 1$
+
+Try and find $\theta, b$ that **maximize the margin** while correctly classifying all points
+
+::: {.callout-caution}
+With the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin.
+:::
+
+
+:::
+::: {.column}
+<iframe scrolling="no" title="taglio ortogonale" src="https://www.geogebra.org/material/iframe/id/rdtebds9/width/600/height/500/border/ffffff/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/false/rc/false/ld/false/sdz/false/ctl/false" width="600px" height="500px" style="border:1px solid black; margin-bottom: -20px;">
+
+</iframe>
+:::
+:::
+<!-- end columns -->
+
+## SVM: Interactive Example (R version)
+
+```{r}
+df <-  tibble(
+  x1 = c(-3, -2, -2, -1, 2, 3, 2, 1),
+  x2 = c(1, 2, -1, 1, 1, 2, -1, 0),
+  state = factor(c("B", "B", "B", "B", "A", "A", "A", "A"))
+)
+```
+
+::: {.columns}
+::: {.column}
+
+We do a **linear SVM** classification and add predictions to it:
+```{r}
+#| echo=TRUE
+fit <- svm(
+  state ~ x1 + x2, data = df, 
+  scale = FALSE, kernel = "linear"
+)
+
+df <-  df %>% mutate(
+  id = 1:n(),
+  pred = predict(fit, .),
+  sv = if_else(id %in% fit$index, "SV", "Other")
+)
+coef(fit)
+```
+
+Coefficients are $b$, $w_1$, and $w_2$ in the decision function $g(\mathbf{x}) = w_1 x_1 + w_2 x_2 + b$
+:::
+::: {.column}
+
+```{r}
+grid <- expand.grid(
+  x1 = seq(min(df$x1) - 0.3, max(df$x1) + 0.3, length.out = 160),
+  x2 = seq(min(df$x2) - 0.3, max(df$x2) + 0.3, length.out = 160)
+)
+grid$pred <- predict(fit, grid)
+cf <- coef(fit)
+df %>% ggplot(aes(x = x1, y = x2)) +
+  geom_point(aes(color = state, shape = sv), size = 3) +
+  geom_abline(intercept = -cf[1]/cf[3], slope = -cf[2]/cf[3], color = "black") +
+  geom_tile(data = grid, aes(x = x1, y = x2, fill = pred), alpha = 0.25) +
+  labs(x = "x1", y = "x2", title = "SVM example dataset")
+```
+:::
+:::
+<!-- end columns -->
+
 ## SVM: soft margin and hinge loss
 
 ::: {.columns}
 ::: {.column}
 Real process data are noisy, overlapping, and rarely perfectly separable
 
-The soft-margin formulation introduces slack variables $\xi_i \ge 0$:
+The soft-margin formulation introduces **slack variables** $\xi_i \ge 0$:
 $$
 \min_{\mathbf{w},b,\boldsymbol{\xi}}
 \frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i
 $$
-subject to
+subject to:
 $$
 y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
 $$
@@ -312,10 +378,47 @@ $$
 :::
 <!-- end columns -->
 
-
-Equivalent empirical-risk view: $\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))$
-
 The parameter $C$ balances margin width against classification violations
+
+::: {.callout-note}
+Equivalent empirical-risk view: $\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))$
+:::
+
+
+## Equivalent empirical-risk view
+
+::: {.columns}
+::: {.column}
+The same soft-margin SVM can be written as
+$$
+\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 +
+C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))
+$$
+
+This has the standard machine-learning form
+$$
+\text{regularization} + \text{empirical loss}
+$$
+
+* $\frac{1}{2}\|\mathbf{w}\|_2^2$ penalizes complex models and favors a wider margin
+* $\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))$ is the **hinge loss**
+* $C$ controls the trade-off between margin size and training violations
+:::
+::: {.column}
+Interpretation:
+
+* if $y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1$, the point is correctly classified and outside the margin, so the loss is 0
+* if $0<y_i(\mathbf{w}^T\mathbf{x}_i+b)<1$, the point is correctly classified but inside the margin
+* if $y_i(\mathbf{w}^T\mathbf{x}_i+b)\le0$, the point is misclassified
+
+So this view is **equivalent** to the slack-variable formulation:
+
+* geometric view: maximize margin while allowing violations
+* empirical-risk view: minimize regularized hinge loss on the training set
+:::
+:::
+<!-- end columns -->
+
 
 ## SVM: dual problem and kernel trick
 
@@ -490,6 +593,20 @@ In this synthetic example, PCA is mainly used as an exploratory and monitoring t
 :::
 
 # SVM example in R
+
+```{r}
+svm_fit <- svm(state ~ x1 + x2, data = ts_df,
+               kernel = "radial", cost = 5, gamma = 1,
+               scale = TRUE)
+ts_df$pred <- predict(svm_fit, ts_df)
+acc <- mean(ts_df$pred == ts_df$state)
+
+grid <- expand.grid(
+  x1 = seq(min(ts_df$x1) - 0.3, max(ts_df$x1) + 0.3, length.out = 160),
+  x2 = seq(min(ts_df$x2) - 0.3, max(ts_df$x2) + 0.3, length.out = 160)
+)
+grid$pred <- predict(svm_fit, grid)
+```
 
 ## SVM on the same bivariate time series
 
