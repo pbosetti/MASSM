@@ -7,3 +7,5 @@
 *.html
 _site
 .Rproj.user
+db
+/*.zip
