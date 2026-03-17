@@ -5,3 +5,468 @@ author: "Paolo Bosetti"
 format: revealjs
 ---
 
+```{r}
+library(tidyverse)
+library(gsignal)
+```
+
+
+# Frequency-domain Basics
+
+
+## Fast Fourier Transform (FFT)
+
+The FFT is an efficient algorithm to compute the **Discrete Fourier Transform** (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as:
+$$X_k = \sum_{n=0}^{N-1} x_n e^{-2\pi i kn/N}$$
+where:
+
+- $X_k \in \mathbb{C}$ is the DFT of the sequence at frequency bin $k$
+- $x_n \in \mathbb{C}$ is the input sequence at time index $n$
+- $N$ is the total number of samples in the input sequence
+
+The FFT reduces the computational complexity from $O(N^2)$ to $O(N \log N)$, making it feasible to analyze large datasets efficiently
+
+
+## Power Spectral Density (PSD)
+
+The **Power Spectral Density** (PSD) is a measure of the power distribution of a signal across different frequency components. It is defined as the squared magnitude of the Fourier Transform of the signal, normalized by the length of the signal:
+$$PSD(f) = \frac{1}{N} |X_k|^2$$
+where:
+
+- $PSD(f)$ is the power spectral density at frequency $f$
+- $N$ is the total number of samples in the signal
+- $X_k$ is the Fourier Transform of the signal at frequency bin $k$
+
+## FFT: to remember
+
+Input vector is normally a sequence of real numbers, but it can also be complex. The output is a **sequence of complex numbers**, where the magnitude represents the amplitude of the corresponding frequency component, and the phase represents its phase shift
+
+If the input sequence is **real-valued**, the output will be symmetric around the Nyquist frequency, which is half the sampling rate. The FFT can be used to analyze the frequency content of signals, identify dominant frequencies, and perform various signal processing tasks such as filtering and spectral analysis
+
+If the input sequence is **complex-valued**, the output will not be symmetric, and it can represent a wider range of frequency components, including negative frequencies. The FFT is widely used in various applications, including audio processing, image analysis, and communications
+
+**Frequency resolution** of the FFT is determined by the sampling rate and the length of the input sequence. The frequency bins are spaced at intervals of $\frac{f_s}{N}$, where $f_s$ is the sampling rate and $N$ is the number of samples in the input sequence
+
+## FFT: to remember (Effect of $N$, 1/2)
+
+::: {.columns}
+::: {.column}
+```{r}
+#| echo: false
+N <- 128
+fs <- 128
+t <- seq(0, (N - 1) / fs, by = 1 / fs)
+
+signal <- 1.2 * sin(2 * pi * 8 * t) +
+  0.7 * sin(2 * pi * 20 * t + pi / 4) +
+  0.3 * sin(2 * pi * 32 * t + pi / 2)
+
+X <- fft(signal)
+k <- 0:(N - 1)
+freq <- k * fs / N
+half_idx <- 1:(N / 2)
+shift_idx <- c((N / 2 + 1):N, 1:(N / 2))
+
+signal_df <- tibble(
+  time = t,
+  value = signal + rnorm(N, mean = 0, sd = 0.1)
+)
+
+fft_df <- tibble(
+  frequency = freq[shift_idx] - fs * (freq[shift_idx] >= fs / 2),
+  magnitude = Mod(X)[shift_idx] / N,
+  phase = Arg(X)[shift_idx]
+) %>%
+  pivot_longer(
+    cols = c(magnitude, phase),
+    names_to = "measure",
+    values_to = "value"
+  )
+```
+
+```{r}
+#| fig-height: 2
+ggplot(signal_df, aes(x = time, y = value)) +
+  geom_line(color = "#1b6ca8", linewidth = 0.7) +
+  labs(x = "Time (s)", y = "Signal", title=paste(N, "samples at", fs, "Hz")) 
+```
+
+```{r}
+#| fig-height: 2.5
+ggplot(fft_df, aes(x = frequency, y = value)) +
+  geom_line(color = "#c84c09", linewidth = 0.6) +
+  facet_wrap(~measure, ncol = 1, scales = "free_y") +
+  labs(x = "Frequency (Hz)", y = NULL)
+```
+
+:::
+::: {.column}
+```{r}
+#| fig-height: 4.8
+psd_df <- tibble(
+  frequency = freq[half_idx],
+  psd = Mod(X[half_idx])^2 / N
+)
+
+ggplot(psd_df, aes(x = frequency, y = psd)) +
+  geom_line(color = "#2a7f62", linewidth = 0.7) +
+  labs(x = "Frequency (Hz)", y = "PSD")
+```
+
+:::
+:::
+<!-- end columns -->
+
+
+## FFT: to remember (Effect of $N$, 2/2)
+
+::: {.columns}
+::: {.column}
+```{r}
+#| echo: false
+N <- 1024
+fs <- 128
+t <- seq(0, (N - 1) / fs, by = 1 / fs)
+
+signal <- 1.2 * sin(2 * pi * 8 * t) +
+  0.7 * sin(2 * pi * 20 * t + pi / 4) +
+  0.3 * sin(2 * pi * 32 * t + pi / 2)
+
+X <- fft(signal)
+k <- 0:(N - 1)
+freq <- k * fs / N
+half_idx <- 1:(N / 2)
+shift_idx <- c((N / 2 + 1):N, 1:(N / 2))
+
+signal_df <- tibble(
+  time = t,
+  value = signal + rnorm(N, mean = 0, sd = 0.1)
+)
+
+fft_df <- tibble(
+  frequency = freq[shift_idx] - fs * (freq[shift_idx] >= fs / 2),
+  magnitude = Mod(X)[shift_idx] / N,
+  phase = Arg(X)[shift_idx]
+) %>%
+  pivot_longer(
+    cols = c(magnitude, phase),
+    names_to = "measure",
+    values_to = "value"
+  )
+```
+
+```{r}
+#| fig-height: 2
+ggplot(signal_df, aes(x = time, y = value)) +
+  geom_line(color = "#1b6ca8", linewidth = 0.7) +
+  labs(x = "Time (s)", y = "Signal", title=paste(N, "samples at", fs, "Hz")) 
+```
+
+```{r}
+#| fig-height: 2.5
+ggplot(fft_df, aes(x = frequency, y = value)) +
+  geom_line(color = "#c84c09", linewidth = 0.6) +
+  facet_wrap(~measure, ncol = 1, scales = "free_y") +
+  labs(x = "Frequency (Hz)", y = NULL)
+```
+
+:::
+::: {.column}
+```{r}
+#| fig-height: 4.8
+psd_df <- tibble(
+  frequency = freq[half_idx],
+  psd = Mod(X[half_idx])^2 / N
+)
+
+ggplot(psd_df, aes(x = frequency, y = psd)) +
+  geom_line(color = "#2a7f62", linewidth = 0.7) +
+  labs(x = "Frequency (Hz)", y = "PSD")
+```
+
+:::
+:::
+<!-- end columns -->
+
+## FFT: Windowing and Spectral Leakage
+
+When performing an FFT on a finite-length signal, the assumption is that the signal is periodic. If the signal does not complete an integer number of periods within the window, it can lead to **spectral leakage**, where energy from one frequency bin leaks into adjacent bins, distorting the frequency representation. To mitigate this issue, **windowing functions** are applied to the signal before performing the FFT. 
+
+Common windowing functions include:
+
+* Hann: $w(n) = 0.5 \left(1 - \cos\left(\frac{2\pi n}{N-1}\right)\right)$
+* Hamming: $w(n) = 0.54 - 0.46 \cos\left(\frac{2\pi n}{N-1}\right)$
+* Blackman: $w(n) = 0.42 - 0.5 \cos\left(\frac{2\pi n}{N-1}\right) + 0.08 \cos\left(\frac{4\pi n}{N-1}\right)$
+
+## Example: Windowing and Spectral Leakage
+
+::: {.columns}
+::: {.column}
+
+```{r}
+signal_df <- mutate(signal_df, value = value * hann(N))
+X <- fft(signal_df$value)
+
+fft_df <- tibble(
+  frequency = freq[shift_idx] - fs * (freq[shift_idx] >= fs / 2),
+  magnitude = Mod(X)[shift_idx] / N,
+  phase = Arg(X)[shift_idx]
+) %>%
+  pivot_longer(
+    cols = c(magnitude, phase),
+    names_to = "measure",
+    values_to = "value"
+  )
+```
+
+```{r}
+#| fig-height: 2
+ggplot(signal_df, aes(x = time, y = value)) +
+  geom_line(color = "#1b6ca8", linewidth = 0.7) +
+  labs(x = "Time (s)", y = "Signal", title=paste(N, "samples at", fs, "Hz, Hann window")) 
+```
+
+```{r}
+#| fig-height: 2.5
+ggplot(fft_df, aes(x = frequency, y = value)) +
+  geom_line(color = "#c84c09", linewidth = 0.6) +
+  facet_wrap(~measure, ncol = 1, scales = "free_y") +
+  labs(x = "Frequency (Hz)", y = NULL)
+```
+
+:::
+::: {.column}
+
+```{r}
+#| fig-height: 4.8
+psd_df <- tibble(
+  frequency = freq[half_idx],
+  psd = Mod(X[half_idx])^2 / N
+)
+
+ggplot(psd_df, aes(x = frequency, y = psd)) +
+  geom_line(color = "#2a7f62", linewidth = 0.7) +
+  labs(x = "Frequency (Hz)", y = "PSD")
+```
+
+:::
+:::
+<!-- end columns -->
+
+# Analyzing data streams
+
+## Frequency-domain analysis of data streams
+
+In real-time applications, data streams are often analyzed using a technique called **Short-Time Fourier Transform** (STFT), which involves applying the FFT to short, overlapping segments of the data stream. This allows for tracking how the frequency content of the signal evolves over time. The STFT is defined as:
+$$STFT\{x(t)\}(m, \omega) = \sum_{n=-\infty}^{\infty} x(n) w(n - m) e^{-j \omega n}$$
+where:
+
+- $x(n)$ is the input signal
+- $w(n - m)$ is a window function centered at time index $m$
+- $\omega$ is the angular frequency
+
+
+## Example: STFT of a data stream
+
+::: {.callout-note}
+The STFT provides a **time-frequency representation of the signal**, allowing for the analysis of non-stationary signals whose frequency content changes over time. This is particularly useful in applications such as speech processing, music analysis, and machine condition monitoring, where the characteristics of the signal can vary significantly over time.
+:::
+
+::: {.columns}
+::: {.column}
+```{r}
+#| echo: false
+fs <- 4000
+T <- 5
+```
+
+```{r}
+#| fig-height: 3.5
+signal_df <- tibble(
+  time = seq(0, T - 1/fs, by = 1/fs),
+  y = chirp(time, 200, T, fs/2, "logarithmic") + sin(2 * pi * 50 * time),
+  value = (y + rnorm(length(y), mean = 0, sd = 0.1)) * seq(0.5, 10, length.out = length(y))
+)
+ft <- stft(signal_df$value, fs = fs)
+
+ggplot(signal_df, aes(x = time, y = value)) +
+  geom_line(color = "#1b6ca8", linewidth = 0.5) +
+  labs(x = "Time (s)", y = "Signal", title="Chirp signal + linear/sine modulation") +
+  xlim(0, 0.5) + ylim(-5,5)
+```
+
+
+
+:::
+::: {.column}
+
+```{r}
+#| fig-height: 3.5
+expand.grid(freq=ft$f, time=ft$t) %>%
+  mutate(magnitude = as.vector(ft$s)) %>%
+  ggplot(aes(x = time, y = freq, fill = magnitude)) +
+  geom_tile() +
+  labs(x = "Time (s)", y = "Frequency (Hz)", title="STFT of the chirp signal") +
+  scale_fill_viridis_c()
+```
+
+:::
+:::
+<!-- end columns -->
+
+
+## Monitoring a signal in real-time
+
+* FFT and STFT work in **batch mode**, meaning they require a block of data to perform the analysis. They are a powerful tool for **screening the frequency content** of signals, but they are not immediately designed for real-time monitoring of data streams
+* They can be applied to **overlapping windows** of the data stream to provide a continuous analysis, but there is a trade-off between time resolution and frequency resolution. The choice of window size and overlap will depend on the characteristics of the signal being analyzed and the computational resources available
+* For real-time monitoring, techniques such as **Goertzel algorithm** or **recursive DFT** can be used, which allow for continuous analysis of the signal as new data arrives without needing to wait for a full block of data.
+
+## Recursive DFT
+
+::: {.columns}
+::: {.column}
+The **Recursive DFT** is an efficient algorithm for computing the DFT of a signal in real-time. It allows for the continuous analysis of a signal as new data arrives without needing to wait for a full block of data. The recursive DFT is defined as:
+$$X_k(n) = X_k(n-1) + x(n) - x(n-N)$$
+where:
+
+- $X_k(n)$ is the DFT coefficient at time $n$ for frequency bin $k$
+- $x(n)$ is the input signal at time $n$
+- $N$ is the length of the DFT
+
+:::
+::: {.column .noicons}
+
+:::{.callout-tip}
+### Fast implementation of the Recursive DFT: SlidingDFT
+This can be used in C, C++ and Python:
+  <a href="https://github.com/pbosetti/SlidingDFT" target="_blank" rel="noopener noreferrer">
+    <img
+      src="https://opengraph.githubassets.com/slidingdft-preview/pbosetti/SlidingDFT"
+      alt="SlidingDFT GitHub repository preview"
+      style="width: 100%; border: 1px solid #ddd; border-radius: 6px; display: block;">
+  </a>
+:::
+
+
+:::
+:::
+<!-- end columns -->
+
+
+## Goertzel algorithm
+
+::: {.columns}
+::: {.column .smaller}
+The **Goertzel algorithm** is a computationally efficient method for calculating specific DFT coefficients, particularly useful for applications like tone detection in telephony. It is defined as:
+$$s(n) = x(n) + 2 \cos\left(\frac{2\pi k}{N}\right) s(n-1) - s(n-2)$$
+
+- $x(n)$ is the input signal at time $n$
+- $s(n)$ is the state variable at time $n$
+- $k$ is the index of the frequency bin being analyzed
+- $N$ is the length of the DFT
+
+:::
+::: {.column .noicons}
+:::{.callout-tip}
+### Goertzel library
+This can be used in C, C++, Python, and R:
+  <a href="https://github.com/pbosetti/goertzel" target="_blank" rel="noopener noreferrer">
+    <img
+      src="https://opengraph.githubassets.com/goertzel-preview/pbosetti/goertzel"
+      alt="Goertzel GitHub repository preview"
+      style="width: 100%; border: 1px solid #ddd; border-radius: 6px; display: block;">
+  </a>
+:::
+
+:::
+:::
+<!-- end columns -->
+
+::: {.callout-tip}
+The Goertzel algorithm is particularly efficient for calculating a **small number of DFT coefficients**, as it avoids the need to compute the entire DFT. It is commonly used in applications such as DTMF tone detection, where only specific frequencies need to be analyzed.
+:::
+
+
+## Goertzel algorithm: example
+
+::: {.columns}
+::: {.column}
+
+```{r}
+fs <- 8000
+N <- 400
+dtmf_low <- c(697, 770, 852, 941)
+dtmf_high <- c(1209, 1336, 1477, 1633)
+frequencies <- c(dtmf_low, dtmf_high)
+
+set.seed(6)
+df <- tibble(
+  time = (0:(N - 1)) / fs,
+  signal = 0.9 * sin(2 * pi * 770 * time) +
+    0.9 * sin(2 * pi * 1477 * time) +
+    rnorm(N, mean = 0, sd = 0.30)
+)
+X <- fft(df$signal)
+k <- 0:(N - 1)
+freq <- k * fs / N
+half_idx <- 1:(N / 2)
+shift_idx <- c((N / 2 + 1):N, 1:(N / 2))
+
+fft_df <- tibble(
+  frequency = freq[shift_idx] - fs * (freq[shift_idx] >= fs / 2),
+  magnitude = Mod(X)[shift_idx] / N,
+  phase = Arg(X)[shift_idx]
+) %>%
+  pivot_longer(
+    cols = c(magnitude, phase),
+    names_to = "measure",
+    values_to = "value"
+  )
+
+```
+
+```{r}
+#| fig-height: 2
+df %>%  ggplot(aes(x = time, y = signal)) +
+  geom_line(color = "#1b6ca8", linewidth = 0.5) +
+  labs(x = "Time (s)", y = "Signal", title="DTMF signal with noise") +
+  xlim(0, 0.05) + ylim(-2,2)
+```
+
+```{r}
+#| fig-height: 2.5
+ggplot(fft_df, aes(x = frequency, y = value)) +
+  geom_line(color = "#c84c09", linewidth = 0.6) +
+  facet_wrap(~measure, ncol = 1, scales = "free_y") +
+  geom_vline(xintercept = frequencies, linetype = "dashed", color = "#2a7f62") +
+  xlim(0, 4000) +
+  labs(x = "Frequency (Hz)", y = NULL)
+```
+
+:::
+::: {.column}
+
+```{r}
+#| echo: true
+bins <- frequencies * N / fs
+response <- goertzel::goertzel(df$signal, bins)
+power <- Mod(response) ^ 2
+
+low_index <- which.max(power[seq_along(dtmf_low)])
+high_index <- which.max(power[length(dtmf_low) + 
+  seq_along(dtmf_high)])
+
+key <- matrix(
+  c("1", "2", "3", "A",
+    "4", "5", "6", "B",
+    "7", "8", "9", "C",
+    "*", "0", "#", "D"),
+  nrow = length(dtmf_low),
+  byrow = TRUE
+)
+key[low_index, high_index]
+```
+
+:::
+:::
+<!-- end columns -->

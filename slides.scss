@@ -8,6 +8,9 @@ $code-block-font-size: 0.75em;
 $body-bg: white;
 $body-color: #777777;
 
+.noicons a.external:after{
+  display: none;
+}
 
 /*-- scss:rules --*/
 
