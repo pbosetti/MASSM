@@ -32,8 +32,74 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-578b444f9d0ce77fab2880f9b5ba25de.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-f1f3a8faa739bf53894b6f2a7ec6013b.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -145,11 +211,331 @@ Paolo Bosetti
 </div>
 
 </section>
-<section class="slide level2">
-
-
+<section>
+<section id="frequency-domain-basics" class="title-slide slide level1 center">
+<h1>Frequency-domain Basics</h1>
 
 </section>
+<section id="fast-fourier-transform-fft" class="slide level2">
+<h2>Fast Fourier Transform (FFT)</h2>
+<p>The FFT is an efficient algorithm to compute the <strong>Discrete Fourier Transform</strong> (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as: <span class="math display">\[X_k = \sum_{n=0}^{N-1} x_n e^{-2\pi i kn/N}\]</span> where:</p>
+<ul>
+<li><span class="math inline">\(X_k \in \mathbb{C}\)</span> is the DFT of the sequence at frequency bin <span class="math inline">\(k\)</span></li>
+<li><span class="math inline">\(x_n \in \mathbb{C}\)</span> is the input sequence at time index <span class="math inline">\(n\)</span></li>
+<li><span class="math inline">\(N\)</span> is the total number of samples in the input sequence</li>
+</ul>
+<p>The FFT reduces the computational complexity from <span class="math inline">\(O(N^2)\)</span> to <span class="math inline">\(O(N \log N)\)</span>, making it feasible to analyze large datasets efficiently</p>
+</section>
+<section id="power-spectral-density-psd" class="slide level2">
+<h2>Power Spectral Density (PSD)</h2>
+<p>The <strong>Power Spectral Density</strong> (PSD) is a measure of the power distribution of a signal across different frequency components. It is defined as the squared magnitude of the Fourier Transform of the signal, normalized by the length of the signal: <span class="math display">\[PSD(f) = \frac{1}{N} |X_k|^2\]</span> where:</p>
+<ul>
+<li><span class="math inline">\(PSD(f)\)</span> is the power spectral density at frequency <span class="math inline">\(f\)</span></li>
+<li><span class="math inline">\(N\)</span> is the total number of samples in the signal</li>
+<li><span class="math inline">\(X_k\)</span> is the Fourier Transform of the signal at frequency bin <span class="math inline">\(k\)</span></li>
+</ul>
+</section>
+<section id="fft-to-remember" class="slide level2">
+<h2>FFT: to remember</h2>
+<p>Input vector is normally a sequence of real numbers, but it can also be complex. The output is a <strong>sequence of complex numbers</strong>, where the magnitude represents the amplitude of the corresponding frequency component, and the phase represents its phase shift</p>
+<p>If the input sequence is <strong>real-valued</strong>, the output will be symmetric around the Nyquist frequency, which is half the sampling rate. The FFT can be used to analyze the frequency content of signals, identify dominant frequencies, and perform various signal processing tasks such as filtering and spectral analysis</p>
+<p>If the input sequence is <strong>complex-valued</strong>, the output will not be symmetric, and it can represent a wider range of frequency components, including negative frequencies. The FFT is widely used in various applications, including audio processing, image analysis, and communications</p>
+<p><strong>Frequency resolution</strong> of the FFT is determined by the sampling rate and the length of the input sequence. The frequency bins are spaced at intervals of <span class="math inline">\(\frac{f_s}{N}\)</span>, where <span class="math inline">\(f_s\)</span> is the sampling rate and <span class="math inline">\(N\)</span> is the number of samples in the input sequence</p>
+</section>
+<section id="fft-to-remember-effect-of-n-12" class="slide level2">
+<h2>FFT: to remember (Effect of <span class="math inline">\(N\)</span>, 1/2)</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-3-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-4-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-5-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+</section>
+<section id="fft-to-remember-effect-of-n-22" class="slide level2">
+<h2>FFT: to remember (Effect of <span class="math inline">\(N\)</span>, 2/2)</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-7-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-8-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-9-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+</section>
+<section id="fft-windowing-and-spectral-leakage" class="slide level2">
+<h2>FFT: Windowing and Spectral Leakage</h2>
+<p>When performing an FFT on a finite-length signal, the assumption is that the signal is periodic. If the signal does not complete an integer number of periods within the window, it can lead to <strong>spectral leakage</strong>, where energy from one frequency bin leaks into adjacent bins, distorting the frequency representation. To mitigate this issue, <strong>windowing functions</strong> are applied to the signal before performing the FFT.</p>
+<p>Common windowing functions include:</p>
+<ul>
+<li>Hann: <span class="math inline">\(w(n) = 0.5 \left(1 - \cos\left(\frac{2\pi n}{N-1}\right)\right)\)</span></li>
+<li>Hamming: <span class="math inline">\(w(n) = 0.54 - 0.46 \cos\left(\frac{2\pi n}{N-1}\right)\)</span></li>
+<li>Blackman: <span class="math inline">\(w(n) = 0.42 - 0.5 \cos\left(\frac{2\pi n}{N-1}\right) + 0.08 \cos\left(\frac{4\pi n}{N-1}\right)\)</span></li>
+</ul>
+</section>
+<section id="example-windowing-and-spectral-leakage" class="slide level2">
+<h2>Example: Windowing and Spectral Leakage</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-11-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-12-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-13-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+</section></section>
+<section>
+<section id="analyzing-data-streams" class="title-slide slide level1 center">
+<h1>Analyzing data streams</h1>
+
+</section>
+<section id="frequency-domain-analysis-of-data-streams" class="slide level2">
+<h2>Frequency-domain analysis of data streams</h2>
+<p>In real-time applications, data streams are often analyzed using a technique called <strong>Short-Time Fourier Transform</strong> (STFT), which involves applying the FFT to short, overlapping segments of the data stream. This allows for tracking how the frequency content of the signal evolves over time. The STFT is defined as: <span class="math display">\[STFT\{x(t)\}(m, \omega) = \sum_{n=-\infty}^{\infty} x(n) w(n - m) e^{-j \omega n}\]</span> where:</p>
+<ul>
+<li><span class="math inline">\(x(n)\)</span> is the input signal</li>
+<li><span class="math inline">\(w(n - m)\)</span> is a window function centered at time index <span class="math inline">\(m\)</span></li>
+<li><span class="math inline">\(\omega\)</span> is the angular frequency</li>
+</ul>
+</section>
+<section id="example-stft-of-a-data-stream" class="slide level2">
+<h2>Example: STFT of a data stream</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>The STFT provides a <strong>time-frequency representation of the signal</strong>, allowing for the analysis of non-stationary signals whose frequency content changes over time. This is particularly useful in applications such as speech processing, music analysis, and machine condition monitoring, where the characteristics of the signal can vary significantly over time.</p>
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-15-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-16-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+</section>
+<section id="monitoring-a-signal-in-real-time" class="slide level2">
+<h2>Monitoring a signal in real-time</h2>
+<ul>
+<li>FFT and STFT work in <strong>batch mode</strong>, meaning they require a block of data to perform the analysis. They are a powerful tool for <strong>screening the frequency content</strong> of signals, but they are not immediately designed for real-time monitoring of data streams</li>
+<li>They can be applied to <strong>overlapping windows</strong> of the data stream to provide a continuous analysis, but there is a trade-off between time resolution and frequency resolution. The choice of window size and overlap will depend on the characteristics of the signal being analyzed and the computational resources available</li>
+<li>For real-time monitoring, techniques such as <strong>Goertzel algorithm</strong> or <strong>recursive DFT</strong> can be used, which allow for continuous analysis of the signal as new data arrives without needing to wait for a full block of data.</li>
+</ul>
+</section>
+<section id="recursive-dft" class="slide level2">
+<h2>Recursive DFT</h2>
+<div class="columns">
+<div class="column">
+<p>The <strong>Recursive DFT</strong> is an efficient algorithm for computing the DFT of a signal in real-time. It allows for the continuous analysis of a signal as new data arrives without needing to wait for a full block of data. The recursive DFT is defined as: <span class="math display">\[X_k(n) = X_k(n-1) + x(n) - x(n-N)\]</span> where:</p>
+<ul>
+<li><span class="math inline">\(X_k(n)\)</span> is the DFT coefficient at time <span class="math inline">\(n\)</span> for frequency bin <span class="math inline">\(k\)</span></li>
+<li><span class="math inline">\(x(n)\)</span> is the input signal at time <span class="math inline">\(n\)</span></li>
+<li><span class="math inline">\(N\)</span> is the length of the DFT</li>
+</ul>
+</div><div class="column noicons">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Fast implementation of the Recursive DFT: SlidingDFT</strong></p>
+</div>
+<div class="callout-content">
+<p>This can be used in C, C++ and Python: <a href="https://github.com/pbosetti/SlidingDFT" target="_blank" rel="noopener noreferrer"> <img src="https://opengraph.githubassets.com/slidingdft-preview/pbosetti/SlidingDFT" alt="SlidingDFT GitHub repository preview" style="width: 100%; border: 1px solid #ddd; border-radius: 6px; display: block;"> </a></p>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+</section>
+<section id="goertzel-algorithm" class="slide level2">
+<h2>Goertzel algorithm</h2>
+<div class="columns">
+<div class="column smaller">
+<p>The <strong>Goertzel algorithm</strong> is a computationally efficient method for calculating specific DFT coefficients, particularly useful for applications like tone detection in telephony. It is defined as: <span class="math display">\[s(n) = x(n) + 2 \cos\left(\frac{2\pi k}{N}\right) s(n-1) - s(n-2)\]</span></p>
+<ul>
+<li><span class="math inline">\(x(n)\)</span> is the input signal at time <span class="math inline">\(n\)</span></li>
+<li><span class="math inline">\(s(n)\)</span> is the state variable at time <span class="math inline">\(n\)</span></li>
+<li><span class="math inline">\(k\)</span> is the index of the frequency bin being analyzed</li>
+<li><span class="math inline">\(N\)</span> is the length of the DFT</li>
+</ul>
+</div><div class="column noicons">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Goertzel library</strong></p>
+</div>
+<div class="callout-content">
+<p>This can be used in C, C++, Python, and R: <a href="https://github.com/pbosetti/goertzel" target="_blank" rel="noopener noreferrer"> <img src="https://opengraph.githubassets.com/goertzel-preview/pbosetti/goertzel" alt="Goertzel GitHub repository preview" style="width: 100%; border: 1px solid #ddd; border-radius: 6px; display: block;"> </a></p>
+</div>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>The Goertzel algorithm is particularly efficient for calculating a <strong>small number of DFT coefficients</strong>, as it avoids the need to compute the entire DFT. It is commonly used in applications such as DTMF tone detection, where only specific frequencies need to be analyzed.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="goertzel-algorithm-example" class="slide level2">
+<h2>Goertzel algorithm: example</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-18-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="4_frequency_domain_files/figure-revealjs/unnamed-chunk-19-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>bins <span class="ot">&lt;-</span> frequencies <span class="sc">*</span> N <span class="sc">/</span> fs</span>
+<span id="cb1-2"><a></a>response <span class="ot">&lt;-</span> goertzel<span class="sc">::</span><span class="fu">goertzel</span>(df<span class="sc">$</span>signal, bins)</span>
+<span id="cb1-3"><a></a>power <span class="ot">&lt;-</span> <span class="fu">Mod</span>(response) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb1-4"><a></a></span>
+<span id="cb1-5"><a></a>low_index <span class="ot">&lt;-</span> <span class="fu">which.max</span>(power[<span class="fu">seq_along</span>(dtmf_low)])</span>
+<span id="cb1-6"><a></a>high_index <span class="ot">&lt;-</span> <span class="fu">which.max</span>(power[<span class="fu">length</span>(dtmf_low) <span class="sc">+</span> </span>
+<span id="cb1-7"><a></a>  <span class="fu">seq_along</span>(dtmf_high)])</span>
+<span id="cb1-8"><a></a></span>
+<span id="cb1-9"><a></a>key <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb1-10"><a></a>  <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"A"</span>,</span>
+<span id="cb1-11"><a></a>    <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>, <span class="st">"B"</span>,</span>
+<span id="cb1-12"><a></a>    <span class="st">"7"</span>, <span class="st">"8"</span>, <span class="st">"9"</span>, <span class="st">"C"</span>,</span>
+<span id="cb1-13"><a></a>    <span class="st">"*"</span>, <span class="st">"0"</span>, <span class="st">"#"</span>, <span class="st">"D"</span>),</span>
+<span id="cb1-14"><a></a>  <span class="at">nrow =</span> <span class="fu">length</span>(dtmf_low),</span>
+<span id="cb1-15"><a></a>  <span class="at">byrow =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-16"><a></a>)</span>
+<span id="cb1-17"><a></a>key[low_index, high_index]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "6"</code></pre>
+</div>
+</div>
+</div></div>
+<!-- end columns -->
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="../images/logo.png" class="slide-logo"></p>
@@ -368,6 +754,44 @@ Paolo Bosetti
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
