@@ -501,7 +501,7 @@
     "href": "slides/4_frequency_domain.html#fast-fourier-transform-fft",
     "title": "Frequency-domain analysis of time series",
     "section": "Fast Fourier Transform (FFT)",
-    "text": "Fast Fourier Transform (FFT)\nThe FFT is an efficient algorithm to compute the Discrete Fourier Transform (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as: \\[X_k = \\sum_{n=0}^{N-1} x_n e^{-2\\pi i kn/N}\\] where:\n\n\\(X_k \\in \\mathbb{C}\\) is the DFT of the sequence at frequency bin \\(k\\)\n\\(x_n \\in \\mathbb{C}\\) is the input sequence at time index \\(n\\)\n\\(N\\) is the total number of samples in the input sequence\n\nThe FFT reduces the computational complexity from \\(O(N^2)\\) to \\(O(N \\log N)\\), making it feasible to analyze large datasets efficiently"
+    "text": "Fast Fourier Transform (FFT)\nThe FFT is an efficient algorithm to compute the Discrete Fourier Transform (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as: \\[X_k = \\sum_{n=0}^{N-1} x_n e^{-2\\pi i kn/N}\\] where:\n\n\\(X_k \\in \\mathbb{C}\\) is the DFT of the sequence at frequency bin \\(k = 0, 1, \\dots, N-1\\)\n\\(x_n \\in \\mathbb{C}\\) is the input sequence at time index \\(n\\)\n\\(N\\) is the total number of samples in the input sequence\n\nThe FFT reduces the computational complexity from \\(O(N^2)\\) to \\(O(N \\log N)\\), making it feasible to analyze large datasets efficiently"
   },
   {
     "objectID": "slides/4_frequency_domain.html#power-spectral-density-psd",
@@ -586,6 +586,20 @@
     "title": "Frequency-domain analysis of time series",
     "section": "Goertzel algorithm: example",
     "text": "Goertzel algorithm: example\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbins &lt;- frequencies * N / fs\nresponse &lt;- goertzel::goertzel(df$signal, bins)\npower &lt;- Mod(response) ^ 2\n\nlow_index &lt;- which.max(power[seq_along(dtmf_low)])\nhigh_index &lt;- which.max(power[length(dtmf_low) + \n  seq_along(dtmf_high)])\n\nkey &lt;- matrix(\n  c(\"1\", \"2\", \"3\", \"A\",\n    \"4\", \"5\", \"6\", \"B\",\n    \"7\", \"8\", \"9\", \"C\",\n    \"*\", \"0\", \"#\", \"D\"),\n  nrow = length(dtmf_low),\n  byrow = TRUE\n)\nkey[low_index, high_index]\n\n[1] \"6\""
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#the-timescale-problem",
+    "href": "slides/4_frequency_domain.html#the-timescale-problem",
+    "title": "Frequency-domain analysis of time series",
+    "section": "The timescale problem",
+    "text": "The timescale problem\nWhen continuously monitoring a process, we have to deal with multivariate timeseries data that can be sampled at different rates. For example, in a machining process, we might have:\n\nVibration data sampled at a high rate (e.g., 10 kHz) to capture high-frequency components related to tool wear or chatter\nPower data sampled at a lower rate (e.g., 100 Hz) to track the cutting forces during machining\nController status updated at variable intervals to monitor the state of the machine\n\n\n\n\n\n\n\nTip\n\n\nAny continuous, feature-based technique for process monitoring can’t reasonably run at the maximum frequency of the data, so we need to find a way to extract meaningful features from the data at different timescales and integrate them into a unified monitoring system."
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#feature-extraction-and-integration",
+    "href": "slides/4_frequency_domain.html#feature-extraction-and-integration",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Feature extraction and integration",
+    "text": "Feature extraction and integration\nTo integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for Feature Extraction\nWe use FFT or SFFT to extract power in specific bands of interest:\n\nin chunks of data: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information\nwith sliding window approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate\nin overlapping chunks of data avoid the risk of loosing information between updates, but it can increase computational load"
   },
   {
     "objectID": "slides/3_feature_based.html#pca-data-matrix-and-centering",

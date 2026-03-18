@@ -220,7 +220,7 @@ Paolo Bosetti
 <h2>Fast Fourier Transform (FFT)</h2>
 <p>The FFT is an efficient algorithm to compute the <strong>Discrete Fourier Transform</strong> (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as: <span class="math display">\[X_k = \sum_{n=0}^{N-1} x_n e^{-2\pi i kn/N}\]</span> where:</p>
 <ul>
-<li><span class="math inline">\(X_k \in \mathbb{C}\)</span> is the DFT of the sequence at frequency bin <span class="math inline">\(k\)</span></li>
+<li><span class="math inline">\(X_k \in \mathbb{C}\)</span> is the DFT of the sequence at frequency bin <span class="math inline">\(k = 0, 1, \dots, N-1\)</span></li>
 <li><span class="math inline">\(x_n \in \mathbb{C}\)</span> is the input sequence at time index <span class="math inline">\(n\)</span></li>
 <li><span class="math inline">\(N\)</span> is the total number of samples in the input sequence</li>
 </ul>
@@ -533,9 +533,47 @@ Paolo Bosetti
 </div>
 </div></div>
 <!-- end columns -->
-
-
 </section></section>
+<section>
+<section id="exploiting-the-frequency-domain-for-monitoring" class="title-slide slide level1 center">
+<h1>Exploiting the frequency domain for monitoring</h1>
+<p>How to intergate frequency-domain analysis into a real-time monitoring system?</p>
+</section>
+<section id="the-timescale-problem" class="slide level2">
+<h2>The timescale problem</h2>
+<p>When continuously monitoring a process, we have to deal with multivariate timeseries data that can be sampled at different rates. For example, in a machining process, we might have:</p>
+<ul>
+<li><strong>Vibration data</strong> sampled at a high rate (e.g., 10 kHz) to capture high-frequency components related to tool wear or chatter</li>
+<li><strong>Power data</strong> sampled at a lower rate (e.g., 100 Hz) to track the cutting forces during machining</li>
+<li><strong>Controller status</strong> updated at variable intervals to monitor the state of the machine</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Any continuous, feature-based technique for process monitoring can’t reasonably run at the maximum frequency of the data, so we need to find a way to <strong>extract meaningful features</strong> from the data at different timescales and integrate them into a unified monitoring system.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="feature-extraction-and-integration" class="slide level2">
+<h2>Feature extraction and integration</h2>
+<p>To integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for <strong>Feature Extraction</strong></p>
+<p>We use FFT or SFFT to extract power in specific bands of interest:</p>
+<ul>
+<li>in <strong>chunks of data</strong>: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information</li>
+<li>with <strong>sliding window</strong> approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate</li>
+<li>in <strong>overlapping chunks of data</strong> avoid the risk of loosing information between updates, but it can increase computational load</li>
+</ul>
+
+
+
+<img data-src="../images/windows.png" class="quarto-figure quarto-figure-center r-stretch"></section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="../images/logo.png" class="slide-logo"></p>
