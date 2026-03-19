@@ -20,7 +20,7 @@ The FFT is an efficient algorithm to compute the **Discrete Fourier Transform** 
 $$X_k = \sum_{n=0}^{N-1} x_n e^{-2\pi i kn/N}$$
 where:
 
-- $X_k \in \mathbb{C}$ is the DFT of the sequence at frequency bin $k$
+- $X_k \in \mathbb{C}$ is the DFT of the sequence at frequency bin $k = 0, 1, \dots, N-1$
 - $x_n \in \mathbb{C}$ is the input sequence at time index $n$
 - $N$ is the total number of samples in the input sequence
 
@@ -470,3 +470,31 @@ key[low_index, high_index]
 :::
 :::
 <!-- end columns -->
+
+# Exploiting the frequency domain for monitoring
+
+How to intergate frequency-domain analysis into a real-time monitoring system?
+
+## The timescale problem
+
+When continuously monitoring a process, we have to deal with multivariate timeseries data that can be sampled at different rates. For example, in a machining process, we might have:
+
+- **Vibration data** sampled at a high rate (e.g., 10 kHz) to capture high-frequency components related to tool wear or chatter
+- **Power data** sampled at a lower rate (e.g., 100 Hz) to track the cutting forces during machining
+- **Controller status** updated at variable intervals to monitor the state of the machine
+
+::: {.callout-tip}
+Any continuous, feature-based technique for process monitoring can't reasonably run at the maximum frequency of the data, so we need to find a way to **extract meaningful features** from the data at different timescales and integrate them into a unified monitoring system.
+:::
+
+## Feature extraction and integration
+
+To integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for **Feature Extraction**
+
+We use FFT or SFFT to extract power in specific bands of interest:
+
+- in **chunks of data**: if  computation time exceeds sampling time, there's a risk of falling behind and loosing information
+- with **sliding window** approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate
+- in **overlapping chunks of data** avoid the risk of loosing information between updates, but it can increase computational load
+
+![](../images/windows.png){ fig-align="center" }

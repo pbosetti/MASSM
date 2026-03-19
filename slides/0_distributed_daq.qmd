@@ -226,3 +226,30 @@ MongoDB *pipelines* can be set as read-only virtual tables, or **views**, that c
 **Machine learning models** can be trained on the data stored in the data lake or data warehouse to later perform tasks such as anomaly detection and predictive maintenance, in real-time
 
 Machine learning models can be **supervised** or **unsupervised**, can be implemented with conventional algorithms (e.g., SVM, PCA) or deep learning architectures (e.g., CNNs, RNNs), and can be deployed on the edge or in the cloud, depending on the requirements of the application
+
+# Distributed data acquisition and processing in practice
+
+## MADS: Multi-Agent Distributed System
+
+::: {.columns}
+::: {.column}
+The **Multi-Agent Distributed System** (MADS) is a lightweight and modular software framework for distributed data acquisition and processing
+
+General purpose, but well-suited for smart manufacturing environments
+:::
+::: {.column .noicons}
+  <a href="https://github.com/pbosetti/MADS" target="_blank" rel="noopener noreferrer">
+    <img
+      src="https://opengraph.githubassets.com/MADS-preview/pbosetti/MADS"
+      alt="MADS GitHub repository preview"
+      style="width: 100%; border: 1px solid #ddd; border-radius: 6px; display: block;">
+  </a>
+:::
+:::
+<!-- end columns -->
+
+
+::: {.callout-important}
+### Where to start
+Go to [mads-net-github.io](https://mads-net-github.io/) for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing
+:::
