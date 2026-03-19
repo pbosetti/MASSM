@@ -224,6 +224,13 @@
     "text": "Machine learning for anomaly detection and predictive maintenance\nMachine learning models can be trained on the data stored in the data lake or data warehouse to later perform tasks such as anomaly detection and predictive maintenance, in real-time\nMachine learning models can be supervised or unsupervised, can be implemented with conventional algorithms (e.g., SVM, PCA) or deep learning architectures (e.g., CNNs, RNNs), and can be deployed on the edge or in the cloud, depending on the requirements of the application"
   },
   {
+    "objectID": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
+    "href": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
+    "title": "Distributed data acquisition and processing",
+    "section": "MADS: Multi-Agent Distributed System",
+    "text": "MADS: Multi-Agent Distributed System\n\n\nThe Multi-Agent Distributed System (MADS) is a lightweight and modular software framework for distributed data acquisition and processing\nGeneral purpose, but well-suited for smart manufacturing environments\n\n  \n\n\n\n\n\n\n\n\nWhere to start\n\n\nGo to mads-net-github.io for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing"
+  },
+  {
     "objectID": "slides/2_time_domain.html#time-series-statistics",
     "href": "slides/2_time_domain.html#time-series-statistics",
     "title": "Time-domain analysis of time series",
