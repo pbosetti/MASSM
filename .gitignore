@@ -12,3 +12,5 @@ db
 /example_data*
 /*.py
 /Milling*
+.vscode
+/*.csv

@@ -1,6 +1,6 @@
 ---
 title: "Distributed data acquisition and processing"
-subtitle: "Multi-agent system for smart machining, part II"
+subtitle: "Multi-agent system for smart machining, part I-a"
 author: "Paolo Bosetti"
 format: revealjs
 ---

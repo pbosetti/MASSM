@@ -14,12 +14,11 @@ format: revealjs
 # Course structure (30 hours)
 
 ## Part 1 --- Fundamentals (P. Bosetti, 10h)
-1. Distributed data acquisition **architectures** and edge computing [{{< bi file-slides >}}](/slides/0_distributed_daq.qmd)
-1. **Time series** of stochastic process variables [{{< bi file-slides >}}](/slides/1_time_series.qmd)
-1. Time-domain: **ARIMA** [{{< bi file-slides >}}](/slides/2_time_domain.qmd)
-1. Feature-based: **PCA**, **SVM** [{{< bi file-slides >}}](/slides/3_feature_based.qmd)
-1. Frequency-domain: **Fast Fourier Transform** [{{< bi file-slides >}}](/slides/4_frequency_domain.qmd)
-
+a. Distributed data acquisition **architectures** and edge computing [{{< bi file-slides >}}](/slides/0_distributed_daq.qmd)
+b. **Time series** of stochastic process variables [{{< bi file-slides >}}](/slides/1_time_series.qmd)
+c. Time-domain: **ARIMA** [{{< bi file-slides >}}](/slides/2_time_domain.qmd)
+d. Feature-based: **PCA**, **SVM** [{{< bi file-slides >}}](/slides/3_feature_based.qmd)
+e. Frequency-domain: **Fast Fourier Transform** [{{< bi file-slides >}}](/slides/4_frequency_domain.qmd)
 
 ## Part 2 --- Algorithms (D. Fontanelli, 20h)
 

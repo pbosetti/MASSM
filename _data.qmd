@@ -1,0 +1,122 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+```{r setup}
+library(tidyverse)
+library(patchwork)
+options(digits = 15)
+options(digits.secs = 3)
+posixct_to_time <- function(ts, micro) {
+  x <- (as.numeric(ts) - as.numeric(ts[1]) + micro / 1e6)
+  return(round(x, 4))
+}
+```
+
+
+
+```{r}
+force <- "Milling dataset from QIT/Force and torque data"
+vibration <- "Milling dataset from QIT/Vibration and sound data"
+date <- "01-26-01"
+
+force_df <- read_delim(paste0(force, "/", date, ".txt"))
+vibration_df <- read_csv(
+  paste0(vibration, "/", date, ".csv"),
+  col_types = cols(
+    col_datetime(format = "%Y-%m-%d %H:%M:%OS"),
+    col_double(),
+    col_double(),
+    col_double(),
+    col_double()
+  )
+) %>% 
+  rename_with(~ c("timestamp", "Ax", "Ay", "Az", "microphone")) %>%
+  group_by(timestamp) %>% 
+  mutate(micro = seq(0, n() - 1) * 100, .after=timestamp) %>% 
+  ungroup() %>% 
+  mutate(Time = posixct_to_time(timestamp, micro), .after = micro)
+
+all <- vibration_df %>% 
+  left_join(force_df, by = "Time") %>% 
+  select(Time, timestamp, Fx, Fy, Fz, Mz, Ax, Ay, Az, microphone)
+```
+
+
+```{r}
+p1 <- all %>% 
+  slice_sample(n = 1000) %>%
+  # head(10000) %>%
+  ggplot(aes(x=Time)) +
+  geom_line(aes(y = Fx), color = "red") +
+  geom_line(aes(y = Fy), color = "blue") +
+  geom_line(aes(y = Fz), color = "green") +
+  geom_line(aes(y = Mz), color = "purple") +
+  labs(title = "Force and Torque over Time", x = "Time (s)", y = "Force/Torque")
+
+p2 <- all %>%
+  slice_sample(n = 1000) %>%
+  # head(10000) %>%
+  ggplot(aes(x=Time)) +
+  geom_line(aes(y = Ax), color = "orange") +
+  geom_line(aes(y = Ay), color = "cyan") +
+  geom_line(aes(y = Az), color = "magenta") +
+  geom_line(aes(y = microphone), color = "brown") +
+  labs(title = "Vibration and Sound over Time", x = "Time (s)", y = "Acceleration/Microphone")
+
+p1 / p2
+```
+
+
+
+```{r}
+write_csv(all, paste0(date, ".csv"))
+```
+
+
+```{r}
+rdcd <- all %>% 
+  mutate(date = timestamp, timestamp = as.double(timestamp)) %>% 
+  group_by(timestamp) %>% 
+  mutate(idx = 0:(n()-1), .after=timestamp) %>% 
+  ungroup()
+# rdcd <- all[(1:1000) + 1e6,] %>% 
+#   mutate(date = timestamp, timestamp = as.double(timestamp))
+```
+
+
+```{r}
+todb <- rdcd %>% 
+  select(-c(Ax, Ay, Az, microphone)) %>%
+  mutate(time_group = ((1:n()) - 1) %/% 50) %>% 
+  group_by(time_group) %>% 
+  # mutate(rank = 1:n()) %>%
+  summarise(
+    Time = max(Time), 
+    count = n(), 
+    across(c(Fx, Fy, Fz, Mz), ~ sd(., na.rm = TRUE), .names = "sd_{.col}"),
+    across(c(Fx, Fy, Fz, Mz), ~ mean(., na.rm = TRUE))) %>% 
+  ungroup() %>%
+  full_join(select(rdcd, -c(Fx, Fy, Fz, Mz)), by = "Time") %>%
+  arrange(Time) %>%
+  select(Time, timestamp, idx, date, sd_Fx:sd_Mz, Fx:Mz, Ax:microphone) 
+  
+todb %>%
+  na.omit() %>%
+  # filter(Fx != 0) %>%
+  print(n=100)
+
+write_csv(todb, "todb.csv")
+```
+
+
+```{r}
+todb %>% 
+  # na.omit() %>%
+  ggplot(aes(x=Time)) +
+  # geom_line(aes(y = Ax), color = "red") +
+  # geom_line(aes(y = Ay), color = "blue") +
+  geom_line(aes(y = microphone), color = "green")
+```

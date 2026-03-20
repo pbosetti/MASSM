@@ -1,6 +1,6 @@
 ---
 title: "Frequency-domain analysis of time series"
-subtitle: "Multi-agent system for smart machining, part II"
+subtitle: "Multi-agent system for smart machining, part I-e"
 author: "Paolo Bosetti"
 format: revealjs
 ---

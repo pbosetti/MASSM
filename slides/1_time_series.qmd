@@ -1,6 +1,6 @@
 ---
 title: "Time series of stochastic process variables"
-subtitle: "Multi-agent system for smart machining, part II"
+subtitle: "Multi-agent system for smart machining, part I-b"
 author: "Paolo Bosetti"
 format: revealjs
 ---
