@@ -389,7 +389,7 @@
     "href": "slides/2_time_domain.html#arma-models",
     "title": "Time-domain analysis of time series",
     "section": "ARMA models",
-    "text": "ARMA models\nThe obvious extension comes from combining the \\(\\mathrm{AR}(p)\\) and \\(\\mathrm{MA}(q)\\) models\nAn ARMA model of order \\(p,q\\), abbreviated as \\(\\mathrm{ARMA}(p,q)\\), is defined as:\n\\[\nx_t=\\phi_1 x_{t-1} + \\phi_2 x_{t-2}+\\dots+\\phi_p x_{t-p} + w_t + \\theta_1 w_{t-1} + \\theta_2 w_{t-2} + \\dots + \\theta_q w_{t-q}\n\\] con \\(\\phi_p\\) e \\(\\theta_q\\) non nulli, ovvero, più brevemente: \\[\n\\Phi_p(B)x_t=\\Theta_q(B)w_t\n\\]"
+    "text": "ARMA models\nThe obvious extension comes from combining the \\(\\mathrm{AR}(p)\\) and \\(\\mathrm{MA}(q)\\) models\nAn ARMA model of order \\(p,q\\), abbreviated as \\(\\mathrm{ARMA}(p,q)\\), is defined as:\n\\[\nx_t=\\phi_1 x_{t-1} + \\phi_2 x_{t-2}+\\dots+\\phi_p x_{t-p} + w_t + \\theta_1 w_{t-1} + \\theta_2 w_{t-2} + \\dots + \\theta_q w_{t-q}\n\\] where \\(\\phi_p\\) and \\(\\theta_q\\) are non-zero, or more briefly: \\[\n\\Phi_p(B)x_t=\\Theta_q(B)w_t\n\\]"
   },
   {
     "objectID": "slides/2_time_domain.html#ma-models-and-pacf-1",
