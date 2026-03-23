@@ -490,18 +490,18 @@
     "text": "Forecasting\n\n\nOnce the most suitable model has been selected, the one with minimum AIC, one can proceed with regression and prediction\nPrediction can be obtained with the forecast() function\nThis function also reports the 95% confidence bands\n\n\nForecastDetail"
   },
   {
-    "objectID": "index.html#part-1-fundamentals-p.-bosetti-10h",
-    "href": "index.html#part-1-fundamentals-p.-bosetti-10h",
+    "objectID": "index.html#chapter-1-fundamentals-p.-bosetti-10h",
+    "href": "index.html#chapter-1-fundamentals-p.-bosetti-10h",
     "title": "Multi-agent system for smart machining, part II",
-    "section": "Part 1 — Fundamentals (P. Bosetti, 10h)",
-    "text": "Part 1 — Fundamentals (P. Bosetti, 10h)\n\nDistributed data acquisition architectures and edge computing \nTime series of stochastic process variables \nTime-domain: ARIMA \nFeature-based: PCA, SVM \nFrequency-domain: Fast Fourier Transform"
+    "section": "Chapter 1 — Fundamentals (P. Bosetti, 10h)",
+    "text": "Chapter 1 — Fundamentals (P. Bosetti, 10h)\n\nDistributed data acquisition architectures and edge computing \nTime series of stochastic process variables \nTime-domain: ARIMA \nFeature-based: PCA, SVM \nFrequency-domain: Fast Fourier Transform"
   },
   {
-    "objectID": "index.html#part-2-algorithms-d.-fontanelli-20h",
-    "href": "index.html#part-2-algorithms-d.-fontanelli-20h",
+    "objectID": "index.html#chapter-2-algorithms-d.-fontanelli-20h",
+    "href": "index.html#chapter-2-algorithms-d.-fontanelli-20h",
     "title": "Multi-agent system for smart machining, part II",
-    "section": "Part 2 — Algorithms (D. Fontanelli, 20h)",
-    "text": "Part 2 — Algorithms (D. Fontanelli, 20h)\n\nFundamentals and evolution of maintenance management, including failures, faults, maintenance activities, and decision-making.\nScheduling and execution of maintenance actions, including breakdown, time-based, opportunity-based, and degradation-based policies.\nCondition monitoring, PHM, diagnostics, prognostics, P/F curve, and Remaining Useful Life estimation.\nDetection theory foundations: binary and multiple hypothesis testing, false alarms, missed detections, ROC curves, and likelihood-ratio tests.\nNeyman-Pearson, Bayesian, and GLRT approaches for detection under known or uncertain model parameters.\nClassification of process data using Bayes classifiers, logistic regression, neural networks, temporal models, HMM/CRF methods, and risk minimization.\nAnomaly and non-conformity detection in time-series process data, including control charts, PCA, autoencoders, LSTMs, threshold tuning, drift detection, deployment, and industrial case studies."
+    "section": "Chapter 2 — Algorithms (D. Fontanelli, 20h)",
+    "text": "Chapter 2 — Algorithms (D. Fontanelli, 20h)\n\nFundamentals and evolution of maintenance management, including failures, faults, maintenance activities, and decision-making.\nScheduling and execution of maintenance actions, including breakdown, time-based, opportunity-based, and degradation-based policies.\nCondition monitoring, PHM, diagnostics, prognostics, P/F curve, and Remaining Useful Life estimation.\nDetection theory foundations: binary and multiple hypothesis testing, false alarms, missed detections, ROC curves, and likelihood-ratio tests.\nNeyman-Pearson, Bayesian, and GLRT approaches for detection under known or uncertain model parameters.\nClassification of process data using Bayes classifiers, logistic regression, neural networks, temporal models, HMM/CRF methods, and risk minimization.\nAnomaly and non-conformity detection in time-series process data, including control charts, PCA, autoencoders, LSTMs, threshold tuning, drift detection, deployment, and industrial case studies."
   },
   {
     "objectID": "slides/4_frequency_domain.html#fast-fourier-transform-fft",
