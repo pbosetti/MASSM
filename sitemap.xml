@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://pbosetti.github.io/MASSM/slides/1_time_series.html</loc>
-    <lastmod>2026-03-19T08:30:55.447Z</lastmod>
+    <loc>https://pbosetti.github.io/MASSM/notebooks/exercise_01.html</loc>
+    <lastmod>2026-03-23T17:52:49.556Z</lastmod>
   </url>
   <url>
-    <loc>https://pbosetti.github.io/MASSM/slides/0_distributed_daq.html</loc>
-    <lastmod>2026-03-19T08:30:41.373Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pbosetti.github.io/MASSM/slides/2_time_domain.html</loc>
-    <lastmod>2026-03-23T08:23:35.996Z</lastmod>
-  </url>
-  <url>
-    <loc>https://pbosetti.github.io/MASSM/index.html</loc>
-    <lastmod>2026-03-23T16:39:13.335Z</lastmod>
+    <loc>https://pbosetti.github.io/MASSM/slides/3_feature_based.html</loc>
+    <lastmod>2026-03-19T08:31:03.399Z</lastmod>
   </url>
   <url>
     <loc>https://pbosetti.github.io/MASSM/slides/4_frequency_domain.html</loc>
     <lastmod>2026-03-19T08:31:10.692Z</lastmod>
   </url>
   <url>
-    <loc>https://pbosetti.github.io/MASSM/slides/3_feature_based.html</loc>
-    <lastmod>2026-03-19T08:31:03.399Z</lastmod>
+    <loc>https://pbosetti.github.io/MASSM/index.html</loc>
+    <lastmod>2026-03-23T16:39:13.335Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pbosetti.github.io/MASSM/slides/2_time_domain.html</loc>
+    <lastmod>2026-03-23T08:23:35.996Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pbosetti.github.io/MASSM/slides/0_distributed_daq.html</loc>
+    <lastmod>2026-03-19T08:30:41.373Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pbosetti.github.io/MASSM/slides/1_time_series.html</loc>
+    <lastmod>2026-03-23T17:53:58.946Z</lastmod>
   </url>
 </urlset>
