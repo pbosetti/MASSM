@@ -113,6 +113,10 @@ $body-color: #777777;
   .math {
     color: $math-color;
   }
+
+  h2 .math {
+    color: $main-color-dark;
+  }
   
   code {
     color: $code-color;
