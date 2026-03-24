@@ -413,8 +413,8 @@
     "text": "Feature extraction and integration\nTo integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for Feature Extraction\nWe use FFT or SFFT to extract power in specific bands of interest:\n\nin chunks of data: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information\nwith sliding window approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate\nin overlapping chunks of data avoid the risk of loosing information between updates, but it can increase computational load"
   },
   {
-    "objectID": "index.html#chapter-1-fundamentals-p.-bosetti-10h",
-    "href": "index.html#chapter-1-fundamentals-p.-bosetti-10h",
+    "objectID": "index.html#sec-index",
+    "href": "index.html#sec-index",
     "title": "Multi-agent system for smart machining, part II",
     "section": "Chapter 1 — Fundamentals (P. Bosetti, 10h)",
     "text": "Chapter 1 — Fundamentals (P. Bosetti, 10h)\n\nDistributed data acquisition architectures and edge computing \nTime series of stochastic process variables \nTime-domain: ARIMA \nFeature-based: PCA, SVM \nFrequency-domain: Fast Fourier Transform"
