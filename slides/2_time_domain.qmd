@@ -548,7 +548,7 @@ An ARMA model of order $p,q$, abbreviated as $\mathrm{ARMA}(p,q)$, is defined as
 $$
 x_t=\phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q}
 $$
-con $\phi_p$ e $\theta_q$ non nulli, ovvero, più brevemente:
+where $\phi_p$ and $\theta_q$ are non-zero, or more briefly:
 $$
 \Phi_p(B)x_t=\Theta_q(B)w_t
 $$

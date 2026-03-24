@@ -13,14 +13,14 @@ format: revealjs
 
 # Course structure (30 hours)
 
-## Part 1 --- Fundamentals (P. Bosetti, 10h)
+## Chapter 1 --- Fundamentals (P. Bosetti, 10h)
 a. Distributed data acquisition **architectures** and edge computing [{{< bi file-slides >}}](/slides/0_distributed_daq.qmd)
 b. **Time series** of stochastic process variables [{{< bi file-slides >}}](/slides/1_time_series.qmd)
 c. Time-domain: **ARIMA** [{{< bi file-slides >}}](/slides/2_time_domain.qmd)
 d. Feature-based: **PCA**, **SVM** [{{< bi file-slides >}}](/slides/3_feature_based.qmd)
 e. Frequency-domain: **Fast Fourier Transform** [{{< bi file-slides >}}](/slides/4_frequency_domain.qmd)
 
-## Part 2 --- Algorithms (D. Fontanelli, 20h)
+## Chapter 2 --- Algorithms (D. Fontanelli, 20h)
 
 1. Fundamentals and evolution of **maintenance management**, including failures, faults, maintenance activities, and decision-making.
 2. Scheduling and execution of **maintenance actions**, including breakdown, time-based, opportunity-based, and degradation-based policies.

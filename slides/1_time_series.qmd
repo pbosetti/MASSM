@@ -514,3 +514,7 @@ sensor_df %>%
 * In Python, `pandas` provides the closest workflow to `xts` plus data-frame filtering
 * MongoDB range queries on ISO dates are naturally expressed with `$gte` and `$lt`
 * Once data are extracted, the main tasks are always parse, index, filter, aggregate, and model
+
+
+# Exercises
+Look at the [exercise notebook](/notebooks/exercise_01.qmd) for exercises on time-series data handling in R and MongoDB.
