@@ -6,6 +6,8 @@ date: "2026-03-20"
 date-modified: today
 format: html
 engine: knitr
+toc: true
+number-sections: true
 ---
 
 # Exercise 1: Data loading and visualization
@@ -125,9 +127,9 @@ Likewise, the first record in the `acceleration` collection is:
 
 where this time the `message.measurements` field contains the 10 samples collected in the 1 ms window for each of the 3 acceleration components and for the sound pressure.
 
-# Tasks
+## Tasks
 
-## Queries on MongoDB Compass
+### Queries on MongoDB Compass
 
 Using MongoDB Compass, perform the following queries on the `MASSM_1` database:
 
@@ -146,7 +148,7 @@ Note that with the **green save button** you can save the aggregation in the col
 
 Once you have customized your data query or transformation, you can export the results as a CSV file, and then load it in R or Python for further analysis and visualization. This approach, though, **is not ideal for large datasets** (you are duplicating the data!), and it is better to use a database client library to query the database directly from your code, as we will see in the next exercises.
 
-## Queries from R
+### Queries from R
 
 We start loading some packages:
 
@@ -196,7 +198,7 @@ tibble(
 The query result is a rather complicate data frame, for its columns are nested lists. Try to use an aggregation of a saved View to make it simpler and more efficient to load in R.
 :::
 
-## Queries from Python
+### Queries from Python
 
 ```{r}
 #| echo: false
@@ -242,4 +244,120 @@ plt.show()
 
 ::: {.callout-tip}
 As said above for R, the query result is a rather complicate data frame, for its columns are nested lists. Try to use an aggregation of a saved View to make it simpler and more efficient to load in Python.
+:::
+
+
+
+# Exercise 2: data streaming via MADS
+
+We are showing how to stream data from MongoDB to R and Python using the [MADS](https://mads-net.github.io) library.
+
+## Install MADS
+
+To setup the MADS framework, follow the instructions in the [MADS documentation](https://mads-net.github.io/guides/install.html). You need to install the MADS library. Beside, you need the MongoDB installed and loaded with example data as described above.
+
+Furthermore, you need Python or R/RStudio.
+
+## Configuring MADS
+
+MADS is a multi-agent system for data streaming and processing. It is based on the concept of *agents* that can be configured to perform specific tasks, such as data acquisition, processing, and visualization.
+
+MADS agents connect to a central *broker* that manages the communication between agents. Each agent can subscribe to specific *topics* to receive data, and publish data on other topics for other agents to consume.
+
+MADS has a central configuration file, that is loaded by the broker and distributed to all agents. There is also a GUI called *director* that orchestrate the launch of the broker and the agents, and allows to monitor their status and communication.
+
+We start by creating a configuration file for our MADS setup, `mads.ini`, and a director configuration file `director.toml`.
+
+In your current working directory, create the file `mads.ini` with the following content:
+
+```ini
+[agents]
+frontend_address = "tcp://localhost:9090"
+backend_address = "tcp://localhost:9091"
+settings_address = "tcp://localhost:9092"
+timecode_fps = 25
+
+[broker]
+frontend_address = "tcp://*:9090"
+backend_address = "tcp://*:9091"
+settings_address = "tcp://*:9092"
+
+[feedback]
+sub_topic = [""]
+print_width = 0
+indent_width = 2
+
+[replay]
+db_uri = "mongodb://localhost:27017"
+db_name = "MASSM_1"
+collections = ["force", "acceleration"]
+max_loop_duration_ms = 1000
+repeat = true
+```
+
+Then create the file `director.toml` with the following content:
+
+```toml
+[director] 
+sample_rate = 2.0 # optional, default=2.0: process metrics sampling period in seconds (fractions allowed)
+
+[broker]
+command = "mads broker"
+enabled = true
+relaunch = true
+tty = true
+
+[feedback]
+command = "mads feedback"
+after = "broker"
+enabled = true
+
+[replay]
+command = "mads source replay"
+after = "broker"
+enabled = false
+```
+
+## Running MADS
+
+Just launch the director with the command:
+
+```bash
+mads director
+```
+
+![MADS director GUI](../images/director.png)
+
+In the GUI that opens, you should see the broker and the feedback agent running. You can enable the replay agent to start streaming data from MongoDB by clicking on the `start` button. You should see the data being printed in the feedback agent.
+
+::: {.callout-tip}
+The director GUI is just a convenient way to launch and monitor the MADS agents. You can also launch the agents directly from the command line, using the commands specified in the `director.toml` file. For example, you can launch the broker with `mads broker`, and then launch the replay agent with `mads source replay`.
+:::
+
+
+## Consuming MADS data in R and Python
+
+MADS is designed to be flexible. You can create custom agents to consume the data streamed by MADS and perform specific tasks, such as data processing, visualization, or machine learning.
+
+Among the different strategies and languages, you can design your agents by following these strategies:
+
+* Create a **custom C++ plugin** as [detailed here](https://mads-net.github.io/guides/plugins.html){target="_blank"}, and then use the plugin in your MADS configuration. This is the most efficient way to create custom agents, but it requires C++ programming skills.
+* Use the [MADS Python agent](https://mads-net.github.io/guides/python_agent.html){target="_blank"} to create a **custom agent in Python**. Easier than the C++ plugin, does not require to define the agent logic and loop, but it is less efficient than the C++ plugin and has some limitation in flexibility.
+* Use the [MADS R plugin](https://github.com/MADS-NET/r_plugin){target="_blank"} to create a **custom agent in R**. Similar as the previous case, but for R language.
+* Use the [MADS Python library](https://mads-net.github.io/guides/python.html){target="_blank"} to create a **custom agent entirely in Python** that connects to the MADS broker and subscribes to the relevant topics to receive data. Very flexible, but you have to manage the agent logic and loop yourself.
+
+::: {.callout-important}
+### Real-time
+
+Note that, unless you run the MADS agents on realtime operating systems (like RT-Linux), you cannot guarantee real-time performance, and you may experience some delay in the data streaming. However, MADS is designed to be efficient and to minimize the latency, so it can be used for near-real-time applications.
+:::
+
+## Task
+
+Try to create a custom agent in Python or R that subscribes to the forces or accelerations data streams and performs some simple processing, such as computing the mean and standard deviation of the measurements, and then publishes the statistic back to MADS for visualization in the feedback agent.
+
+::: {.callout-tip}
+### Graphical visualization in Rerun
+
+The [MADS rerunner](https://mads-net.github.io/guides/rerun.html){target="_blank"} is a powerful tool for visualizing data in real-time. You can use it to create custom visualizations of the data streamed by MADS, such as time series plots, ACF, FFT. It can consume data produced by any other MADS agent and provide a real-time chart or graphical representation of the data.
 :::

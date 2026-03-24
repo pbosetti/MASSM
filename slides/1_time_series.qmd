@@ -517,4 +517,4 @@ sensor_df %>%
 
 
 # Exercises
-Look at the [exercise notebook](/notebooks/exercise_01.qmd) for exercises on time-series data handling in R and MongoDB.
+Look at the [exercise notebook](/notebooks/exercise_01.qmd){target="_blank"} for exercises on time-series data handling in R and MongoDB.

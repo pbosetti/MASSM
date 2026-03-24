@@ -13,7 +13,7 @@ format: revealjs
 
 # Course structure (30 hours)
 
-## Chapter 1 --- Fundamentals (P. Bosetti, 10h)
+## Chapter 1 --- Fundamentals (P. Bosetti, 10h) {#sec-index}
 a. Distributed data acquisition **architectures** and edge computing [{{< bi file-slides >}}](/slides/0_distributed_daq.qmd)
 b. **Time series** of stochastic process variables [{{< bi file-slides >}}](/slides/1_time_series.qmd)
 c. Time-domain: **ARIMA** [{{< bi file-slides >}}](/slides/2_time_domain.qmd)
