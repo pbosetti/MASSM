@@ -329,123 +329,207 @@
     "text": "Example: the same test with DescTools\nIf DescTools is available, the same test can be run directly:\n\nlibrary(DescTools)\n\nHotellingsT2Test(\n  x = as.matrix(batch_df),\n  mu = mu0\n)\n\n\n    Hotelling's one sample T2-test\n\ndata:  as.matrix(batch_df)\nT.2 = 8.8274, df1 = 2, df2 = 38, p-value = 0.0007101\nalternative hypothesis: true location is not equal to c(50,100)\n\n\nThis is the most compact way to perform the one-sample test in R, but the underlying quantity remains the same statistic defined earlier"
   },
   {
-    "objectID": "slides/4_frequency_domain.html#fast-fourier-transform-fft",
-    "href": "slides/4_frequency_domain.html#fast-fourier-transform-fft",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Fast Fourier Transform (FFT)",
-    "text": "Fast Fourier Transform (FFT)\nThe FFT is an efficient algorithm to compute the Discrete Fourier Transform (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as: \\[X_k = \\sum_{n=0}^{N-1} x_n e^{-2\\pi i kn/N}\\] where:\n\n\\(X_k \\in \\mathbb{C}\\) is the DFT of the sequence at frequency bin \\(k = 0, 1, \\dots, N-1\\)\n\\(x_n \\in \\mathbb{C}\\) is the input sequence at time index \\(n\\)\n\\(N\\) is the total number of samples in the input sequence\n\nThe FFT reduces the computational complexity from \\(O(N^2)\\) to \\(O(N \\log N)\\), making it feasible to analyze large datasets efficiently"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-topic-matters-in-mechatronics",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-topic-matters-in-mechatronics",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Why this topic matters in mechatronics",
+    "text": "Why this topic matters in mechatronics\n\nCoordinate handling and geometric utilities\nSensor-data processing pipelines\nCalibration and test-bench software\nRobotics and automation support tools\nReusable numerical components inside larger systems\n\n\nMany engineering tools are built from small reusable software components. A class such as Vector2D is simple enough to understand in one lesson, but rich enough to discuss design choices, correctness, testing, and AI-assisted workflow."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#power-spectral-density-psd",
-    "href": "slides/4_frequency_domain.html#power-spectral-density-psd",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Power Spectral Density (PSD)",
-    "text": "Power Spectral Density (PSD)\nThe Power Spectral Density (PSD) is a measure of the power distribution of a signal across different frequency components. It is defined as the squared magnitude of the Fourier Transform of the signal, normalized by the length of the signal: \\[PSD(f) = \\frac{1}{N} |X_k|^2\\] where:\n\n\\(PSD(f)\\) is the power spectral density at frequency \\(f\\)\n\\(N\\) is the total number of samples in the signal\n\\(X_k\\) is the Fourier Transform of the signal at frequency bin \\(k\\)"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#core-principle",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#core-principle",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Core principle",
+    "text": "Core principle\n\n\n\n\n\n\n\n\nWe decide\n\n\n\nrequirements\ninterface\nconstraints\nacceptance criteria\n\n\n\n\n\n\n\n\n\n\n\nAI proposes\n\n\n\ncandidate code\nalternatives\ntests\nexplanations\n\n\n\n\n\n\n\n\n\n\n\nWe verify\n\n\n\nreview\ncompilation\nnumerical checks\ntargeted tests\n\n\n\n\n\n\nThis is the whole lesson in one slide. Requirements, interfaces, assumptions, and validation criteria remain a human responsibility."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#fft-to-remember",
-    "href": "slides/4_frequency_domain.html#fft-to-remember",
-    "title": "Frequency-domain analysis of time series",
-    "section": "FFT: to remember",
-    "text": "FFT: to remember\nInput vector is normally a sequence of real numbers, but it can also be complex. The output is a sequence of complex numbers, where the magnitude represents the amplitude of the corresponding frequency component, and the phase represents its phase shift\nIf the input sequence is real-valued, the output will be symmetric around the Nyquist frequency, which is half the sampling rate. The FFT can be used to analyze the frequency content of signals, identify dominant frequencies, and perform various signal processing tasks such as filtering and spectral analysis\nIf the input sequence is complex-valued, the output will not be symmetric, and it can represent a wider range of frequency components, including negative frequencies. The FFT is widely used in various applications, including audio processing, image analysis, and communications\nFrequency resolution of the FFT is determined by the sampling rate and the length of the input sequence. The frequency bins are spaced at intervals of \\(\\frac{f_s}{N}\\), where \\(f_s\\) is the sampling rate and \\(N\\) is the number of samples in the input sequence"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#learning-outcomes",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#learning-outcomes",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Learning outcomes",
+    "text": "Learning outcomes\nBy the end of the lesson, students should be able to:\n\ndefine requirements for a small C++ component\ndesign a minimal public interface\nuse AI in bounded, controllable steps\nreview generated code critically\nvalidate correctness with tests and numerical checks\n\n\nThis is not a lesson on advanced C++ techniques. It is a lesson on disciplined workflow."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-12",
-    "href": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-12",
-    "title": "Frequency-domain analysis of time series",
-    "section": "FFT: to remember (Effect of \\(N\\), 1/2)",
-    "text": "FFT: to remember (Effect of \\(N\\), 1/2)"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-well",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-well",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "What AI does well",
+    "text": "What AI does well\n\n\n\n\n\n\n\n\nCode generation\n\n\n\nboilerplate\nrepetitive operators\nsmall utilities\n\n\n\n\n\n\n\n\n\n\n\nSupport work\n\n\n\ntest scaffolding\ndocumentation drafts\ncompiler-diagnostic explanations\n\n\n\n\n\n\n\n\n\n\n\nReview support\n\n\n\nalternative formulations\nrefactoring suggestions\nfirst-pass code review hints\n\n\n\n\n\n\nAI is useful for acceleration, not for authorship of the engineering intent."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-22",
-    "href": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-22",
-    "title": "Frequency-domain analysis of time series",
-    "section": "FFT: to remember (Effect of \\(N\\), 2/2)",
-    "text": "FFT: to remember (Effect of \\(N\\), 2/2)"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-poorly",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-poorly",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "What AI does poorly",
+    "text": "What AI does poorly\n\n\n\n\n\n\n\n\nDesign judgment\n\n\n\ninventing requirements\nchoosing abstractions\ndeciding public API boundaries\n\n\n\n\n\n\n\n\n\n\n\nTechnical judgment\n\n\n\nnumerical reasoning\nhidden assumptions\nsubtle domain mistakes\n\n\n\n\n\n\n\n\n\n\n\nProcess discipline\n\n\n\nscope control\nsignaling uncertainty\nstopping when evidence is weak\n\n\n\n\n\n\nPlausible-looking code is not the same as trustworthy code."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#fft-windowing-and-spectral-leakage",
-    "href": "slides/4_frequency_domain.html#fft-windowing-and-spectral-leakage",
-    "title": "Frequency-domain analysis of time series",
-    "section": "FFT: Windowing and Spectral Leakage",
-    "text": "FFT: Windowing and Spectral Leakage\nWhen performing an FFT on a finite-length signal, the assumption is that the signal is periodic. If the signal does not complete an integer number of periods within the window, it can lead to spectral leakage, where energy from one frequency bin leaks into adjacent bins, distorting the frequency representation. To mitigate this issue, windowing functions are applied to the signal before performing the FFT.\nCommon windowing functions include:\n\nHann: \\(w(n) = 0.5 \\left(1 - \\cos\\left(\\frac{2\\pi n}{N-1}\\right)\\right)\\)\nHamming: \\(w(n) = 0.54 - 0.46 \\cos\\left(\\frac{2\\pi n}{N-1}\\right)\\)\nBlackman: \\(w(n) = 0.42 - 0.5 \\cos\\left(\\frac{2\\pi n}{N-1}\\right) + 0.08 \\cos\\left(\\frac{4\\pi n}{N-1}\\right)\\)"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-strengths-and-weaknesses",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-strengths-and-weaknesses",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "AI strengths and weaknesses",
+    "text": "AI strengths and weaknesses\n\n\n\n\n\n\n\n\nUseful acceleration\n\n\nAI is effective for:\n\nboilerplate\nrepetitive operators\ntest skeletons\ncode explanations\n\n\n\n\n\n\n\n\n\n\n\nTypical risks\n\n\nAI often introduces:\n\nextra features\nhidden assumptions\nstyle inconsistency\nfragile numeric checks\n\n\n\n\n\n\n\n\n\n\n\nHuman role\n\n\nThe engineer must retain control of:\n\nrequirements\ninterface design\nacceptance criteria\nfinal validation\n\n\n\n\n\n\nUse this slide to reinforce the operational division of responsibility."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#example-windowing-and-spectral-leakage",
-    "href": "slides/4_frequency_domain.html#example-windowing-and-spectral-leakage",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Example: Windowing and Spectral Leakage",
-    "text": "Example: Windowing and Spectral Leakage"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#example-problem",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#example-problem",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Example problem",
+    "text": "Example problem\nImplement a Vector2D class representing a 2D point/vector.\nRequired operations:\n\nconstruction\naccessors\naddition\nsubtraction\nscalar multiplication\nnorm\ndistance\nprinting\n\n\nThe example is deliberately small so the workflow stays visible."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#frequency-domain-analysis-of-data-streams",
-    "href": "slides/4_frequency_domain.html#frequency-domain-analysis-of-data-streams",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Frequency-domain analysis of data streams",
-    "text": "Frequency-domain analysis of data streams\nIn real-time applications, data streams are often analyzed using a technique called Short-Time Fourier Transform (STFT), which involves applying the FFT to short, overlapping segments of the data stream. This allows for tracking how the frequency content of the signal evolves over time. The STFT is defined as: \\[STFT\\{x(t)\\}(m, \\omega) = \\sum_{n=-\\infty}^{\\infty} x(n) w(n - m) e^{-j \\omega n}\\] where:\n\n\\(x(n)\\) is the input signal\n\\(w(n - m)\\) is a window function centered at time index \\(m\\)\n\\(\\omega\\) is the angular frequency"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#constraints",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#constraints",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Constraints",
+    "text": "Constraints\n\nSimple and readable\nSuitable for beginners\nNo dynamic allocation\nNo inheritance\nEasy to test\nClear separation of interface and implementation\n\n\nConstraints reduce ambiguity. Without them, AI tends to invent scope and style."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#example-stft-of-a-data-stream",
-    "href": "slides/4_frequency_domain.html#example-stft-of-a-data-stream",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Example: STFT of a data stream",
-    "text": "Example: STFT of a data stream\n\n\n\n\n\n\nNote\n\n\nThe STFT provides a time-frequency representation of the signal, allowing for the analysis of non-stationary signals whose frequency content changes over time. This is particularly useful in applications such as speech processing, music analysis, and machine condition monitoring, where the characteristics of the signal can vary significantly over time."
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#design-before-code",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#design-before-code",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Design before code",
+    "text": "Design before code\nQuestions to answer before implementation:\n\nShould data be public or private?\nWhy use const?\nMember or non-member printing?\nExact equality or tolerance?\nWhat belongs in the public interface?\n\n\nThis is where engineering authorship begins. Design decisions precede syntax."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#monitoring-a-signal-in-real-time",
-    "href": "slides/4_frequency_domain.html#monitoring-a-signal-in-real-time",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Monitoring a signal in real-time",
-    "text": "Monitoring a signal in real-time\n\nFFT and STFT work in batch mode, meaning they require a block of data to perform the analysis. They are a powerful tool for screening the frequency content of signals, but they are not immediately designed for real-time monitoring of data streams\nThey can be applied to overlapping windows of the data stream to provide a continuous analysis, but there is a trade-off between time resolution and frequency resolution. The choice of window size and overlap will depend on the characteristics of the signal being analyzed and the computational resources available\nFor real-time monitoring, techniques such as Goertzel algorithm or recursive DFT can be used, which allow for continuous analysis of the signal as new data arrives without needing to wait for a full block of data."
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#proposed-public-interface",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#proposed-public-interface",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Proposed public interface",
+    "text": "Proposed public interface\nclass Vector2D {\npublic:\n    Vector2D();\n    Vector2D(double x, double y);\n\n    double x() const;\n    double y() const;\n\n    double norm() const;\n    double distanceTo(const Vector2D& other) const;\n\n    Vector2D operator+(const Vector2D& other) const;\n    Vector2D operator-(const Vector2D& other) const;\n    Vector2D operator*(double scalar) const;\n\nprivate:\n    double x_;\n    double y_;\n};\n\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v);\n\nThe interface is the contract. AI should implement this contract, not rewrite it unless asked."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#recursive-dft",
-    "href": "slides/4_frequency_domain.html#recursive-dft",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Recursive DFT",
-    "text": "Recursive DFT\n\n\nThe Recursive DFT is an efficient algorithm for computing the DFT of a signal in real-time. It allows for the continuous analysis of a signal as new data arrives without needing to wait for a full block of data. The recursive DFT is defined as: \\[X_k(n) = X_k(n-1) + x(n) - x(n-N)\\] where:\n\n\\(X_k(n)\\) is the DFT coefficient at time \\(n\\) for frequency bin \\(k\\)\n\\(x(n)\\) is the input signal at time \\(n\\)\n\\(N\\) is the length of the DFT\n\n\n\n\n\n\n\n\nFast implementation of the Recursive DFT: SlidingDFT\n\n\nThis can be used in C, C++ and Python:"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-interface-is-reasonable",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-interface-is-reasonable",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Why this interface is reasonable",
+    "text": "Why this interface is reasonable\n\nPrivate representation limits accidental misuse\nSmall API reduces the error surface\nArithmetic operators improve readability\nconst clarifies intent and enables safer use\nStream output integrates with standard C++ I/O\n\n\nTranslate each design choice into a practical benefit."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#goertzel-algorithm",
-    "href": "slides/4_frequency_domain.html#goertzel-algorithm",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Goertzel algorithm",
-    "text": "Goertzel algorithm\n\n\nThe Goertzel algorithm is a computationally efficient method for calculating specific DFT coefficients, particularly useful for applications like tone detection in telephony. It is defined as: \\[s(n) = x(n) + 2 \\cos\\left(\\frac{2\\pi k}{N}\\right) s(n-1) - s(n-2)\\]\n\n\\(x(n)\\) is the input signal at time \\(n\\)\n\\(s(n)\\) is the state variable at time \\(n\\)\n\\(k\\) is the index of the frequency bin being analyzed\n\\(N\\) is the length of the DFT\n\n\n\n\n\n\n\n\nGoertzel library\n\n\nThis can be used in C, C++, Python, and R:   \n\n\n\n\n\n\n\n\n\n\n\nTip\n\n\nThe Goertzel algorithm is particularly efficient for calculating a small number of DFT coefficients, as it avoids the need to compute the entire DFT. It is commonly used in applications such as DTMF tone detection, where only specific frequencies need to be analyzed."
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#first-ai-prompt-generate-the-header",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#first-ai-prompt-generate-the-header",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "First AI prompt: generate the header",
+    "text": "First AI prompt: generate the header\nGenerate a simple C++ header for a class named Vector2D with private double\nmembers x_ and y_. Provide a default constructor, a constructor with x and y,\nconst accessors, norm(), distanceTo(), operators +, -, scalar multiplication by\ndouble, and a non-member stream output operator. Keep it minimal and\nbeginner-friendly. Do not add templates, comparisons, normalization, exceptions,\nor advanced features.\n\nA good prompt is mainly a well-bounded specification."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#goertzel-algorithm-example",
-    "href": "slides/4_frequency_domain.html#goertzel-algorithm-example",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Goertzel algorithm: example",
-    "text": "Goertzel algorithm: example\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbins &lt;- frequencies * N / fs\nresponse &lt;- goertzel::goertzel(df$signal, bins)\npower &lt;- Mod(response) ^ 2\n\nlow_index &lt;- which.max(power[seq_along(dtmf_low)])\nhigh_index &lt;- which.max(power[length(dtmf_low) + \n  seq_along(dtmf_high)])\n\nkey &lt;- matrix(\n  c(\"1\", \"2\", \"3\", \"A\",\n    \"4\", \"5\", \"6\", \"B\",\n    \"7\", \"8\", \"9\", \"C\",\n    \"*\", \"0\", \"#\", \"D\"),\n  nrow = length(dtmf_low),\n  byrow = TRUE\n)\nkey[low_index, high_index]\n\n[1] \"6\""
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-generated-header",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-generated-header",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Review the generated header",
+    "text": "Review the generated header\nChecklist:\n\nDid AI add unwanted features?\nAre methods const where appropriate?\nAre members private?\nAre includes minimal?\nIs the interface still ours?\n\n\nModel rejection openly. Removing AI-generated extras is part of competent use."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#the-timescale-problem",
-    "href": "slides/4_frequency_domain.html#the-timescale-problem",
-    "title": "Frequency-domain analysis of time series",
-    "section": "The timescale problem",
-    "text": "The timescale problem\nWhen continuously monitoring a process, we have to deal with multivariate timeseries data that can be sampled at different rates. For example, in a machining process, we might have:\n\nVibration data sampled at a high rate (e.g., 10 kHz) to capture high-frequency components related to tool wear or chatter\nPower data sampled at a lower rate (e.g., 100 Hz) to track the cutting forces during machining\nController status updated at variable intervals to monitor the state of the machine\n\n\n\n\n\n\n\nTip\n\n\nAny continuous, feature-based technique for process monitoring can’t reasonably run at the maximum frequency of the data, so we need to find a way to extract meaningful features from the data at different timescales and integrate them into a unified monitoring system."
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#second-ai-prompt-generate-the-implementation",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#second-ai-prompt-generate-the-implementation",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Second AI prompt: generate the implementation",
+    "text": "Second AI prompt: generate the implementation\nGenerate the .cpp implementation for this Vector2D interface. Use std::sqrt for\nnorm and distance. Keep the code readable for engineering students with limited\nC++ background. Avoid unnecessary abstractions.\n\nOnce the interface is frozen, implementation can be delegated more safely."
   },
   {
-    "objectID": "slides/4_frequency_domain.html#feature-extraction-and-integration",
-    "href": "slides/4_frequency_domain.html#feature-extraction-and-integration",
-    "title": "Frequency-domain analysis of time series",
-    "section": "Feature extraction and integration",
-    "text": "Feature extraction and integration\nTo integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for Feature Extraction\nWe use FFT or SFFT to extract power in specific bands of interest:\n\nin chunks of data: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information\nwith sliding window approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate\nin overlapping chunks of data avoid the risk of loosing information between updates, but it can increase computational load"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-implementation",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-implementation",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Review the implementation",
+    "text": "Review the implementation\nCheck for:\n\ncorrect formulas\nclear naming\nminimal includes\nconsistent operator semantics\nno hidden complexity\n\n\nThis is where line-by-line review should be presented as normal engineering practice."
   },
   {
-    "objectID": "index.html#sec-index",
-    "href": "index.html#sec-index",
-    "title": "Multi-agent system for smart machining, part II",
-    "section": "Chapter 1 — Fundamentals (P. Bosetti, 10h)",
-    "text": "Chapter 1 — Fundamentals (P. Bosetti, 10h)\n\nDistributed data acquisition architectures and edge computing \nTime series of stochastic process variables \nTime-domain: ARIMA \nFeature-based: PCA, SVM \nFrequency-domain: Fast Fourier Transform"
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Reference implementation",
+    "text": "Reference implementation\n#ifndef VECTOR2D_H\n#define VECTOR2D_H\n\n#include &lt;iosfwd&gt;\n\nclass Vector2D {\npublic:\n    Vector2D();\n    Vector2D(double x, double y);\n\n    double x() const;\n    double y() const;\n\n    double norm() const;\n    double distanceTo(const Vector2D& other) const;\n\n    Vector2D operator+(const Vector2D& other) const;\n    Vector2D operator-(const Vector2D& other) const;\n    Vector2D operator*(double scalar) const;\n\nprivate:\n    double x_;\n    double y_;\n};\n\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v);\n\n#endif\n\nPresent this as an accepted baseline, not the only possible design."
   },
   {
-    "objectID": "index.html#chapter-2-algorithms-d.-fontanelli-20h",
-    "href": "index.html#chapter-2-algorithms-d.-fontanelli-20h",
-    "title": "Multi-agent system for smart machining, part II",
-    "section": "Chapter 2 — Algorithms (D. Fontanelli, 20h)",
-    "text": "Chapter 2 — Algorithms (D. Fontanelli, 20h)\n\nFundamentals and evolution of maintenance management, including failures, faults, maintenance activities, and decision-making.\nScheduling and execution of maintenance actions, including breakdown, time-based, opportunity-based, and degradation-based policies.\nCondition monitoring, PHM, diagnostics, prognostics, P/F curve, and Remaining Useful Life estimation.\nDetection theory foundations: binary and multiple hypothesis testing, false alarms, missed detections, ROC curves, and likelihood-ratio tests.\nNeyman-Pearson, Bayesian, and GLRT approaches for detection under known or uncertain model parameters.\nClassification of process data using Bayes classifiers, logistic regression, neural networks, temporal models, HMM/CRF methods, and risk minimization.\nAnomaly and non-conformity detection in time-series process data, including control charts, PCA, autoencoders, LSTMs, threshold tuning, drift detection, deployment, and industrial case studies."
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation-.cpp",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation-.cpp",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Reference implementation (.cpp)",
+    "text": "Reference implementation (.cpp)\n#include \"Vector2D.h\"\n\n#include &lt;cmath&gt;\n#include &lt;ostream&gt;\n\nVector2D::Vector2D() : x_(0.0), y_(0.0) {}\n\nVector2D::Vector2D(double x, double y) : x_(x), y_(y) {}\n\ndouble Vector2D::x() const {\n    return x_;\n}\n\ndouble Vector2D::y() const {\n    return y_;\n}\n\ndouble Vector2D::norm() const {\n    return std::sqrt(x_ * x_ + y_ * y_);\n}\n\ndouble Vector2D::distanceTo(const Vector2D& other) const {\n    const double dx = x_ - other.x_;\n    const double dy = y_ - other.y_;\n    return std::sqrt(dx * dx + dy * dy);\n}\n\nVector2D Vector2D::operator+(const Vector2D& other) const {\n    return Vector2D(x_ + other.x_, y_ + other.y_);\n}\n\nVector2D Vector2D::operator-(const Vector2D& other) const {\n    return Vector2D(x_ - other.x_, y_ - other.y_);\n}\n\nVector2D Vector2D::operator*(double scalar) const {\n    return Vector2D(x_ * scalar, y_ * scalar);\n}\n\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v) {\n    os &lt;&lt; \"(\" &lt;&lt; v.x() &lt;&lt; \", \" &lt;&lt; v.y() &lt;&lt; \")\";\n    return os;\n}"
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#example-usage",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#example-usage",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Example usage",
+    "text": "Example usage\n#include \"Vector2D.h\"\n#include &lt;iostream&gt;\n\nint main() {\n    Vector2D a(3.0, 4.0);\n    Vector2D b(1.0, 2.0);\n\n    std::cout &lt;&lt; \"a = \" &lt;&lt; a &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"b = \" &lt;&lt; b &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"a + b = \" &lt;&lt; (a + b) &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"a - b = \" &lt;&lt; (a - b) &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"2a = \" &lt;&lt; (a * 2.0) &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"norm(a) = \" &lt;&lt; a.norm() &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"distance(a,b) = \" &lt;&lt; a.distanceTo(b) &lt;&lt; '\\n';\n\n    return 0;\n}"
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#compile-with-warnings",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#compile-with-warnings",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Compile with warnings",
+    "text": "Compile with warnings\ng++ -std=c++17 -Wall -Wextra -pedantic main.cpp Vector2D.cpp -o vector_demo\n\nWarnings are part of review\nGenerated code is not finished if diagnostics are sloppy\nBuild cleanliness is one acceptance criterion\n\n\nCompilation is not just “does it build”."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#what-could-go-wrong",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#what-could-go-wrong",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "What could go wrong",
+    "text": "What could go wrong\n\nMissing const\nToo many features\nPublic data without reason\nPoor header design\nExact float comparisons\nUnclear operator semantics\n\n\nThe class is small, but the failure modes are real and inspectable."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#validation-mindset",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#validation-mindset",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Validation mindset",
+    "text": "Validation mindset\nQuestion:\n\nWhat would convince us that this class is correct enough for use?\n\nPossible evidence:\n\nknown reference cases\nreadable implementation\nclean compilation\ntargeted tests\nexplicit numerical assumptions\n\n\nMove from coding to evidence."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-prompt-for-tests",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-prompt-for-tests",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "AI prompt for tests",
+    "text": "AI prompt for tests\nGenerate a small C++ test program for Vector2D using &lt;cassert&gt;. Test default\nconstruction, addition, subtraction, scalar multiplication, norm of (3,4), and\ndistance between known points. Use a floating-point tolerance for numeric\ncomparisons.\n\nAI is often more valuable for generating test scaffolding than for inventing software design."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-test-program",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-test-program",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Reference test program",
+    "text": "Reference test program\n#include \"Vector2D.h\"\n#include &lt;cassert&gt;\n#include &lt;cmath&gt;\n#include &lt;iostream&gt;\n\nbool approxEqual(double a, double b, double tol = 1e-9) {\n    return std::fabs(a - b) &lt; tol;\n}\n\nint main() {\n    Vector2D v0;\n    assert(approxEqual(v0.x(), 0.0));\n    assert(approxEqual(v0.y(), 0.0));\n\n    Vector2D a(3.0, 4.0);\n    assert(approxEqual(a.norm(), 5.0));\n\n    Vector2D b(1.0, 2.0);\n    Vector2D s = a + b;\n    assert(approxEqual(s.x(), 4.0));\n    assert(approxEqual(s.y(), 6.0));\n\n    Vector2D d = a - b;\n    assert(approxEqual(d.x(), 2.0));\n    assert(approxEqual(d.y(), 2.0));\n\n    Vector2D m = b * 3.0;\n    assert(approxEqual(m.x(), 3.0));\n    assert(approxEqual(m.y(), 6.0));\n\n    Vector2D p1(0.0, 0.0);\n    Vector2D p2(3.0, 4.0);\n    assert(approxEqual(p1.distanceTo(p2), 5.0));\n\n    std::cout &lt;&lt; \"All tests passed\\n\";\n}"
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#why-tolerance-matters",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#why-tolerance-matters",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Why tolerance matters",
+    "text": "Why tolerance matters\n\nFloating-point arithmetic is approximate\nExact equality is often fragile\nEngineering software usually needs tolerance-based checks\nTesting strategy should match numerical reality\n\n\nTie this directly to measurement uncertainty and numerical reasoning."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#good-prompt-vs-bad-prompt",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#good-prompt-vs-bad-prompt",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Good prompt vs bad prompt",
+    "text": "Good prompt vs bad prompt\n\n\nBad\nWrite a modern C++ vector class.\nTypical outcome:\n\nscope drift\nunrequested features\nharder idioms\nweaker pedagogical value\n\n\nGood\nGenerate a minimal beginner-friendly Vector2D \nwith exactly these operations...\nTypical outcome:\n\nbounded scope\npredictable output\neasier review\nbetter alignment with lesson goals"
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#practical-prompting-workflow",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#practical-prompting-workflow",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Practical prompting workflow",
+    "text": "Practical prompting workflow\n\nWrite requirements yourself\nAsk AI for the interface only\nReview and correct the interface\nAsk for the implementation only\nReview again\nAsk for tests\nCompile, run, and inspect results\nRefactor only what you understand\n\n\nThis is the reusable process students should take away."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#human-responsibilities-ai-cannot-take-over",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#human-responsibilities-ai-cannot-take-over",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Human responsibilities AI cannot take over",
+    "text": "Human responsibilities AI cannot take over\n\nChoosing requirements\nDeciding acceptable complexity\nChecking domain assumptions\nNumerical validation\nIntegration into the full application\nFinal responsibility\n\n\nAI can assist with code production, but not with engineering accountability."
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#in-class-exercise",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#in-class-exercise",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "In-class exercise",
+    "text": "In-class exercise\n\n\n\n\n\n\n\n\nSpecify\n\n\nExtend Vector2D with:\ndouble dot(const Vector2D& other) const;\nWrite the requirement in one sentence.\n\n\n\n\n\n\n\n\n\n\nGenerate\n\n\nUse AI only for bounded tasks:\n\nheader update\nimplementation update\ntest update\n\n\n\n\n\n\n\n\n\n\n\nVerify\n\n\nCheck:\n\nformula correctness\nconsistent style\nclean compilation\nupdated tests"
+  },
+  {
+    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#closing-checklist",
+    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#closing-checklist",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Closing checklist",
+    "text": "Closing checklist\n\n\n\n\n\n\n\n\nBefore AI\n\n\n\ndefine requirements\ndefine interface\nstate constraints\n\n\n\n\n\n\n\n\n\n\n\nWith AI\n\n\n\nrequest one artifact at a time\nexclude unwanted features\nkeep prompts explicit\n\n\n\n\n\n\n\n\n\n\n\nAfter AI\n\n\n\nreview line by line\ncompile with warnings\ntest known cases\nsimplify what you do not understand\n\n\n\n\n\n\nEnd with the professional rule: use AI to accelerate only what you can still inspect, justify, and validate."
   },
   {
     "objectID": "slides/2_time_domain.html#time-series-statistics",
@@ -705,6 +789,125 @@
     "title": "Time-domain analysis of time series",
     "section": "Forecasting",
     "text": "Forecasting\n\n\nOnce the most suitable model has been selected, the one with minimum AIC, one can proceed with regression and prediction\nPrediction can be obtained with the forecast() function\nThis function also reports the 95% confidence bands\n\n\nForecastDetail"
+  },
+  {
+    "objectID": "index.html#sec-index",
+    "href": "index.html#sec-index",
+    "title": "Multi-agent system for smart machining, part II",
+    "section": "Chapter 1 — Fundamentals (P. Bosetti, 10h)",
+    "text": "Chapter 1 — Fundamentals (P. Bosetti, 10h)\n\nDistributed data acquisition architectures and edge computing \nTime series of stochastic process variables \nTime-domain: ARIMA \nFeature-based: PCA, SVM \nFrequency-domain: Fast Fourier Transform"
+  },
+  {
+    "objectID": "index.html#chapter-2-algorithms-d.-fontanelli-20h",
+    "href": "index.html#chapter-2-algorithms-d.-fontanelli-20h",
+    "title": "Multi-agent system for smart machining, part II",
+    "section": "Chapter 2 — Algorithms (D. Fontanelli, 20h)",
+    "text": "Chapter 2 — Algorithms (D. Fontanelli, 20h)\n\nFundamentals and evolution of maintenance management, including failures, faults, maintenance activities, and decision-making.\nScheduling and execution of maintenance actions, including breakdown, time-based, opportunity-based, and degradation-based policies.\nCondition monitoring, PHM, diagnostics, prognostics, P/F curve, and Remaining Useful Life estimation.\nDetection theory foundations: binary and multiple hypothesis testing, false alarms, missed detections, ROC curves, and likelihood-ratio tests.\nNeyman-Pearson, Bayesian, and GLRT approaches for detection under known or uncertain model parameters.\nClassification of process data using Bayes classifiers, logistic regression, neural networks, temporal models, HMM/CRF methods, and risk minimization.\nAnomaly and non-conformity detection in time-series process data, including control charts, PCA, autoencoders, LSTMs, threshold tuning, drift detection, deployment, and industrial case studies."
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#fast-fourier-transform-fft",
+    "href": "slides/4_frequency_domain.html#fast-fourier-transform-fft",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Fast Fourier Transform (FFT)",
+    "text": "Fast Fourier Transform (FFT)\nThe FFT is an efficient algorithm to compute the Discrete Fourier Transform (DFT) of a sequence, which transforms a time-domain signal into its frequency-domain representation. The DFT is defined as: \\[X_k = \\sum_{n=0}^{N-1} x_n e^{-2\\pi i kn/N}\\] where:\n\n\\(X_k \\in \\mathbb{C}\\) is the DFT of the sequence at frequency bin \\(k = 0, 1, \\dots, N-1\\)\n\\(x_n \\in \\mathbb{C}\\) is the input sequence at time index \\(n\\)\n\\(N\\) is the total number of samples in the input sequence\n\nThe FFT reduces the computational complexity from \\(O(N^2)\\) to \\(O(N \\log N)\\), making it feasible to analyze large datasets efficiently"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#power-spectral-density-psd",
+    "href": "slides/4_frequency_domain.html#power-spectral-density-psd",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Power Spectral Density (PSD)",
+    "text": "Power Spectral Density (PSD)\nThe Power Spectral Density (PSD) is a measure of the power distribution of a signal across different frequency components. It is defined as the squared magnitude of the Fourier Transform of the signal, normalized by the length of the signal: \\[PSD(f) = \\frac{1}{N} |X_k|^2\\] where:\n\n\\(PSD(f)\\) is the power spectral density at frequency \\(f\\)\n\\(N\\) is the total number of samples in the signal\n\\(X_k\\) is the Fourier Transform of the signal at frequency bin \\(k\\)"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#fft-to-remember",
+    "href": "slides/4_frequency_domain.html#fft-to-remember",
+    "title": "Frequency-domain analysis of time series",
+    "section": "FFT: to remember",
+    "text": "FFT: to remember\nInput vector is normally a sequence of real numbers, but it can also be complex. The output is a sequence of complex numbers, where the magnitude represents the amplitude of the corresponding frequency component, and the phase represents its phase shift\nIf the input sequence is real-valued, the output will be symmetric around the Nyquist frequency, which is half the sampling rate. The FFT can be used to analyze the frequency content of signals, identify dominant frequencies, and perform various signal processing tasks such as filtering and spectral analysis\nIf the input sequence is complex-valued, the output will not be symmetric, and it can represent a wider range of frequency components, including negative frequencies. The FFT is widely used in various applications, including audio processing, image analysis, and communications\nFrequency resolution of the FFT is determined by the sampling rate and the length of the input sequence. The frequency bins are spaced at intervals of \\(\\frac{f_s}{N}\\), where \\(f_s\\) is the sampling rate and \\(N\\) is the number of samples in the input sequence"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-12",
+    "href": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-12",
+    "title": "Frequency-domain analysis of time series",
+    "section": "FFT: to remember (Effect of \\(N\\), 1/2)",
+    "text": "FFT: to remember (Effect of \\(N\\), 1/2)"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-22",
+    "href": "slides/4_frequency_domain.html#fft-to-remember-effect-of-n-22",
+    "title": "Frequency-domain analysis of time series",
+    "section": "FFT: to remember (Effect of \\(N\\), 2/2)",
+    "text": "FFT: to remember (Effect of \\(N\\), 2/2)"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#fft-windowing-and-spectral-leakage",
+    "href": "slides/4_frequency_domain.html#fft-windowing-and-spectral-leakage",
+    "title": "Frequency-domain analysis of time series",
+    "section": "FFT: Windowing and Spectral Leakage",
+    "text": "FFT: Windowing and Spectral Leakage\nWhen performing an FFT on a finite-length signal, the assumption is that the signal is periodic. If the signal does not complete an integer number of periods within the window, it can lead to spectral leakage, where energy from one frequency bin leaks into adjacent bins, distorting the frequency representation. To mitigate this issue, windowing functions are applied to the signal before performing the FFT.\nCommon windowing functions include:\n\nHann: \\(w(n) = 0.5 \\left(1 - \\cos\\left(\\frac{2\\pi n}{N-1}\\right)\\right)\\)\nHamming: \\(w(n) = 0.54 - 0.46 \\cos\\left(\\frac{2\\pi n}{N-1}\\right)\\)\nBlackman: \\(w(n) = 0.42 - 0.5 \\cos\\left(\\frac{2\\pi n}{N-1}\\right) + 0.08 \\cos\\left(\\frac{4\\pi n}{N-1}\\right)\\)"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#example-windowing-and-spectral-leakage",
+    "href": "slides/4_frequency_domain.html#example-windowing-and-spectral-leakage",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Example: Windowing and Spectral Leakage",
+    "text": "Example: Windowing and Spectral Leakage"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#frequency-domain-analysis-of-data-streams",
+    "href": "slides/4_frequency_domain.html#frequency-domain-analysis-of-data-streams",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Frequency-domain analysis of data streams",
+    "text": "Frequency-domain analysis of data streams\nIn real-time applications, data streams are often analyzed using a technique called Short-Time Fourier Transform (STFT), which involves applying the FFT to short, overlapping segments of the data stream. This allows for tracking how the frequency content of the signal evolves over time. The STFT is defined as: \\[STFT\\{x(t)\\}(m, \\omega) = \\sum_{n=-\\infty}^{\\infty} x(n) w(n - m) e^{-j \\omega n}\\] where:\n\n\\(x(n)\\) is the input signal\n\\(w(n - m)\\) is a window function centered at time index \\(m\\)\n\\(\\omega\\) is the angular frequency"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#example-stft-of-a-data-stream",
+    "href": "slides/4_frequency_domain.html#example-stft-of-a-data-stream",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Example: STFT of a data stream",
+    "text": "Example: STFT of a data stream\n\n\n\n\n\n\nNote\n\n\nThe STFT provides a time-frequency representation of the signal, allowing for the analysis of non-stationary signals whose frequency content changes over time. This is particularly useful in applications such as speech processing, music analysis, and machine condition monitoring, where the characteristics of the signal can vary significantly over time."
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#monitoring-a-signal-in-real-time",
+    "href": "slides/4_frequency_domain.html#monitoring-a-signal-in-real-time",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Monitoring a signal in real-time",
+    "text": "Monitoring a signal in real-time\n\nFFT and STFT work in batch mode, meaning they require a block of data to perform the analysis. They are a powerful tool for screening the frequency content of signals, but they are not immediately designed for real-time monitoring of data streams\nThey can be applied to overlapping windows of the data stream to provide a continuous analysis, but there is a trade-off between time resolution and frequency resolution. The choice of window size and overlap will depend on the characteristics of the signal being analyzed and the computational resources available\nFor real-time monitoring, techniques such as Goertzel algorithm or recursive DFT can be used, which allow for continuous analysis of the signal as new data arrives without needing to wait for a full block of data."
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#recursive-dft",
+    "href": "slides/4_frequency_domain.html#recursive-dft",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Recursive DFT",
+    "text": "Recursive DFT\n\n\nThe Recursive DFT is an efficient algorithm for computing the DFT of a signal in real-time. It allows for the continuous analysis of a signal as new data arrives without needing to wait for a full block of data. The recursive DFT is defined as: \\[X_k(n) = X_k(n-1) + x(n) - x(n-N)\\] where:\n\n\\(X_k(n)\\) is the DFT coefficient at time \\(n\\) for frequency bin \\(k\\)\n\\(x(n)\\) is the input signal at time \\(n\\)\n\\(N\\) is the length of the DFT\n\n\n\n\n\n\n\n\nFast implementation of the Recursive DFT: SlidingDFT\n\n\nThis can be used in C, C++ and Python:"
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#goertzel-algorithm",
+    "href": "slides/4_frequency_domain.html#goertzel-algorithm",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Goertzel algorithm",
+    "text": "Goertzel algorithm\n\n\nThe Goertzel algorithm is a computationally efficient method for calculating specific DFT coefficients, particularly useful for applications like tone detection in telephony. It is defined as: \\[s(n) = x(n) + 2 \\cos\\left(\\frac{2\\pi k}{N}\\right) s(n-1) - s(n-2)\\]\n\n\\(x(n)\\) is the input signal at time \\(n\\)\n\\(s(n)\\) is the state variable at time \\(n\\)\n\\(k\\) is the index of the frequency bin being analyzed\n\\(N\\) is the length of the DFT\n\n\n\n\n\n\n\n\nGoertzel library\n\n\nThis can be used in C, C++, Python, and R:   \n\n\n\n\n\n\n\n\n\n\n\nTip\n\n\nThe Goertzel algorithm is particularly efficient for calculating a small number of DFT coefficients, as it avoids the need to compute the entire DFT. It is commonly used in applications such as DTMF tone detection, where only specific frequencies need to be analyzed."
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#goertzel-algorithm-example",
+    "href": "slides/4_frequency_domain.html#goertzel-algorithm-example",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Goertzel algorithm: example",
+    "text": "Goertzel algorithm: example\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbins &lt;- frequencies * N / fs\nresponse &lt;- goertzel::goertzel(df$signal, bins)\npower &lt;- Mod(response) ^ 2\n\nlow_index &lt;- which.max(power[seq_along(dtmf_low)])\nhigh_index &lt;- which.max(power[length(dtmf_low) + \n  seq_along(dtmf_high)])\n\nkey &lt;- matrix(\n  c(\"1\", \"2\", \"3\", \"A\",\n    \"4\", \"5\", \"6\", \"B\",\n    \"7\", \"8\", \"9\", \"C\",\n    \"*\", \"0\", \"#\", \"D\"),\n  nrow = length(dtmf_low),\n  byrow = TRUE\n)\nkey[low_index, high_index]\n\n[1] \"6\""
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#the-timescale-problem",
+    "href": "slides/4_frequency_domain.html#the-timescale-problem",
+    "title": "Frequency-domain analysis of time series",
+    "section": "The timescale problem",
+    "text": "The timescale problem\nWhen continuously monitoring a process, we have to deal with multivariate timeseries data that can be sampled at different rates. For example, in a machining process, we might have:\n\nVibration data sampled at a high rate (e.g., 10 kHz) to capture high-frequency components related to tool wear or chatter\nPower data sampled at a lower rate (e.g., 100 Hz) to track the cutting forces during machining\nController status updated at variable intervals to monitor the state of the machine\n\n\n\n\n\n\n\nTip\n\n\nAny continuous, feature-based technique for process monitoring can’t reasonably run at the maximum frequency of the data, so we need to find a way to extract meaningful features from the data at different timescales and integrate them into a unified monitoring system."
+  },
+  {
+    "objectID": "slides/4_frequency_domain.html#feature-extraction-and-integration",
+    "href": "slides/4_frequency_domain.html#feature-extraction-and-integration",
+    "title": "Frequency-domain analysis of time series",
+    "section": "Feature extraction and integration",
+    "text": "Feature extraction and integration\nTo integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for Feature Extraction\nWe use FFT or SFFT to extract power in specific bands of interest:\n\nin chunks of data: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information\nwith sliding window approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate\nin overlapping chunks of data avoid the risk of loosing information between updates, but it can increase computational load"
   },
   {
     "objectID": "slides/0_distributed_daq.html#challenges",
