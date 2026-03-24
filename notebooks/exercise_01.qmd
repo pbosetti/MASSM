@@ -4,10 +4,15 @@ subtitle: "Chapter I-a: exercise"
 author: "Paolo Bosetti"
 date: "2026-03-20"
 date-modified: today
-format: html
+format:
+  html:
+    code-fold: false
+    toc: true
+    number-sections: true
+  pdf:
+    toc: true
+    number-sections: true
 engine: knitr
-toc: true
-number-sections: true
 ---
 
 # Exercise 1: Data loading and visualization
@@ -26,16 +31,20 @@ Then you need to start a [MongoDB](https://www.mongodb.com/) instance using Dock
 
 ```bash
 mkdir ~/MASSM
-docker run -d -p 27017:27017 -v ${PWD}/db:/data/db --name massm-mongo mongo:latest
-cat mongo_massm_2026-03-20.archive.gz | docker exec -i massm-mongo mongorestore --gzip --archive --drop
+docker run -d -p 27017:27017 -v ${PWD}/db:/data/db \
+  --name massm-mongo mongo:latest
+cat mongo_massm_2026-03-20.archive.gz | docker exec \
+  -i massm-mongo mongorestore --gzip --archive --drop
 ```
 
 or, on Windows PowerShell:
 
 ```powershell
 mkdir $env:USERPROFILE\MASSM
-docker run -d -p 27017:27017 -v "${PWD}\db":/data/db --name massm-mongo mongo:latest
-Get-Content mongo_massm_2026-03-20.archive.gz -Raw | docker exec -i massm-mongo mongorestore --gzip --archive --drop
+docker run -d -p 27017:27017 -v "${PWD}\db":/data/db `
+  --name massm-mongo mongo:latest
+Get-Content mongo_massm_2026-03-20.archive.gz -Raw | `
+  docker exec -i massm-mongo mongorestore --gzip --archive --drop
 ```
 
 Now launch MongoDB Compass and connect to `mongodb://localhost:27017`. You should see a database named `MASSM_1`.
@@ -170,7 +179,9 @@ Now, using the `mongolite` library, write R code to perform the same queries as 
 For example, we could run:
 
 ```{r}
-m <- mongo(collection = "acceleration", db = "MASSM_1", url = "mongodb://localhost:27017")
+m <- mongo(
+  collection = "acceleration", db = "MASSM_1", 
+  url = "mongodb://localhost:27017")
 t0 <- "2011-01-01T01:07:34.780+00:00"
 query <- glue(
 '{{
@@ -184,14 +195,16 @@ fields <- '{
   "message.timestamp": 1,
   "message.measurements.microphone": 1
 }'
-df <- m$find(query=query, fields = fields, limit=200) %>% as_tibble()
+df <- m$find(query=query, fields = fields, limit=200) %>% 
+  as_tibble()
 tibble(
   timestamp = df$message$timestamp,
   microphone = map_dbl(df$message$measurements$microphone, mean)
 ) %>% 
   ggplot(aes(x=timestamp, y=microphone)) +
   geom_line() +
-  scale_x_datetime(date_labels = "%M.%OS", date_breaks = "0.05 sec")
+  scale_x_datetime(
+    date_labels = "%M.%OS", date_breaks = "0.05 sec")
 ```
 
 ::: {.callout-tip}
@@ -234,7 +247,9 @@ fields = {
 }
 cursor = collection.find(query, fields).limit(100)
 df = pd.DataFrame(list(cursor))
-df["microphone"] = df["message"].apply(lambda x: sum(x["measurements"]["microphone"]) / len(x["measurements"]["microphone"]))
+df["microphone"] = df["message"].apply(
+  lambda x: sum(x["measurements"]["microphone"])/
+  len(x["measurements"]["microphone"]))
 df["timestamp"] = df["message"].apply(lambda x: x["timestamp"])
 plt.plot(df["timestamp"], df["microphone"])
 plt.xlabel("Time")
