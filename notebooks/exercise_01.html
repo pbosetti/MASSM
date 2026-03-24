@@ -199,12 +199,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>Then you need to start a <a href="https://www.mongodb.com/">MongoDB</a> instance using Docker:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> ~/MASSM</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-d</span> <span class="at">-p</span> 27017:27017 <span class="at">-v</span> <span class="va">${PWD}</span>/db:/data/db <span class="at">--name</span> massm-mongo mongo:latest</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> mongo_massm_2026-03-20.archive.gz <span class="kw">|</span> <span class="ex">docker</span> exec <span class="at">-i</span> massm-mongo mongorestore <span class="at">--gzip</span> <span class="at">--archive</span> <span class="at">--drop</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-d</span> <span class="at">-p</span> 27017:27017 <span class="at">-v</span> <span class="va">${PWD}</span>/db:/data/db <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--name</span> massm-mongo mongo:latest</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> mongo_massm_2026-03-20.archive.gz <span class="kw">|</span> <span class="ex">docker</span> exec <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-i</span> massm-mongo mongorestore <span class="at">--gzip</span> <span class="at">--archive</span> <span class="at">--drop</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>or, on Windows PowerShell:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mkdir <span class="va">$env</span><span class="op">:</span><span class="va">USERPROFILE</span>\MASSM</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>docker run <span class="op">-</span>d <span class="op">-</span>p <span class="dv">27017</span><span class="op">:</span><span class="dv">27017</span> <span class="op">-</span>v <span class="st">"</span><span class="pp">${</span><span class="va">PWD</span><span class="pp">}</span><span class="st">\db"</span><span class="op">:/</span><span class="kw">data</span><span class="op">/</span>db <span class="op">--</span>name massm-mongo mongo<span class="op">:</span>latest</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Content</span> mongo_massm_2026-03-20<span class="op">.</span><span class="fu">archive</span><span class="op">.</span><span class="fu">gz</span> <span class="op">-</span>Raw <span class="op">|</span> docker exec <span class="op">-</span>i massm-mongo mongorestore <span class="op">--</span>gzip <span class="op">--</span>archive <span class="op">--</span>drop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>docker run <span class="op">-</span>d <span class="op">-</span>p <span class="dv">27017</span><span class="op">:</span><span class="dv">27017</span> <span class="op">-</span>v <span class="st">"</span><span class="pp">${</span><span class="va">PWD</span><span class="pp">}</span><span class="st">\db"</span><span class="op">:/</span><span class="kw">data</span><span class="op">/</span>db `</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">--</span>name massm-mongo mongo<span class="op">:</span>latest</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Content</span> mongo_massm_2026-03-20<span class="op">.</span><span class="fu">archive</span><span class="op">.</span><span class="fu">gz</span> <span class="op">-</span>Raw <span class="op">|</span> `</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  docker exec <span class="op">-</span>i massm-mongo mongorestore <span class="op">--</span>gzip <span class="op">--</span>archive <span class="op">--</span>drop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now launch MongoDB Compass and connect to <code>mongodb://localhost:27017</code>. You should see a database named <code>MASSM_1</code>.</p>
 </section>
 <section id="database-description" class="level2" data-number="1.2">
@@ -325,14 +329,11 @@ Important
 <h3 data-number="1.3.2" class="anchored" data-anchor-id="queries-from-r"><span class="header-section-number">1.3.2</span> Queries from R</h3>
 <p>We start loading some packages:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mongolite)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">15</span>)</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits.secs =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -350,31 +351,32 @@ Warning
 <p>Now, using the <code>mongolite</code> library, write R code to perform the same queries as above, and load the results in a data frame. Then, create a plot of the <code>Fx</code> component over time, and a histogram of the <code>microphone</code> component.</p>
 <p>For example, we could run:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">mongo</span>(<span class="at">collection =</span> <span class="st">"acceleration"</span>, <span class="at">db =</span> <span class="st">"MASSM_1"</span>, <span class="at">url =</span> <span class="st">"mongodb://localhost:27017"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="st">"2011-01-01T01:07:34.780+00:00"</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="fu">glue</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="st">'{{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">  "message.timestamp": {{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">    "$gte": {{"$date": "{t0}"}}</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">  }}</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">}}'</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>fields <span class="ot">&lt;-</span> <span class="st">'{</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">  "_id": 0, </span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">  "message.timestamp": 1,</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">  "message.measurements.microphone": 1</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> m<span class="sc">$</span><span class="fu">find</span>(<span class="at">query=</span>query, <span class="at">fields =</span> fields, <span class="at">limit=</span><span class="dv">200</span>) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">timestamp =</span> df<span class="sc">$</span>message<span class="sc">$</span>timestamp,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">microphone =</span> <span class="fu">map_dbl</span>(df<span class="sc">$</span>message<span class="sc">$</span>measurements<span class="sc">$</span>microphone, mean)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>timestamp, <span class="at">y=</span>microphone)) <span class="sc">+</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%M.%OS"</span>, <span class="at">date_breaks =</span> <span class="st">"0.05 sec"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">mongo</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">"acceleration"</span>, <span class="at">db =</span> <span class="st">"MASSM_1"</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">"mongodb://localhost:27017"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="st">"2011-01-01T01:07:34.780+00:00"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="fu">glue</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">'{{</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">  "message.timestamp": {{</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">    "$gte": {{"$date": "{t0}"}}</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">  }}</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">}}'</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>fields <span class="ot">&lt;-</span> <span class="st">'{</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">  "_id": 0, </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">  "message.timestamp": 1,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">  "message.measurements.microphone": 1</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> m<span class="sc">$</span><span class="fu">find</span>(<span class="at">query=</span>query, <span class="at">fields =</span> fields, <span class="at">limit=</span><span class="dv">200</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">timestamp =</span> df<span class="sc">$</span>message<span class="sc">$</span>timestamp,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">microphone =</span> <span class="fu">map_dbl</span>(df<span class="sc">$</span>message<span class="sc">$</span>measurements<span class="sc">$</span>microphone, mean)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>timestamp, <span class="at">y=</span>microphone)) <span class="sc">+</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_datetime</span>(</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_labels =</span> <span class="st">"%M.%OS"</span>, <span class="at">date_breaks =</span> <span class="st">"0.05 sec"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -402,8 +404,6 @@ Tip
 <p>Using the <code>pymongo</code> library, write Python code to perform the same queries as above, and load the results in a Pandas data frame. Then, create a plot of the <code>Fx</code> component over time, and a histogram of the <code>microphone</code> component.</p>
 <p>For example, we could run:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymongo <span class="im">import</span> MongoClient</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
@@ -424,13 +424,14 @@ Tip
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>cursor <span class="op">=</span> collection.find(query, fields).limit(<span class="dv">100</span>)</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">list</span>(cursor))</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"microphone"</span>] <span class="op">=</span> df[<span class="st">"message"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">sum</span>(x[<span class="st">"measurements"</span>][<span class="st">"microphone"</span>]) <span class="op">/</span> <span class="bu">len</span>(x[<span class="st">"measurements"</span>][<span class="st">"microphone"</span>]))</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"timestamp"</span>] <span class="op">=</span> df[<span class="st">"message"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="st">"timestamp"</span>])</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>plt.plot(df[<span class="st">"timestamp"</span>], df[<span class="st">"microphone"</span>])</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time"</span>)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Microphone"</span>)</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"microphone"</span>] <span class="op">=</span> df[<span class="st">"message"</span>].<span class="bu">apply</span>(</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="kw">lambda</span> x: <span class="bu">sum</span>(x[<span class="st">"measurements"</span>][<span class="st">"microphone"</span>])<span class="op">/</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="bu">len</span>(x[<span class="st">"measurements"</span>][<span class="st">"microphone"</span>]))</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"timestamp"</span>] <span class="op">=</span> df[<span class="st">"message"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="st">"timestamp"</span>])</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.plot(df[<span class="st">"timestamp"</span>], df[<span class="st">"microphone"</span>])</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time"</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Microphone"</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
