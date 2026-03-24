@@ -110,14 +110,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#exercise-1-data-loading-and-visualization" id="toc-exercise-1-data-loading-and-visualization" class="nav-link active" data-scroll-target="#exercise-1-data-loading-and-visualization"><span class="header-section-number">1</span> Exercise 1: Data loading and visualization</a>
+  <ul class="collapse">
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites"><span class="header-section-number">1.1</span> Prerequisites</a></li>
+  <li><a href="#database-description" id="toc-database-description" class="nav-link" data-scroll-target="#database-description"><span class="header-section-number">1.2</span> Database description</a></li>
+  </ul></li>
+  <li><a href="#tasks" id="toc-tasks" class="nav-link" data-scroll-target="#tasks"><span class="header-section-number">2</span> Tasks</a>
+  <ul class="collapse">
+  <li><a href="#queries-on-mongodb-compass" id="toc-queries-on-mongodb-compass" class="nav-link" data-scroll-target="#queries-on-mongodb-compass"><span class="header-section-number">2.1</span> Queries on MongoDB Compass</a></li>
+  <li><a href="#queries-from-r" id="toc-queries-from-r" class="nav-link" data-scroll-target="#queries-from-r"><span class="header-section-number">2.2</span> Queries from R</a></li>
+  <li><a href="#queries-from-python" id="toc-queries-from-python" class="nav-link" data-scroll-target="#queries-from-python"><span class="header-section-number">2.3</span> Queries from Python</a></li>
+  </ul></li>
+  <li><a href="#exercise-2-data-streaming-via-mads" id="toc-exercise-2-data-streaming-via-mads" class="nav-link" data-scroll-target="#exercise-2-data-streaming-via-mads"><span class="header-section-number">3</span> Exercise 2: data streaming via MADS</a>
+  <ul class="collapse">
+  <li><a href="#install-mads" id="toc-install-mads" class="nav-link" data-scroll-target="#install-mads"><span class="header-section-number">3.1</span> Install MADS</a></li>
+  <li><a href="#configuring-mads" id="toc-configuring-mads" class="nav-link" data-scroll-target="#configuring-mads"><span class="header-section-number">3.2</span> Configuring MADS</a></li>
+  <li><a href="#running-mads" id="toc-running-mads" class="nav-link" data-scroll-target="#running-mads"><span class="header-section-number">3.3</span> Running MADS</a></li>
+  <li><a href="#consuming-mads-data-in-r-and-python" id="toc-consuming-mads-data-in-r-and-python" class="nav-link" data-scroll-target="#consuming-mads-data-in-r-and-python"><span class="header-section-number">3.4</span> Consuming MADS data in R and Python</a></li>
+  <li><a href="#task" id="toc-task" class="nav-link" data-scroll-target="#task"><span class="header-section-number">3.5</span> Task</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -159,10 +185,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="exercise-1-data-loading-and-visualization" class="level1">
-<h1>Exercise 1: Data loading and visualization</h1>
-<section id="prerequisites" class="level2">
-<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
+<section id="exercise-1-data-loading-and-visualization" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Exercise 1: Data loading and visualization</h1>
+<section id="prerequisites" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="prerequisites"><span class="header-section-number">1.1</span> Prerequisites</h2>
 <p>To run this exercise, you need to have the following tools and libraries installed:</p>
 <ul>
 <li>R and RStudio from <a href="https://cran.r-project.org/">CRAN</a> and Posit from <a href="https://posit.co/download/rstudio-desktop/">Posit</a></li>
@@ -181,8 +207,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Content</span> mongo_massm_2026-03-20<span class="op">.</span><span class="fu">archive</span><span class="op">.</span><span class="fu">gz</span> <span class="op">-</span>Raw <span class="op">|</span> docker exec <span class="op">-</span>i massm-mongo mongorestore <span class="op">--</span>gzip <span class="op">--</span>archive <span class="op">--</span>drop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now launch MongoDB Compass and connect to <code>mongodb://localhost:27017</code>. You should see a database named <code>MASSM_1</code>.</p>
 </section>
-<section id="database-description" class="level2">
-<h2 class="anchored" data-anchor-id="database-description">Database description</h2>
+<section id="database-description" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="database-description"><span class="header-section-number">1.2</span> Database description</h2>
 <p>The <code>MASSM_1</code> database contains two <em>collections</em>, <code>force</code> and <code>acceleration</code>, containing the data acquired during a milling process from a force sensing fixture, a 3-axis accelerometer, and a microphone.</p>
 <p>All measurements have been collected at 10kHz rate, originally spanning a total of over 5 million samples, although the force measurements have been downsampled to 200 Hz (providing mean and standard deviation in wondows of 5 ms) to reduce the data size, and the acceleration and sound pressure measurements have been kept at the original 10 kHz rate, but saved in chunks of 10 samples every 1 ms.</p>
 <p>Each collection is made by a list of <em>documents</em>. Each document is a JSON format object containing relevant information about the acquisition.</p>
@@ -258,10 +284,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>where this time the <code>message.measurements</code> field contains the 10 samples collected in the 1 ms window for each of the 3 acceleration components and for the sound pressure.</p>
 </section>
 </section>
-<section id="tasks" class="level1">
-<h1>Tasks</h1>
-<section id="queries-on-mongodb-compass" class="level2">
-<h2 class="anchored" data-anchor-id="queries-on-mongodb-compass">Queries on MongoDB Compass</h2>
+<section id="tasks" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Tasks</h1>
+<section id="queries-on-mongodb-compass" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="queries-on-mongodb-compass"><span class="header-section-number">2.1</span> Queries on MongoDB Compass</h2>
 <p>Using MongoDB Compass, perform the following queries on the <code>MASSM_1</code> database:</p>
 <ol type="1">
 <li>Using the query field and the query option <code>Project</code>, select 100 documents from the <code>force</code> collection starting 10 seconds after the first timestamp, and only show the <code>message.timestamp</code> and <code>message.measurements.Fx</code> fields.</li>
@@ -296,8 +322,8 @@ Important
 </div>
 <p>Once you have customized your data query or transformation, you can export the results as a CSV file, and then load it in R or Python for further analysis and visualization. This approach, though, <strong>is not ideal for large datasets</strong> (you are duplicating the data!), and it is better to use a database client library to query the database directly from your code, as we will see in the next exercises.</p>
 </section>
-<section id="queries-from-r" class="level2">
-<h2 class="anchored" data-anchor-id="queries-from-r">Queries from R</h2>
+<section id="queries-from-r" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="queries-from-r"><span class="header-section-number">2.2</span> Queries from R</h2>
 <p>We start loading some packages:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -366,8 +392,8 @@ Tip
 </div>
 </div>
 </section>
-<section id="queries-from-python" class="level2">
-<h2 class="anchored" data-anchor-id="queries-from-python">Queries from Python</h2>
+<section id="queries-from-python" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="queries-from-python"><span class="header-section-number">2.3</span> Queries from Python</h2>
 <p>Using the <code>pymongo</code> library, write Python code to perform the same queries as above, and load the results in a Pandas data frame. Then, create a plot of the <code>Fx</code> component over time, and a histogram of the <code>microphone</code> component.</p>
 <p>For example, we could run:</p>
 <div class="cell">
@@ -416,6 +442,124 @@ Tip
 </div>
 <div class="callout-body-container callout-body">
 <p>As said above for R, the query result is a rather complicate data frame, for its columns are nested lists. Try to use an aggregation of a saved View to make it simpler and more efficient to load in Python.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise-2-data-streaming-via-mads" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Exercise 2: data streaming via MADS</h1>
+<p>We are showing how to stream data from MongoDB to R and Python using the <a href="https://mads-net.github.io">MADS</a> library.</p>
+<section id="install-mads" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="install-mads"><span class="header-section-number">3.1</span> Install MADS</h2>
+<p>To setup the MADS framework, follow the instructions in the <a href="https://mads-net.github.io/guides/install.html">MADS documentation</a>. You need to install the MADS library. Beside, you need the MongoDB installed and loaded with example data as described above.</p>
+<p>Furthermore, you need Python or R/RStudio.</p>
+</section>
+<section id="configuring-mads" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="configuring-mads"><span class="header-section-number">3.2</span> Configuring MADS</h2>
+<p>MADS is a multi-agent system for data streaming and processing. It is based on the concept of <em>agents</em> that can be configured to perform specific tasks, such as data acquisition, processing, and visualization.</p>
+<p>MADS agents connect to a central <em>broker</em> that manages the communication between agents. Each agent can subscribe to specific <em>topics</em> to receive data, and publish data on other topics for other agents to consume.</p>
+<p>MADS has a central configuration file, that is loaded by the broker and distributed to all agents. There is also a GUI called <em>director</em> that orchestrate the launch of the broker and the agents, and allows to monitor their status and communication.</p>
+<p>We start by creating a configuration file for our MADS setup, <code>mads.ini</code>, and a director configuration file <code>director.toml</code>.</p>
+<p>In your current working directory, create the file <code>mads.ini</code> with the following content:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[agents]</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">frontend_address </span><span class="ot">=</span><span class="st"> "tcp://localhost:9090"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="dt">backend_address </span><span class="ot">=</span><span class="st"> "tcp://localhost:9091"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">settings_address </span><span class="ot">=</span><span class="st"> "tcp://localhost:9092"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="dt">timecode_fps </span><span class="ot">=</span><span class="st"> </span><span class="dv">25</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">[broker]</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="dt">frontend_address </span><span class="ot">=</span><span class="st"> "tcp://*:9090"</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="dt">backend_address </span><span class="ot">=</span><span class="st"> "tcp://*:9091"</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="dt">settings_address </span><span class="ot">=</span><span class="st"> "tcp://*:9092"</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">[feedback]</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="dt">sub_topic </span><span class="ot">=</span><span class="st"> [""]</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="dt">print_width </span><span class="ot">=</span><span class="st"> </span><span class="dv">0</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="dt">indent_width </span><span class="ot">=</span><span class="st"> </span><span class="dv">2</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="kw">[replay]</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="dt">db_uri </span><span class="ot">=</span><span class="st"> "mongodb://localhost:27017"</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="dt">db_name </span><span class="ot">=</span><span class="st"> "MASSM_1"</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="dt">collections </span><span class="ot">=</span><span class="st"> ["force", "acceleration"]</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="dt">max_loop_duration_ms </span><span class="ot">=</span><span class="st"> </span><span class="dv">1000</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="dt">repeat </span><span class="ot">=</span><span class="st"> </span><span class="kw">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then create the file <code>director.toml</code> with the following content:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[director]</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">sample_rate</span> <span class="op">=</span> <span class="fl">2.0</span> <span class="co"># optional, default=2.0: process metrics sampling period in seconds (fractions allowed)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[broker]</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="dt">command</span> <span class="op">=</span> <span class="st">"mads broker"</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="dt">enabled</span> <span class="op">=</span> <span class="cn">true</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="dt">relaunch</span> <span class="op">=</span> <span class="cn">true</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="dt">tty</span> <span class="op">=</span> <span class="cn">true</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="kw">[feedback]</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="dt">command</span> <span class="op">=</span> <span class="st">"mads feedback"</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="dt">after</span> <span class="op">=</span> <span class="st">"broker"</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="dt">enabled</span> <span class="op">=</span> <span class="cn">true</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">[replay]</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="dt">command</span> <span class="op">=</span> <span class="st">"mads source replay"</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="dt">after</span> <span class="op">=</span> <span class="st">"broker"</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="dt">enabled</span> <span class="op">=</span> <span class="cn">false</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="running-mads" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="running-mads"><span class="header-section-number">3.3</span> Running MADS</h2>
+<p>Just launch the director with the command:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mads</span> director</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In the GUI that opens, you should see the broker and the feedback agent running. You can enable the replay agent to start streaming data from MongoDB by clicking on the <code>start</code> button. You should see the data being printed in the feedback agent.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The director GUI is just a convenient way to launch and monitor the MADS agents. You can also launch the agents directly from the command line, using the commands specified in the <code>director.toml</code> file. For example, you can launch the broker with <code>mads broker</code>, and then launch the replay agent with <code>mads source replay</code>.</p>
+</div>
+</div>
+</section>
+<section id="consuming-mads-data-in-r-and-python" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="consuming-mads-data-in-r-and-python"><span class="header-section-number">3.4</span> Consuming MADS data in R and Python</h2>
+<p>MADS is designed to be flexible. You can create custom agents to consume the data streamed by MADS and perform specific tasks, such as data processing, visualization, or machine learning.</p>
+<p>Among the different strategies and languages, you can design your agents by following these strategies:</p>
+<ul>
+<li>Create a <strong>custom C++ plugin</strong> as <a href="https://mads-net.github.io/guides/plugins.html" target="_blank">detailed here</a>, and then use the plugin in your MADS configuration. This is the most efficient way to create custom agents, but it requires C++ programming skills.</li>
+<li>Use the <a href="https://mads-net.github.io/guides/python_agent.html" target="_blank">MADS Python agent</a> to create a <strong>custom agent in Python</strong>. Easier than the C++ plugin, does not require to define the agent logic and loop, but it is less efficient than the C++ plugin and has some limitation in flexibility.</li>
+<li>Use the <a href="https://github.com/MADS-NET/r_plugin" target="_blank">MADS R plugin</a> to create a <strong>custom agent in R</strong>. Similar as the previous case, but for R language.</li>
+<li>Use the <a href="https://mads-net.github.io/guides/python.html" target="_blank">MADS Python library</a> to create a <strong>custom agent entirely in Python</strong> that connects to the MADS broker and subscribes to the relevant topics to receive data. Very flexible, but you have to manage the agent logic and loop yourself.</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Real-time
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that, unless you run the MADS agents on realtime operating systems (like RT-Linux), you cannot guarantee real-time performance, and you may experience some delay in the data streaming. However, MADS is designed to be efficient and to minimize the latency, so it can be used for near-real-time applications.</p>
+</div>
+</div>
+</section>
+<section id="task" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="task"><span class="header-section-number">3.5</span> Task</h2>
+<p>Try to create a custom agent in Python or R that subscribes to the forces or accelerations data streams and performs some simple processing, such as computing the mean and standard deviation of the measurements, and then publishes the statistic back to MADS for visualization in the feedback agent.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Graphical visualization in Rerun
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <a href="https://mads-net.github.io/guides/rerun.html" target="_blank">MADS rerunner</a> is a powerful tool for visualizing data in real-time. You can use it to create custom visualizations of the data streamed by MADS, such as time series plots, ACF, FFT. It can consume data produced by any other MADS agent and provide a real-time chart or graphical representation of the data.</p>
 </div>
 </div>
 
