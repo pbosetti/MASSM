@@ -291,7 +291,7 @@
     "href": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
     "title": "Distributed data acquisition and processing",
     "section": "MADS: Multi-Agent Distributed System",
-    "text": "MADS: Multi-Agent Distributed System\n\n\nThe Multi-Agent Distributed System (MADS) is a lightweight and modular software framework for distributed data acquisition and processing\nGeneral purpose, but well-suited for smart manufacturing environments\n\n  \n\n\n\n\n\n\n\n\nWhere to start\n\n\nGo to mads-net-github.io for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing"
+    "text": "MADS: Multi-Agent Distributed System\n\n\nThe Multi-Agent Distributed System (MADS) is a lightweight and modular software framework for distributed data acquisition and processing\nGeneral purpose, but well-suited for smart manufacturing environments\n\n  \n\n\n\n\n\n\n\n\nWhere to start\n\n\nGo to mads-net.github.io for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing"
   },
   {
     "objectID": "slides/2_time_domain.html#time-series-statistics",
