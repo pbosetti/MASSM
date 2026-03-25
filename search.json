@@ -63,473 +63,235 @@
     "text": "2.5 Task\nTry to create a custom agent in Python or R that subscribes to the forces or accelerations data streams and performs some simple processing, such as computing the mean and standard deviation of the measurements, and then publishes the statistic back to MADS for visualization in the feedback agent.\n\n\n\n\n\n\nTipGraphical visualization in Rerun\n\n\n\nThe MADS rerunner is a powerful tool for visualizing data in real-time. You can use it to create custom visualizations of the data streamed by MADS, such as time series plots, ACF, FFT. It can consume data produced by any other MADS agent and provide a real-time chart or graphical representation of the data."
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-data-matrix-and-centering",
-    "href": "slides/3_feature_based.html#pca-data-matrix-and-centering",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA: data matrix and centering",
-    "text": "PCA: data matrix and centering\n\n\nLet the feature matrix of a MVTS be \\[\n\\mathbf{X} =\n\\begin{bmatrix}\n\\mathbf{x}_1^T \\\\\n\\mathbf{x}_2^T \\\\\n\\vdots \\\\\n\\mathbf{x}_N^T\n\\end{bmatrix}\n\\in \\mathbb{R}^{N \\times p}\n\\] where each row is a feature vector extracted at one time instant or from one time window statistics\nIn other words, uppercase \\(\\mathbf{X}\\) collects all observations, while lowercase \\(\\mathbf{x}_t\\) denotes the feature vector of the \\(t\\)-th observation\n\nPCA starts from the centered matrix \\(\\mathbf{X}_c\\): \\[\n\\mathbf{X}_c = \\mathbf{X} - \\boldsymbol{\\mu}^T\n\\] with sample means vector: \\[\n\\boldsymbol{\\mu} = \\frac{1}{N}\\sum_{t=1}^{N}\\mathbf{x}_t\n\\]\nIf variables have different physical units, one usually standardizes them before PCA"
+    "objectID": "slides/1_time_series.html#storing-time",
+    "href": "slides/1_time_series.html#storing-time",
+    "title": "Time series of stochastic process variables",
+    "section": "Storing time",
+    "text": "Storing time\nTwo common representations are used in practice:\n\nISO8601 date-time string, for example 2026-03-09T08:15:30.125Z\nNumeric offset from an epoch, for example seconds or milliseconds from a reference instant\n\nISO strings are readable, self-describing, and easy to exchange between systems, especially when they include time zone information\nEpoch-based values are compact and fast for storage, sorting, and arithmetic, but they require agreement on the epoch, units, and time zone convention\nIn industrial applications, timestamps are often stored with millisecond resolution, although sensor acquisition may internally use finer clocks"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-covariance-matrix-and-eigenproblem",
-    "href": "slides/3_feature_based.html#pca-covariance-matrix-and-eigenproblem",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA: covariance matrix and eigenproblem",
-    "text": "PCA: covariance matrix and eigenproblem\n\n\nThe sample covariance matrix (\\(p\\times p\\))is: \\[\n\\mathbf{S} = \\frac{1}{N-1}\\mathbf{X}_c^T \\mathbf{X}_c\n\\]\nPCA solves the eigenvalue problem: \\[\n\\mathbf{S}\\mathbf{p}_i = \\lambda_i \\mathbf{p}_i,\n\\quad i = 1,\\dots,p\n\\]\n\nwhere:\n\n\\(\\lambda_i\\) is the variance explained by the \\(i\\)-th principal component\n\\(\\mathbf{p}_i\\) is the corresponding eigenvector, or loading vector\n\nThe indexes \\(i\\) are sorted so that: \\[\n\\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge \\lambda_p \\ge 0\n\\]\n\n\n\n\n\n\n\n\nNote\n\n\nThe eigenvectors \\(\\mathbf{p}_i\\) are orthogonal and form a new coordinate system in feature space, where the first axis captures the largest variance, the second axis captures the largest remaining variance, and so on."
+    "objectID": "slides/1_time_series.html#epoch-conventions-and-clocks",
+    "href": "slides/1_time_series.html#epoch-conventions-and-clocks",
+    "title": "Time series of stochastic process variables",
+    "section": "Epoch conventions and clocks",
+    "text": "Epoch conventions and clocks\n\n\nAn epoch is the reference instant from which a numeric timestamp is measured\nCommon conventions include:\n\nUnix epoch: 1970-01-01 00:00:00 UTC\nGPS epoch: 1980-01-06 00:00:00 UTC\nOther software-specific origins, used by spreadsheets, PLCs, or proprietary databases\n\nIf the epoch changes, the same numeric value refers to a different physical instant\n\nOperating systems expose different clocks:\n\nSystem clock: returns civil time and can jump because of NTP, manual updates, or daylight-saving adjustments\nMonotonic clock: only increases and is used to measure elapsed time reliably\n\nTherefore:\n\nuse the system clock for timestamps attached to data\nuse a monotonic clock for latency, timeout, and sampling-period measurements\n\n\n\n\nNever compute elapsed time by subtracting two readings of the wall-clock if the clock can be corrected while the program is running."
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-scores-and-low-dimensional-representation",
-    "href": "slides/3_feature_based.html#pca-scores-and-low-dimensional-representation",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA: scores and low-dimensional representation",
-    "text": "PCA: scores and low-dimensional representation\n\n\n\nThe projection of the data onto the principal axes gives the scores matrix (\\(N\\times p\\)): \\[\n\\mathbf{T} = \\mathbf{X}_c \\mathbf{P}\n\\] that is, \\[\n\\mathbf{T} =\n\\begin{bmatrix}\n\\mathbf{t}_1^T \\\\\n\\mathbf{t}_2^T \\\\\n\\vdots \\\\\n\\mathbf{t}_N^T\n\\end{bmatrix},\n~~~\n\\mathbf{t}_t^T = \\mathbf{x}_{c,t}^T \\mathbf{P},~~~\\mathbf{P} = [\\mathbf{p}_1,\\mathbf{p}_2,\\dots,\\mathbf{p}_p]\n\\]\n\nUsing only the first \\(a &lt; p\\) components yields the reduced model \\[\n\\mathbf{X}_c \\approx \\mathbf{T}_a \\mathbf{P}_a^T\n\\] where: \\[\n\\mathbf{T}_a = \\mathbf{X}_c \\mathbf{P}_a\n\\]\n\n\n\n\n\n\n\n\n\nNote\n\n\nFor a given subset of principal components \\(a\\), the explained variance ratio is: \\(\\eta_a = \\frac{\\sum_{i=1}^{a}\\lambda_i}{\\sum_{i=1}^{p}\\lambda_i}\\). This can be used to select the number of components to retain, for example by setting a threshold such as \\(\\eta_a \\ge 0.95\\).\n\n\n\n\n\nNote: We can use transpose rather than inverse because \\(\\mathbf{P}\\) is an orthonormal matrix, so \\(\\mathbf{P}^{-1} = \\mathbf{P}^T\\)."
+    "objectID": "slides/1_time_series.html#monotonic-clock-limitations",
+    "href": "slides/1_time_series.html#monotonic-clock-limitations",
+    "title": "Time series of stochastic process variables",
+    "section": "Monotonic clock limitations",
+    "text": "Monotonic clock limitations\nThe monotonic clock is usually referenced to an internal origin that depends on the current operating-system session, typically the last boot time\nTherefore, its zero is not a civil date and is generally different on each machine, even if the devices are nominally synchronized on the network\nAs a consequence, monotonic time is excellent for measuring:\n\nelapsed time\nlatency\ntimeout intervals\nlocal acquisition jitter\n\nHowever, it cannot be used to synchronize measurements collected on different devices, because the timestamps do not share a common physical epoch\nTo align data acquired by multiple systems, one needs timestamps derived from a shared wall-clock reference, typically UTC, distributed for example by NTP, PTP, or GNSS"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-reconstruction-error-and-monitoring-statistics",
-    "href": "slides/3_feature_based.html#pca-reconstruction-error-and-monitoring-statistics",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA: reconstruction error and monitoring statistics",
-    "text": "PCA: reconstruction error and monitoring statistics\n\n\n\nFor centered observation row \\(\\mathbf{x}_{c,t}^T\\), PCA computes the score row \\[\n\\mathbf{t}_t^T = \\mathbf{x}_{c,t}^T \\mathbf{P}_a\n\\] and then reconstructs it in feature space as \\[\n\\hat{\\mathbf{x}}_{c,t}^T = \\mathbf{t}_t^T \\mathbf{P}_a^T\n\\]\nTherefore the residual decomposition is: \\[\n\\mathbf{x}_{c,t}^T = \\hat{\\mathbf{x}}_{c,t}^T + \\boldsymbol{\\varepsilon}_t^T\n\\] where \\(\\hat{\\mathbf{x}}_{c,t}^T\\) lies in the retained latent subspace and \\(\\boldsymbol{\\varepsilon}_t^T\\) is the residual row\n\nTwo standard monitoring statistics are:\n\nHotelling’s \\(T^2\\) : \\[\nT_t^2 = \\sum_{i=1}^{a}\\frac{t_{ti}^2}{\\lambda_i}\n\\]\nSquared Prediction Error, SPE or \\(Q\\) statistic: \\[\nQ_t = \\|\\mathbf{\\varepsilon}_t\\|_2^2\n  = \\sum_{j=1}^{p}\\varepsilon_{tj}^2\n\\]\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\\(T^2\\) measures abnormality inside the retained subspace, while \\(Q_t\\) measures lack of fit outside it"
+    "objectID": "slides/1_time_series.html#time-in-r",
+    "href": "slides/1_time_series.html#time-in-r",
+    "title": "Time series of stochastic process variables",
+    "section": "Time in R",
+    "text": "Time in R\nR provides several complementary tools for time handling:\n\nDate: stores calendar dates without time-of-day\nPOSIXct: stores date-time as seconds from the Unix epoch\nts: for regularly sampled series with known frequency\nxts: for indexed time series, especially convenient for date-time filtering and irregular sampling\nlubridate: simplifies parsing, rounding, shifting, and extracting date-time components\n\nThe choice depends on whether time is regular, irregular, or mainly used for querying"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-why-it-is-useful-for-time-series",
-    "href": "slides/3_feature_based.html#pca-why-it-is-useful-for-time-series",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA: why it is useful for time series",
-    "text": "PCA: why it is useful for time series\nPCA is applied to time-series analysis after building features from samples or windows\nTypical uses are:\n\nreducing a multivariate signal to a few latent variables\ndetecting operating regimes and structural changes\ndecorrelating strongly coupled measurements\nidentifying dominant directions of variability\n\n\n\n\n\n\n\nImportant\n\n\nFor dynamic systems, PCA by itself does not describe how the system evolves over time. It only summarizes the data in feature space; any temporal information must be introduced explicitly, for example through window-based features or lagged variables, that is, past values of the same signal such as \\(x_{t-1}\\), \\(x_{t-2}\\), and so on, used together with the current value \\(x_t\\) to capture the temporal dynamics"
+    "objectID": "slides/1_time_series.html#regular-series-with-ts",
+    "href": "slides/1_time_series.html#regular-series-with-ts",
+    "title": "Time series of stochastic process variables",
+    "section": "Regular series with ts",
+    "text": "Regular series with ts\n\n\nThe ts class is designed for regular sampling, such as monthly production, daily energy use, or hourly average demand\nIt does not store a full timestamp per sample. Instead, it stores:\n\na start instant\na frequency\nthe ordered values\n\nThis is efficient and works very well with classical time-series models"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-supervised-binary-classification",
-    "href": "slides/3_feature_based.html#svm-supervised-binary-classification",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: supervised binary classification",
-    "text": "SVM: supervised binary classification\n\n\nAssume labeled feature vectors, where \\(\\mathbf{x_i}\\) is the vector of observations and \\(y_i\\) is the class label: \\[\n(\\mathbf{x}_i, y_i),\\quad y_i \\in \\{-1,+1\\},\\quad i=1,\\dots,N\n\\]\nThe goal is to learn a decision function \\[\nf(\\mathbf{x}) = \\mathrm{sign}(g(\\mathbf{x}))\n\\] that separates the two classes with maximum robustness\n\n\n\n\nSVM example in 2-D\n\n\n\n\nFor the linear case, \\(g(\\mathbf{x}) = \\mathbf{w}^T \\mathbf{x} + b\\) and the separating boundary is the hyperplane \\(\\mathbf{w}^T \\mathbf{x} + b = 0\\)"
+    "objectID": "slides/1_time_series.html#indexed-series-with-xts",
+    "href": "slides/1_time_series.html#indexed-series-with-xts",
+    "title": "Time series of stochastic process variables",
+    "section": "Indexed series with xts",
+    "text": "Indexed series with xts\n\n\nThe xts class is more convenient when timestamps are explicit and may be irregular\nEach observation is paired with a time index, typically Date or POSIXct\nThis is useful for:\n\nsensor logs\nevent streams\nasynchronous acquisition\nfiltering by calendar date or time window\n\n\n\nPlotData\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIndex\n.\n\n\n\n\n1\n2026-03-09 08:00:00\n20.0\n\n\n2\n2026-03-09 08:05:00\n20.4\n\n\n3\n2026-03-09 08:08:00\n20.1\n\n\n4\n2026-03-09 08:15:00\n20.8\n\n\n5\n2026-03-09 08:23:00\n21.2\n\n\n6\n2026-03-09 08:31:00\n21.0"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-maximum-margin-principle",
-    "href": "slides/3_feature_based.html#svm-maximum-margin-principle",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: maximum-margin principle",
-    "text": "SVM: maximum-margin principle\nIf the classes are linearly separable, the hard-margin SVM solves: \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2\n\\] subject to \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1,\\quad i=1,\\dots,N\n\\]\nThe geometric margin is \\[\n\\gamma = \\frac{2}{\\|\\mathbf{w}\\|_2}\n\\]\nTherefore, minimizing \\(\\|\\mathbf{w}\\|_2^2\\) is equivalent to maximizing the separation margin"
+    "objectID": "slides/1_time_series.html#querying-xts-with-date-ranges",
+    "href": "slides/1_time_series.html#querying-xts-with-date-ranges",
+    "title": "Time series of stochastic process variables",
+    "section": "Querying xts with date ranges",
+    "text": "Querying xts with date ranges\n\n\nOne of the strengths of xts is its compact indexing syntax\nExamples:\n\none day: x[\"2026-03-09\"]\none range: x[\"2026-03-09/2026-03-10\"]\nfrom an instant onward: x[\"2026-03-09 08:10:00/\"]\nup to an instant: x[\"/2026-03-09 08:15:00\"]\n\n\n\nsensor_xts[\"2026-03-09 08:05:00/2026-03-09 08:20:00\"]\n\n                    [,1]\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1\n2026-03-09 08:15:00 20.8\n\n\n\nsensor_xts[\"/2026-03-09 08:08:00\"]\n\n                    [,1]\n2026-03-09 08:00:00 20.0\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1\n\n\n\nThis is often faster to read and write than manual logical filtering"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-interactive-example",
-    "href": "slides/3_feature_based.html#svm-interactive-example",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: Interactive Example",
-    "text": "SVM: Interactive Example\n\n\n\n\nWe select as decision boundary \\(\\mathbf{w} = [\\cos(\\theta), \\sin(\\theta)]^T\\)\n\\(||\\mathbf w||_2 = 1\\) (it is a unit vector)\n\\(b\\) the intercept with the vertical axis\n\nThe margin width is then \\(2/\\|\\mathbf{w}\\|_2 = 2\\) and the support vectors are those that satisfy \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b) = 1\\)\nTry and find \\(\\theta, b\\) that maximize the margin while correctly classifying all points\n\n\n\n\n\n\n\nCaution\n\n\nWith the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin."
+    "objectID": "slides/1_time_series.html#lubridate-for-parsing-and-filtering",
+    "href": "slides/1_time_series.html#lubridate-for-parsing-and-filtering",
+    "title": "Time series of stochastic process variables",
+    "section": "lubridate for parsing and filtering",
+    "text": "lubridate for parsing and filtering\n\n\nlubridate helps create robust pipelines for date-time handling\nTypical tasks include:\n\nparsing strings with ymd_hms()\nchanging time zone with with_tz() or force_tz()\nrounding with floor_date() and ceiling_date()\nextracting fields such as year(), month(), wday(), hour()\n\n\n\nsensor_df %&gt;%\n  mutate(\n    minute_bin = floor_date(timestamp, \"10 min\"),\n    hour = hour(timestamp))\n\n# A tibble: 6 × 4\n  timestamp           value minute_bin           hour\n  &lt;dttm&gt;              &lt;dbl&gt; &lt;dttm&gt;              &lt;int&gt;\n1 2026-03-09 08:00:00  20   2026-03-09 08:00:00     8\n2 2026-03-09 08:05:00  20.4 2026-03-09 08:00:00     8\n3 2026-03-09 08:08:00  20.1 2026-03-09 08:00:00     8\n4 2026-03-09 08:15:00  20.8 2026-03-09 08:10:00     8\n5 2026-03-09 08:23:00  21.2 2026-03-09 08:20:00     8\n6 2026-03-09 08:31:00  21   2026-03-09 08:30:00     8\n\n\n\nsensor_df %&gt;% filter(\n  timestamp &gt;= ymd_hms(\"2026-03-09 08:05:00\"),\n  timestamp &lt;  ymd_hms(\"2026-03-09 08:25:00\"))\n\n# A tibble: 4 × 2\n  timestamp           value\n  &lt;dttm&gt;              &lt;dbl&gt;\n1 2026-03-09 08:05:00  20.4\n2 2026-03-09 08:08:00  20.1\n3 2026-03-09 08:15:00  20.8\n4 2026-03-09 08:23:00  21.2\n\n\n\n\n\n\n\n\n\nNote\n\n\nThis is especially useful before converting tabular data to xts"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-interactive-example-r-version",
-    "href": "slides/3_feature_based.html#svm-interactive-example-r-version",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: Interactive Example (R version)",
-    "text": "SVM: Interactive Example (R version)\n\n\nWe do a linear SVM classification and add predictions to it:\n\nfit &lt;- svm(\n  state ~ x1 + x2, data = df, \n  scale = FALSE, kernel = \"linear\"\n)\n\ndf &lt;-  df %&gt;% mutate(\n  id = 1:n(),\n  pred = predict(fit, .),\n  sv = if_else(id %in% fit$index, \"SV\", \"Other\")\n)\ncoef(fit)\n\n(Intercept)          x1          x2 \n       -0.2        -0.8         0.4 \n\n\nCoefficients are \\(b\\), \\(w_1\\), and \\(w_2\\) in the decision function \\(g(\\mathbf{x}) = w_1 x_1 + w_2 x_2 + b\\)"
+    "objectID": "slides/1_time_series.html#from-data-frame-to-xts",
+    "href": "slides/1_time_series.html#from-data-frame-to-xts",
+    "title": "Time series of stochastic process variables",
+    "section": "From data frame to xts",
+    "text": "From data frame to xts\nTo work efficiently with time series in R, a common workflow is:\n\n\n\nimport tabular data\nparse the timestamp column as POSIXct\nsort by time\nconvert to xts\nquery and aggregate\n\n\n\nsensor_tbl &lt;- tibble(\n  timestamp = c(\"2026-03-09 08:00:00\",\n                \"2026-03-09 08:05:00\",\n                \"2026-03-09 08:08:00\"),\n  temperature = c(20.0, 20.4, 20.1)\n)\n\nsensor_tbl2 &lt;- sensor_tbl %&gt;%\n  mutate(timestamp = ymd_hms(timestamp)) %&gt;%\n  arrange(timestamp)\n\nsensor_xts2 &lt;- xts::xts(\n  x = sensor_tbl2$temperature,\n  order.by = sensor_tbl2$timestamp\n)\n\nsensor_xts2\n\n                    [,1]\n2026-03-09 08:00:00 20.0\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
-    "href": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: soft margin and hinge loss",
-    "text": "SVM: soft margin and hinge loss\n\n\n\nReal process data are noisy, overlapping, and rarely perfectly separable\nThe soft-margin formulation introduces slack variables \\(\\xi_i \\ge 0\\): \\[\n\\min_{\\mathbf{w},b,\\boldsymbol{\\xi}}\n\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\xi_i\n\\] subject to: \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1-\\xi_i\n\\]\n\n\n\n\n\nSoft-margin SVM\n\n\n\n\nThe parameter \\(C\\) balances margin width against classification violations\n\n\n\n\n\n\nNote\n\n\nEquivalent empirical-risk view: \\(\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\)"
+    "objectID": "slides/1_time_series.html#time-series-in-python",
+    "href": "slides/1_time_series.html#time-series-in-python",
+    "title": "Time series of stochastic process variables",
+    "section": "Time series in Python",
+    "text": "Time series in Python\nPython offers libraries with roles similar to those seen in R:\n\ndatetime: basic date-time objects, time zones, timedeltas\npandas: indexed time series, resampling, rolling windows, filtering by date range\nnumpy: efficient numerical arrays and vectorized operations\nstatsmodels: AR, MA, ARIMA, seasonal models, ACF and PACF\npolars: fast tabular processing, useful before conversion to time-indexed data\nxarray: labeled multi-dimensional arrays, useful for sensor grids and scientific data\n\nIn practice, pandas plays a role similar to a combination of data.frame, xts, and part of lubridate"
   },
   {
-    "objectID": "slides/3_feature_based.html#equivalent-empirical-risk-view",
-    "href": "slides/3_feature_based.html#equivalent-empirical-risk-view",
-    "title": "Feature-based analysis of time series",
-    "section": "Equivalent empirical-risk view",
-    "text": "Equivalent empirical-risk view\n\n\nThe same soft-margin SVM can be written as \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 +\nC\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\n\\]\nThis has the standard machine-learning form \\[\n\\text{regularization} + \\text{empirical loss}\n\\]\n\n\\(\\frac{1}{2}\\|\\mathbf{w}\\|_2^2\\) penalizes complex models and favors a wider margin\n\\(\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\) is the hinge loss\n\\(C\\) controls the trade-off between margin size and training violations\n\n\nInterpretation:\n\nif \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1\\), the point is correctly classified and outside the margin, so the loss is 0\nif \\(0&lt;y_i(\\mathbf{w}^T\\mathbf{x}_i+b)&lt;1\\), the point is correctly classified but inside the margin\nif \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\le0\\), the point is misclassified\n\nSo this view is equivalent to the slack-variable formulation:\n\ngeometric view: maximize margin while allowing violations\nempirical-risk view: minimize regularized hinge loss on the training set"
+    "objectID": "slides/1_time_series.html#time-series-in-python-1",
+    "href": "slides/1_time_series.html#time-series-in-python-1",
+    "title": "Time series of stochastic process variables",
+    "section": "Time series in Python",
+    "text": "Time series in Python\n\n\nTypical workflow in Python:\n\nparse timestamps with pd.to_datetime()\nset the timestamp as index\nsort the index\nslice by date or time range\nresample or aggregate if needed\n\nThis is very close to the xts workflow in R\n\nimport pandas as pd\n\ndf = pd.DataFrame({\n    \"timestamp\": [\n        \"2026-03-09T08:00:00Z\",\n        \"2026-03-09T08:05:00Z\",\n        \"2026-03-09T08:08:00Z\"\n    ],\n    \"value\": [20.0, 20.4, 20.1]\n})\n\ndf[\"timestamp\"] = pd.to_datetime(df[\"timestamp\"], utc=True)\ndf = df.sort_values(\"timestamp\")\ndf = df.set_index(\"timestamp\")\n\nwindow = df.loc[\"2026-03-09 08:00:00\":\"2026-03-09 08:06:00\"]"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
-    "href": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: dual problem and kernel trick",
-    "text": "SVM: dual problem and kernel trick\n\n\nThe dual formulation is \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j K(\\mathbf{x}_i,\\mathbf{x}_j)\n\\] with constraints \\[\n\\alpha_i \\ge 0,\\qquad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\n\nThe kernel function \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] allows nonlinear separation in the original space through linear separation in a transformed feature space\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function, RBF: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]"
+    "objectID": "slides/1_time_series.html#r-and-python-correspondence",
+    "href": "slides/1_time_series.html#r-and-python-correspondence",
+    "title": "Time series of stochastic process variables",
+    "section": "R and Python correspondence",
+    "text": "R and Python correspondence\n\n\nUseful parallels are:\n\nts in R and statsmodels regular-series tools in Python\nxts in R and pandas with DatetimeIndex in Python\nlubridate in R and pandas date-time accessors, plus datetime, in Python\n\n\n# resample every 10 minutes\nagg = df.resample(\"10min\").mean()\n\n# rolling mean\nsmooth = df[\"value\"].rolling(3).mean()\n\n# month and hour extraction\ndf[\"hour\"] = df.index.hour\ndf[\"day\"] = df.index.day\n\n\n\n\n\n\n\nNote\n\n\nThe conceptual workflow is almost the same:\nparse  index  filter  resample  model"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-understanding-the-dual-problem",
-    "href": "slides/3_feature_based.html#svm-understanding-the-dual-problem",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: understanding the dual problem",
-    "text": "SVM: understanding the dual problem\n\n\n\nInstead of optimizing the hyperplane parameters directly, the dual problem optimizes one coefficient \\(\\alpha_i\\) for each training sample: \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j \\mathbf{x}_i^T\\mathbf{x}_j\n\\]\nFor the soft-margin SVM, the constraints are \\[\n0 \\le \\alpha_i \\le C,\\qquad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\nThe primal and dual formulations are equivalent: they lead to the same classifier.\n\nInterpretation:\n\neach \\(\\alpha_i\\) measures how much training point \\(i\\) contributes to the solution\nmost \\(\\alpha_i\\) are zero\nonly points with \\(\\alpha_i &gt; 0\\) matter: these are the support vectors\nthe upper bound \\(C\\) limits the influence of a single sample\n\nWhy it is useful:\n\nthe data appear only through inner products \\(\\mathbf{x}_i^T\\mathbf{x}_j\\)\nthis makes the solution easier to reinterpret in geometric terms\nit prepares the ground for replacing inner products with kernels"
+    "objectID": "slides/1_time_series.html#querying-a-time-range-in-mongodb",
+    "href": "slides/1_time_series.html#querying-a-time-range-in-mongodb",
+    "title": "Time series of stochastic process variables",
+    "section": "Querying a time range in MongoDB",
+    "text": "Querying a time range in MongoDB\n\n\n{\n  \"_id\": {\n    \"$oid\": \"698afb51c3b4084d840b9c85\"\n  },\n  \"timestamp\": {\n    \"$date\": \"2026-02-10T09:33:05.344Z\"\n  },\n  \"measure\": {\n    \"back_bend\": -0.5168184041976929,\n    \"back_flex\": -1.20260488986969,\n    \"back_rot\": 1.749389410018921,\n    \"cervical_flex\": 17.3467960357666,\n    \"horiz_reach_left\": 0.20939064025878906,\n    \"horiz_reach_right\": 0.20467370748519897,\n    \"hostname\": \"nuc3\",\n    \"stability_margin\": 0.11027171462774277,\n    \"timecode\": 37985.2,\n    \"vert_reach_left\": 14.016213417053223,\n    \"vert_reach_right\": 10.769205093383789\n  }\n}\n\nThe standard pattern is:\n\ninclusive lower bound: $gte\nexclusive upper bound: $lt\n\nThis avoids overlap when adjacent windows are queried one after another\ndb.measurements.find({\n  timestamp: {\n    $gte: ISODate(\"2026-02-10T08:00:00.000Z\"),\n    $lt:  ISODate(\"2026-02-10T10:00:00.000Z\")\n  }\n}).sort({ timestamp: 1 })\n\n\n\n\nFor performance, a range query on timestamp should be supported by an index on the same field, or by a compound index such as { machine_id: 1, timestamp: 1 }."
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-the-kernel-trick",
-    "href": "slides/3_feature_based.html#svm-the-kernel-trick",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: the kernel trick",
-    "text": "SVM: the kernel trick\n\n\n\nIn the dual problem and in the decision function, the samples appear only through inner products: \\[\n\\mathbf{x}_i^T\\mathbf{x}_j\n\\]\nIf we first map the data into a feature space \\(\\phi(\\mathbf{x})\\), the same algorithm would use \\[\n\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\]\nThe kernel trick replaces this inner product with a kernel function \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] without computing \\(\\phi(\\mathbf{x})\\) explicitly.\n\nWhy this matters:\n\na linear separator in feature space becomes a nonlinear boundary in the original space\nthe optimization problem stays almost unchanged\nprediction still depends only on support vectors\n\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nNote: the dual formulation is what makes kernelized SVMs possible."
+    "objectID": "slides/1_time_series.html#mongodb-query-in-javascript",
+    "href": "slides/1_time_series.html#mongodb-query-in-javascript",
+    "title": "Time series of stochastic process variables",
+    "section": "MongoDB query in JavaScript",
+    "text": "MongoDB query in JavaScript\nconst t0 = ISODate(\"2026-03-09T08:00:00.000Z\");\nconst t1 = ISODate(\"2026-03-09T09:00:00.000Z\");\n\ndb.measurements.find(\n  {\n    machine_id: \"M01\",\n    timestamp: { $gte: t0, $lt: t1 }\n  },\n  {\n    _id: 0,\n    machine_id: 1,\n    timestamp: 1,\n    temperature: 1,\n    vibration: 1\n  }\n).sort({ timestamp: 1 });"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
-    "href": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM: decision function and time-series use",
-    "text": "SVM: decision function and time-series use\nAfter training, the decision function is \\[\ng(\\mathbf{x}) = \\sum_{i \\in SV}\\alpha_i y_i K(\\mathbf{x}_i,\\mathbf{x}) + b\n\\] where only the support vectors contribute\nFor time-series analysis, SVM is applied to features extracted from samples or windows, for example:\n\ndirect multivariate measurements \\((x_{1,t},x_{2,t},\\dots)\\)\nlagged vectors \\((x_t,x_{t-1},\\dots,x_{t-L})\\)\nstatistical and spectral features over a window\n\nSVM is therefore a classification rule in feature space, not a stochastic time model"
+    "objectID": "slides/1_time_series.html#mongodb-query-in-python",
+    "href": "slides/1_time_series.html#mongodb-query-in-python",
+    "title": "Time series of stochastic process variables",
+    "section": "MongoDB query in Python",
+    "text": "MongoDB query in Python\nfrom datetime import datetime, timezone\nfrom pymongo import MongoClient\nclient = MongoClient(\"mongodb://localhost:27017\")\ndb = client[\"plant\"]\ncol = db[\"measurements\"]\nt0 = datetime(2026, 3, 9, 8, 0, 0, tzinfo=timezone.utc)\nt1 = datetime(2026, 3, 9, 9, 0, 0, tzinfo=timezone.utc)\ncursor = col.find(\n    {\n        \"machine_id\": \"M01\",\n        \"timestamp\": {\"$gte\": t0, \"$lt\": t1}\n    },\n    {\n        \"_id\": 0,\n        \"machine_id\": 1,\n        \"timestamp\": 1,\n        \"temperature\": 1,\n        \"vibration\": 1\n    }\n).sort(\"timestamp\", 1)\nrows = list(cursor)"
   },
   {
-    "objectID": "slides/3_feature_based.html#synthetic-bivariate-time-series",
-    "href": "slides/3_feature_based.html#synthetic-bivariate-time-series",
-    "title": "Feature-based analysis of time series",
-    "section": "Synthetic bivariate time series",
-    "text": "Synthetic bivariate time series\n\n\nWe construct a bivariate time series with two process variables:\n\na normal regime with strong positive correlation\na fault regime with mean shift and changed covariance structure\n\nThis is enough to illustrate how PCA detects changes in latent structure"
+    "objectID": "slides/1_time_series.html#mongodb-query-in-r",
+    "href": "slides/1_time_series.html#mongodb-query-in-r",
+    "title": "Time series of stochastic process variables",
+    "section": "MongoDB query in R",
+    "text": "MongoDB query in R\nlibrary(mongolite)\nlibrary(glue)\nm &lt;- mongo(collection = \"measurements\", db = \"plant\", url = \"mongodb://localhost:27017\")\nt0 &lt;- \"2026-03-09T08:00:00.000Z\"\nt1 &lt;- \"2026-03-09T09:00:00.000Z\"\nquery &lt;- glue(\n'{{\n  \"machine_id\": \"M01\",\n  \"timestamp\": {{\n    \"$gte\": {{\"$date\": \"{t0}\"}},\n    \"$lt\":  {{\"$date\": \"{t1}\"}}\n  }}\n}}'\n)\nfields &lt;- '{\"_id\": 0, \"machine_id\": 1,\n            \"timestamp\": 1, \"temperature\": 1,\n            \"vibration\": 1}'\ndf &lt;- m$find(query = query, fields = fields, sort = '{\"timestamp\": 1}')"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-analysis-14",
-    "href": "slides/3_feature_based.html#pca-analysis-14",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA Analysis 1/4",
-    "text": "PCA Analysis 1/4\n\n\nWe apply PCA to the standardized two-variable feature matrix\nSince \\(p=2\\), the model is simple enough to visualize directly:\n\nloadings describe the principal directions\nscores show how observations evolve in the latent space\nexplained variance quantifies dimensional compression"
+    "objectID": "slides/1_time_series.html#from-mongodb-query-to-time-series",
+    "href": "slides/1_time_series.html#from-mongodb-query-to-time-series",
+    "title": "Time series of stochastic process variables",
+    "section": "From MongoDB query to time series",
+    "text": "From MongoDB query to time series\nOnce the query result is available, the workflow is again the same:\n\nparse the returned timestamp\nsort rows by time\nconvert to a time-indexed object\nanalyze or visualize the selected window\n\n\n\nsensor_df %&gt;%\n  arrange(timestamp) %&gt;%\n  ggplot(aes(x = timestamp, y = value)) +\n  geom_line() +\n  geom_point() +\n  labs(x = \"Timestamp\", y = \"Value\",\n       title = \"Selected time window\")"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-analysis-24",
-    "href": "slides/3_feature_based.html#pca-analysis-24",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA Analysis 2/4",
-    "text": "PCA Analysis 2/4\nFirst we do the PCA fit and compute scores \\([\\mathbf{p}_1, \\mathbf{p}_2]\\):\n\npca_fit &lt;- prcomp(~x1+x2, data=ts_df, center = TRUE, scale. = TRUE)\nsummary(pca_fit)\n\nImportance of components:\n                          PC1    PC2\nStandard deviation     1.3272 0.4884\nProportion of Variance 0.8808 0.1192\nCumulative Proportion  0.8808 1.0000\n\nround(pca_fit$rotation, 3)\n\n      PC1    PC2\nx1 -0.707 -0.707\nx2 -0.707  0.707\n\nscores &lt;- as_tibble(pca_fit$x) %&gt;% mutate(t = ts_df$t, state = ts_df$state)\n\nWe also calculate \\(\\mathbf \\lambda\\) and rescale the data:\n\n(lambda &lt;- pca_fit$sdev^2)\n\n[1] 1.761512 0.238488\n\ncenter_vec &lt;- pca_fit$center\nscale_vec &lt;- pca_fit$scale\nx_scaled &lt;- scale(ts_df %&gt;% select(x1, x2), center = center_vec, scale = scale_vec)"
+    "objectID": "slides/1_time_series.html#summary",
+    "href": "slides/1_time_series.html#summary",
+    "title": "Time series of stochastic process variables",
+    "section": "Summary",
+    "text": "Summary\n\nTime can be stored as readable ISO text or as numeric offset from an epoch\nEpoch convention, time zone, and clock type must be known to avoid semantic errors\nIn R, ts is convenient for regular series, while xts is preferable for explicit timestamp indexing\nIn Python, pandas provides the closest workflow to xts plus data-frame filtering\nMongoDB range queries on ISO dates are naturally expressed with $gte and $lt\nOnce data are extracted, the main tasks are always parse, index, filter, aggregate, and model"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-analysis-34",
-    "href": "slides/3_feature_based.html#pca-analysis-34",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA Analysis 3/4",
-    "text": "PCA Analysis 3/4\nWe calculate the residuals vector \\(\\mathbf\\varepsilon = \\mathbf{x}_c - \\hat{\\mathbf{x}}_c\\) and the monitoring statistics. Given the \\(\\lambda\\) values, we only keep \\(\\mathbf{p}_1\\) so:\n\\[\n\\hat{\\mathbf{x}}_{c,t}^T = \\mathbf{t}_t^T \\mathbf{P}_a^T\n\\]\nbecomes:\n\nx_hat &lt;- tcrossprod(pca_fit$x[, 1, drop = FALSE], pca_fit$rotation[, 1, drop = FALSE])\nresiduals_mat &lt;- x_scaled - x_hat\n\nFinally we can calculate the monitoring statistics:\n\nspe &lt;- rowSums(residuals_mat^2)\nt2 &lt;- rowSums((pca_fit$x[, 1:2, drop = FALSE]^2) / matrix(rep(lambda[1:2], each = n), ncol = 2))"
+    "objectID": "slides/0_distributed_daq.html#challenges",
+    "href": "slides/0_distributed_daq.html#challenges",
+    "title": "Distributed data acquisition and processing",
+    "section": "Challenges",
+    "text": "Challenges\nAcquiring multiple data from a variety of sensors and sources in a manufacturing environment poses several challenges:\n\nHeterogeneous data sources and formats\nReal-time processing requirements\nLarge volumes of data: storage and bandwidth constraints\nScalability and reliability\nNetwork- and Device-neutral architectures"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-analysis-44",
-    "href": "slides/3_feature_based.html#pca-analysis-44",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA Analysis 4/4",
-    "text": "PCA Analysis 4/4\n\n\nFinally we make an overall plot:\n\np &lt;- autoplot(\n  pca_fit, data = ts_df, \n  colour = \"state\",\n  loadings = TRUE,\n  loadings.label = TRUE,\n  loadings.label.size = 3\n  ) +\n  labs(title = \"PCA score plot with loadings\") +\n  coord_fixed() +\n  coord_flip()\n\n\n\n\n\n\n\nNote\n\n\nThis is called a biplot. Another useful visualization is the screeplot, which shows the explained variance ratio \\(\\eta_a\\) as a function of the number of retained components \\(a\\)."
+    "objectID": "slides/0_distributed_daq.html#solutions",
+    "href": "slides/0_distributed_daq.html#solutions",
+    "title": "Distributed data acquisition and processing",
+    "section": "Solutions",
+    "text": "Solutions\n\nEdge computing for local processing and filtering (bandwidth reduction)\nDistributed IIoT data acquisition architectures (e.g., MQTT, ZeroMQ, OPC-UA)\nCloud-based platforms for centralized storage and analysis\nMachine learning models for anomaly detection and predictive maintenance"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-monitoring-statistics",
-    "href": "slides/3_feature_based.html#pca-monitoring-statistics",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA monitoring statistics",
-    "text": "PCA monitoring statistics\n\n\nFor each time instant we compute:\n\nscore coordinates PC1 and PC2\nSPE, squared prediction error\nHotelling’s \\(T^2\\)\n\nFor \\(T^2\\) we can define a control limit associated with a false-alarm probability \\(\\alpha\\): \\[\nT^2_{\\alpha} =\n\\frac{a(n-1)}{n-a}F_{a,n-a;1-\\alpha}\n\\] where \\(a\\) is the number of retained components and \\(n\\) is the reference sample size\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn this synthetic example, PCA is mainly used as an exploratory and monitoring tool: it reveals the regime change without using class labels during training."
+    "objectID": "slides/0_distributed_daq.html#where-to-process-data",
+    "href": "slides/0_distributed_daq.html#where-to-process-data",
+    "title": "Distributed data acquisition and processing",
+    "section": "Where to process data?",
+    "text": "Where to process data?\nSome measurement have high dimensionality (e.g., vibration spectra, 2-D or 3-Dimages) or high sampling rates (e.g., 10 kHz), which can lead to large data volumes\nEdge computing allows for local processing and filtering of data, reducing the bandwidth requirements for transmitting raw data over networks\nThis can involve techniques such as:\n\nfeature extraction\ndimensionality reduction\nanomaly detection\n\nat the edge, allowing only relevant information to be sent to the cloud or central servers for further analysis."
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series",
-    "href": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM on the same bivariate time series",
-    "text": "SVM on the same bivariate time series\n\n\n\nNow we use the same observations, but with labels Normal and Fault\nThe feature vector is simply \\[\n\\mathbf{x}_t = [x_{1,t},x_{2,t}]^T\n\\]\nAn RBF-kernel SVM is trained to separate the two states:\n\n\nsvm(state ~ x1 + x2, data = ts_df,\n    kernel = \"radial\", cost = 5, gamma = 1,\n    scale = TRUE)\n\n\nCall:\nsvm(formula = state ~ x1 + x2, data = ts_df, kernel = \"radial\", \n    cost = 5, gamma = 1, scale = TRUE)\n\n\nParameters:\n   SVM-Type:  C-classification \n SVM-Kernel:  radial \n       cost:  5 \n\nNumber of Support Vectors:  65"
+    "objectID": "slides/0_distributed_daq.html#edge-computing---real-time-processing",
+    "href": "slides/0_distributed_daq.html#edge-computing---real-time-processing",
+    "title": "Distributed data acquisition and processing",
+    "section": "Edge Computing - Real-time processing",
+    "text": "Edge Computing - Real-time processing\nEdge computing also can enable hard real-time processing of data (i.e. time-deterministic processing with guaranteed response times, order of 10–100 microseconds)\nSuch kind of processing is not trivial on general-purpose computing platforms (because of multithreading and other OS overheads), but can be achieved with:\n\nReal-time operating systems (e.g., FreeRTOS, RTLinux) (☠️☠️☠️)\nField-programmable gate arrays (FPGAs) (☠️💰💰)\nApplication-specific integrated circuits (ASICs) or digital signal processors (DSPs) (☠️☠️💰)\nbare-metal machine control units (MCUs)\n\n\n\n\n\n\n\nNote\n\n\nBare-metal MCus are microcontrollers without OS, which are small, low-power computing devices that can be used for real-time processing of sensor data in edge computing applications. Some of those (Arduino) are very cheap and quick for prototyping, but they have limited processing power and memory. More powerful MCUs (e.g., STM32, ESP32) can handle more complex tasks and larger data volumes, but they may require more development effort and cost."
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-predicted-labels-over-time",
-    "href": "slides/3_feature_based.html#svm-predicted-labels-over-time",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM predicted labels over time",
-    "text": "SVM predicted labels over time\n\n\nThe decision boundary is learned in feature space, but the output can be mapped back to time\nThis makes it possible to compare:\n\ntrue process state\nSVM predicted state\nclassification errors and transition regions\n\n\n\n\n\n\n\nNote\n\n\nThis scheme can be carried out continuously in an online setting:\n\nwhere the SVM is trained on a reference dataset and then applied to new observations as they arrive, providing real-time classification of the process state\nor by chunking the time series into windows and applying the SVM to each window"
+    "objectID": "slides/0_distributed_daq.html#iiot-protocols",
+    "href": "slides/0_distributed_daq.html#iiot-protocols",
+    "title": "Distributed data acquisition and processing",
+    "section": "IIoT Protocols",
+    "text": "IIoT Protocols\n\n\nNetwork communication happens in a layered fashion, according to the OSI model\nWe are mostly interested in layers 5–7 (host layers):\n\nresponsible for application-level communication and data exchange\neasily customizable at the user level\n\n\n\n\n\nOSI network model\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nMost famous protocols (eg HTTP, FTP, SMTP) are designed for human-in-the-loop applications, are often point-to-point, and are not suitable for machine-to-machine communication, with low latency and high reliability"
   },
   {
-    "objectID": "slides/3_feature_based.html#python-example-same-synthetic-dataset",
-    "href": "slides/3_feature_based.html#python-example-same-synthetic-dataset",
-    "title": "Feature-based analysis of time series",
-    "section": "Python example: same synthetic dataset",
-    "text": "Python example: same synthetic dataset\nThe same bivariate time series can be generated in Python with numpy and stored in a pandas data frame\nimport numpy as np\nimport pandas as pd\n\nnp.random.seed(0)\n\nn = 240\nt = np.arange(1, n + 1)\nfault_idx = np.arange(150, 210)\n\nx1 = np.cumsum(np.random.normal(0, 0.06, n)) \\\n     + 0.7 * np.sin(2 * np.pi * t / 24)\nx2 = 0.8 * x1 + np.random.normal(0, 0.18, n)\n\nx1[fault_idx] = x1[fault_idx] + 1.0\nx2[fault_idx] = -0.2 * x1[fault_idx] \\\n                + np.random.normal(0, 0.22, len(fault_idx)) + 0.7\n\nstate = np.where(np.isin(t, fault_idx + 1), \"Fault\", \"Normal\")\n\ndf = pd.DataFrame({\"t\": t, \"x1\": x1, \"x2\": x2, \"state\": state})"
+    "objectID": "slides/0_distributed_daq.html#iiot-protocols-requirements",
+    "href": "slides/0_distributed_daq.html#iiot-protocols-requirements",
+    "title": "Distributed data acquisition and processing",
+    "section": "IIoT Protocols requirements",
+    "text": "IIoT Protocols requirements\n\nLow latency\nLow overhead\nSimplified support for complex network topologies (e.g., publish-subscribe, peer-to-peer)\nScalability and reliability\nSecurity features (e.g., encryption, authentication)\n\n\n\n\n\n\n\nImportant\n\n\nIoP communication is focused on Human-to-Machine (H2M) interactions, where the mass of transmitted data is often more important than its frequency (eg a movie or a video stream), and where latency is not critical.\nIn contrast, IIoT communication is focused on Machine-to-Machine (M2M) interactions, where low latency and high reliability are crucial, and where the volume of transmitted data per communication can be limited (eg a single scalar)."
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-on-the-bivariate-series-in-python",
-    "href": "slides/3_feature_based.html#pca-on-the-bivariate-series-in-python",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA on the bivariate series in Python",
-    "text": "PCA on the bivariate series in Python\n\n\nThe PCA workflow in Python is analogous to the R one:\n\nstandardize the variables\nfit a PCA model\ninspect explained variance and loadings\nproject the observations to obtain principal scores\n\n\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\nX = df[[\"x1\", \"x2\"]].to_numpy()\n\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\npca = PCA(n_components=2)\nscores = pca.fit_transform(X_scaled)\n\ndf[\"PC1\"] = scores[:, 0]\ndf[\"PC2\"] = scores[:, 1]\n\nprint(pca.explained_variance_ratio_)\nprint(pca.components_)"
+    "objectID": "slides/0_distributed_daq.html#network-topologies",
+    "href": "slides/0_distributed_daq.html#network-topologies",
+    "title": "Distributed data acquisition and processing",
+    "section": "Network topologies",
+    "text": "Network topologies\nH2M communication almost always happens in a point-to-point fashion, where a client (e.g., a web browser) requests data from a server (e.g., a web server), and the server responds with the requested data.\nIn contrast, in M2M communication, more complex network topologies are often required, where multiple devices need to communicate with each other in a more flexible and scalable way. Using point-to-point communication in such scenarios can lead to scalability issues, as the number of connections grows exponentially with the number of devices, and keeping track of network addresses can become unmanageable/error prone\n\n\n\n\n\n\nTip\n\n\nCommon network topologies for M2M communication include:\n\nPublish-subscribe: devices can publish data to a topic, and other devices can subscribe to that topic to receive updates; traffic is managed by a central broker that handles message distribution\nDealer-worker: a device (dealer) can distribute messages to multiple, identical other devices (workers) in a round-robin fashion, with or without a central broker"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-monitoring-statistics-in-python",
-    "href": "slides/3_feature_based.html#pca-monitoring-statistics-in-python",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA monitoring statistics in Python",
-    "text": "PCA monitoring statistics in Python\n\n\nAs in R, we can reconstruct the retained subspace and compute:\n\nthe score trajectories\nHotelling’s \\(T^2\\)\nthe residual SPE statistic\n\nThis provides a direct parallel with the PCA monitoring slide shown earlier\n\nimport numpy as np\n\nlam = pca.explained_variance_\nX_hat = scores @ pca.components_\nE = X_scaled - X_hat\n\ndf[\"SPE\"] = np.sum(E**2, axis=1)\ndf[\"T2\"] = np.sum((scores**2) / lam, axis=1)\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(2, 1, figsize=(8, 5), sharex=True)\nax[0].plot(df[\"t\"], df[\"PC1\"])\nax[0].set_ylabel(\"PC1\")\nax[1].plot(df[\"t\"], df[\"SPE\"])\nax[1].set_ylabel(\"SPE\")\nax[1].set_xlabel(\"Time index\")"
+    "objectID": "slides/0_distributed_daq.html#publish-subscribe-architectures",
+    "href": "slides/0_distributed_daq.html#publish-subscribe-architectures",
+    "title": "Distributed data acquisition and processing",
+    "section": "Publish-subscribe architectures",
+    "text": "Publish-subscribe architectures\n\n\nPublish-Subscribe architectures are very flexible and suitable for distributed data acquisition\nData producers (publishers) send data to broker, which distributes the data to interested consumers (subscribers) based on subscriptions: no need for direct communication between publishers and subscribers\nOnly the IP address or hostname of the broker needs to be known by devices: simple network management and possible dynamic addition or removal of devices (scalability)\n\n\n\n\n\n\nflowchart LR\n    subgraph PUB[\"Publishers only\"]\n        direction TB\n        P1[\"device_1\"]\n        P2[\"device_2\"]\n    end\n\n    subgraph BOTH[\"Publishers + subscribers\"]\n        direction TB\n        B1[\"device_3\"]\n        B2[\"device_4\"]\n    end\n\n    MB[(\"broker\")]\n\n    subgraph SUB[\"Subscribers only\"]\n        direction TB\n        S1[\"device_5\"]\n        S2[\"device_6\"]\n    end\n\n    style PUB fill:none,stroke:#666,stroke-width:1px\n    style BOTH fill:none,stroke:#666,stroke-width:1px\n    style SUB fill:none,stroke:#666,stroke-width:1px\n\n    P1 --&gt;|\"publish: measure/sens_1\"| MB\n    P2 --&gt;|\"publish: measure/sens_2\"| MB\n\n    B1 --&gt;|\"publish: status/dev_3\"| MB\n    MB --&gt;|\"deliver: cmd/cnt_1\"| B1\n\n    B2 --&gt;|\"publish: event/dev_4\"| MB\n    MB --&gt;|\"deliver: cfg/dev_4\"| B2\n\n    MB --&gt;|\"deliver: measure/sens_1\"| S1\n    MB --&gt;|\"deliver: measure/sens_2\"| S1\n    MB --&gt;|\"deliver: status/dev_3\"| S2\n    MB --&gt;|\"deliver: event/dev_4\"| S2"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series-in-python",
-    "href": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series-in-python",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM on the same bivariate time series in Python",
-    "text": "SVM on the same bivariate time series in Python\n\n\nUsing scikit-learn, the same classification problem is solved by fitting an RBF-kernel SVM to the two features\nThe workflow is:\n\nbuild X and class labels y\nfit SVC\npredict the class of each observation\nevaluate accuracy and inspect the decision regions\n\n\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\nX = df[[\"x1\", \"x2\"]].to_numpy()\ny = df[\"state\"].to_numpy()\n\nsvc = SVC(kernel=\"rbf\", C=5.0, gamma=1.0)\nsvc.fit(X, y)\n\ndf[\"pred\"] = svc.predict(X)\nacc = accuracy_score(y, df[\"pred\"])\nprint(acc)"
+    "objectID": "slides/0_distributed_daq.html#commonly-used-iiot-protocols",
+    "href": "slides/0_distributed_daq.html#commonly-used-iiot-protocols",
+    "title": "Distributed data acquisition and processing",
+    "section": "Commonly used IIoT protocols",
+    "text": "Commonly used IIoT protocols\nThe most commonly used IIoT protocols include:\n\nMQTT (Message Queuing Telemetry Transport): a lightweight publish-subscribe protocol designed for low-bandwidth, high-latency, or unreliable networks; widely used in IIoT applications for its simplicity and efficiency (simple, limited architectures)\nZeroMQ (Zero Message Queue): a high-performance asynchronous messaging library that provides a simple and flexible API for building distributed applications; supports various messaging patterns, including publish-subscribe, request-reply, and dealer-worker; often used in IIoT applications for its scalability and low latency (very flexible)\nOPC-UA (Open Platform Communications, Unified Architecture): a platform-independent, service-oriented architecture for industrial automation; provides a standardized way to access and exchange data between devices and systems in industrial environments; supports both client-server and publish-subscribe communication models (industrial-grade, complex)"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-decision-regions-and-predicted-labels-in-python",
-    "href": "slides/3_feature_based.html#svm-decision-regions-and-predicted-labels-in-python",
-    "title": "Feature-based analysis of time series",
-    "section": "SVM decision regions and predicted labels in Python",
-    "text": "SVM decision regions and predicted labels in Python\n\n\nThe decision map in feature space can be visualized by evaluating the classifier on a regular grid\nThe predicted labels can then be plotted back against time exactly as done in the R example\n\nx1g = np.linspace(df[\"x1\"].min() - 0.3, df[\"x1\"].max() + 0.3, 160)\nx2g = np.linspace(df[\"x2\"].min() - 0.3, df[\"x2\"].max() + 0.3, 160)\nxx1, xx2 = np.meshgrid(x1g, x2g)\nXg = np.column_stack([xx1.ravel(), xx2.ravel()])\nzg = svc.predict(Xg).reshape(xx1.shape)\nfig, ax = plt.subplots(1, 2, figsize=(10, 4))\nax[0].contourf(xx1, xx2, (zg == \"Fault\").astype(float), alpha=0.25)\nax[0].scatter(df[\"x1\"], df[\"x2\"], c=(df[\"state\"] == \"Fault\"))\nax[0].set_xlabel(\"x1\")\nax[0].set_ylabel(\"x2\")\n\nax[1].plot(df[\"t\"], df[\"state\"].eq(\"Fault\").astype(int), label=\"True\")\nax[1].plot(df[\"t\"], df[\"pred\"].eq(\"Fault\").astype(int), \"--\",\n           label=\"Predicted\")\nax[1].set_xlabel(\"Time index\")\nax[1].legend()"
+    "objectID": "slides/0_distributed_daq.html#storage",
+    "href": "slides/0_distributed_daq.html#storage",
+    "title": "Distributed data acquisition and processing",
+    "section": "Storage",
+    "text": "Storage\nA plant can produce a staggering amount of data, which can be difficult to manage and analyze without proper storage strategies\n\nCloud storage: scalable and flexible, but can have latency and security concerns\nOn-premises storage: more control and security, but can be costly and less scalable\nHybrid storage: combines the benefits of both cloud and on-premises storage, allowing for a more flexible and cost-effective solution\n\n\n\n\n\n\n\nImportant\n\n\nRegardless of where data is stored, there are different storeage models to consider:\n\nData lakes: store raw, unstructured data in its native format, allowing for flexibility and scalability; can be more difficult to manage and analyze due to lack of structure\nData warehouses: store structured data in a predefined schema, optimized for querying and analysis; can be less flexible and scalable than data lakes\nData marts: store a subset of data from a data warehouse, focused on a specific business area or function; can provide faster access to relevant data, but can lead to data silos and inconsistencies"
   },
   {
-    "objectID": "slides/3_feature_based.html#pca-and-svm-complementary-roles",
-    "href": "slides/3_feature_based.html#pca-and-svm-complementary-roles",
-    "title": "Feature-based analysis of time series",
-    "section": "PCA and SVM: complementary roles",
-    "text": "PCA and SVM: complementary roles\nPCA and SVM serve different purposes:\n\nPCA is unsupervised and looks for directions of maximum variance\nSVM is supervised and looks for a boundary that best separates known classes\n\nIn practice they are often combined:\n\nPCA for denoising or dimensionality reduction\nSVM for classification on the retained principal scores\n\nFor high-dimensional time-series features this PCA plus SVM pipeline is often more stable than direct classification on raw variables alone"
+    "objectID": "slides/0_distributed_daq.html#data-lakes",
+    "href": "slides/0_distributed_daq.html#data-lakes",
+    "title": "Distributed data acquisition and processing",
+    "section": "Data lakes",
+    "text": "Data lakes\nData lakes are designed to store raw, unstructured data in its native format. They can handle a wide variety of data types, including structured, semi-structured, and unstructured data\nShape of data can be freely changed, which leads to flexibility and scalability, but can make data management and analysis more difficult due to lack of structure\nCommonly used technologies for data lakes include:\n\nHadoop Distributed File System (HDFS): a distributed file system that provides scalable and fault-tolerant storage for large volumes of data; often used in conjunction with the Hadoop ecosystem for big data processing\nAmazon S3: a cloud-based object storage service that provides scalable and durable storage\nAzure Data Lake Storage: a cloud-based data lake service that provides scalable and secure storage for big data analytics\nMongoDB: a NoSQL database that can be used as a data lake for storing unstructured data; provides flexibility, scalability, and can run on-premises, but may not be optimized for large-scale analytics. It stores data as collections of JSON documents"
   },
   {
-    "objectID": "slides/3_feature_based.html#hotellings-t2-distribution",
-    "href": "slides/3_feature_based.html#hotellings-t2-distribution",
-    "title": "Feature-based analysis of time series",
-    "section": "Hotelling’s \\(T^2\\) distribution",
-    "text": "Hotelling’s \\(T^2\\) distribution\nHotelling’s \\(T^2\\) is the multivariate extension of Student’s \\(t\\) test when the parameter of interest is a mean vector rather than a scalar mean\nIf \\[\n\\mathbf{x}_1,\\dots,\\mathbf{x}_n \\in \\mathbb{R}^p\n\\] are independent observations from a multivariate normal population, the one-sample null hypothesis is \\[\nH_0:\\boldsymbol{\\mu}=\\boldsymbol{\\mu}_0\n\\]\nThe sample mean vector and covariance matrix are \\[\n\\bar{\\mathbf{x}}=\\frac{1}{n}\\sum_{i=1}^{n}\\mathbf{x}_i,\n\\qquad\n\\mathbf{S}=\\frac{1}{n-1}\\sum_{i=1}^{n}\n(\\mathbf{x}_i-\\bar{\\mathbf{x}})\n(\\mathbf{x}_i-\\bar{\\mathbf{x}})^T\n\\]"
+    "objectID": "slides/0_distributed_daq.html#data-warehouses",
+    "href": "slides/0_distributed_daq.html#data-warehouses",
+    "title": "Distributed data acquisition and processing",
+    "section": "Data warehouses",
+    "text": "Data warehouses\nData warehouses are designed to store structured data in a predefined schema, optimized for querying and analysis\nThis often relies on a relational database management system (RDBMS), which organizes data into tables with rows and columns, and allows for complex queries using SQL\nWrt data lakes, data warehouses can provide faster access to relevant data for analysis, but can be less flexible and scalable due to the need for predefined schemas and the overhead of managing structured data\nAs such, RDBMS-based data warehouses are often used for mature, well-defined data that is used for reporting and analysis, while data lakes are often used for raw, unstructured data that may require more exploration and processing before analysis"
   },
   {
-    "objectID": "slides/3_feature_based.html#one-sample-hotellings-t2",
-    "href": "slides/3_feature_based.html#one-sample-hotellings-t2",
-    "title": "Feature-based analysis of time series",
-    "section": "One-sample Hotelling’s \\(T^2\\)",
-    "text": "One-sample Hotelling’s \\(T^2\\)\nThe test statistic is \\[\nT^2 = n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)^T\n\\mathbf{S}^{-1}\n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)\n\\]\nInterpretation:\n\n\\((\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)\\) is the deviation from the target mean vector\n\\(\\mathbf{S}^{-1}\\) scales that deviation by the covariance structure\nlarge values of \\(T^2\\) indicate that the observed mean is too far from the target to be explained by normal variability\n\nFor \\(p=1\\), this reduces to the usual Student’s \\(t^2\\)"
+    "objectID": "slides/0_distributed_daq.html#analysis",
+    "href": "slides/0_distributed_daq.html#analysis",
+    "title": "Distributed data acquisition and processing",
+    "section": "Analysis",
+    "text": "Analysis\nSome preliminary analysis and data manipulation can be performed on the data lake or data warehouse.\nFor example, MongoDB provides a powerful query language and aggregation (map-reduce actions) framework that can be used for data analysis and transformation (pipelines), allowing for some level of analysis to be performed directly on the data lake, without the need for a separate data warehouse\nMongoDB pipelines can be set as read-only virtual tables, or views, that can be queried like regular tables, but the underlying data is not duplicated, and the view is updated in real-time as the underlying data changes"
   },
   {
-    "objectID": "slides/3_feature_based.html#relation-with-the-f-distribution",
-    "href": "slides/3_feature_based.html#relation-with-the-f-distribution",
-    "title": "Feature-based analysis of time series",
-    "section": "Relation with the F distribution",
-    "text": "Relation with the F distribution\nUnder multivariate normality and under \\(H_0\\), the statistic can be converted into an F test: \\[\nF = \\frac{n-p}{p(n-1)}T^2\n\\] with \\[\nF \\sim F_{p,n-p}\n\\]\nTherefore, at significance level \\(\\alpha\\), we reject \\(H_0\\) when \\[\nT^2 &gt;\n\\frac{p(n-1)}{n-p}F_{p,n-p;1-\\alpha}\n\\]\nThis gives an exact critical region for the one-sample test"
+    "objectID": "slides/0_distributed_daq.html#machine-learning-for-anomaly-detection-and-predictive-maintenance",
+    "href": "slides/0_distributed_daq.html#machine-learning-for-anomaly-detection-and-predictive-maintenance",
+    "title": "Distributed data acquisition and processing",
+    "section": "Machine learning for anomaly detection and predictive maintenance",
+    "text": "Machine learning for anomaly detection and predictive maintenance\nMachine learning models can be trained on the data stored in the data lake or data warehouse to later perform tasks such as anomaly detection and predictive maintenance, in real-time\nMachine learning models can be supervised or unsupervised, can be implemented with conventional algorithms (e.g., SVM, PCA) or deep learning architectures (e.g., CNNs, RNNs), and can be deployed on the edge or in the cloud, depending on the requirements of the application"
   },
   {
-    "objectID": "slides/3_feature_based.html#two-sample-hotellings-t2",
-    "href": "slides/3_feature_based.html#two-sample-hotellings-t2",
-    "title": "Feature-based analysis of time series",
-    "section": "Two-sample Hotelling’s \\(T^2\\)",
-    "text": "Two-sample Hotelling’s \\(T^2\\)\nIf two independent populations are compared, \\[\nH_0:\\boldsymbol{\\mu}_1=\\boldsymbol{\\mu}_2\n\\] the pooled-covariance version of the statistic is \\[\nT^2 =\n\\frac{n_1 n_2}{n_1+n_2}\n(\\bar{\\mathbf{x}}_1-\\bar{\\mathbf{x}}_2)^T\n\\mathbf{S}_p^{-1}\n(\\bar{\\mathbf{x}}_1-\\bar{\\mathbf{x}}_2)\n\\] where \\[\n\\mathbf{S}_p =\n\\frac{(n_1-1)\\mathbf{S}_1 + (n_2-1)\\mathbf{S}_2}\n{n_1+n_2-2}\n\\]\nThis is the multivariate analogue of the classical two-sample t test"
-  },
-  {
-    "objectID": "slides/3_feature_based.html#assumptions-and-interpretation",
-    "href": "slides/3_feature_based.html#assumptions-and-interpretation",
-    "title": "Feature-based analysis of time series",
-    "section": "Assumptions and interpretation",
-    "text": "Assumptions and interpretation\nHotelling’s \\(T^2\\) is appropriate when:\n\nobservations are independent\nthe population is approximately multivariate normal\nthe covariance matrix is nonsingular\n\nIts main advantage over multiple univariate t tests is that it tests the mean vector jointly, accounting for correlation between variables\nThis avoids contradictory conclusions caused by ignoring covariance structure"
-  },
-  {
-    "objectID": "slides/3_feature_based.html#example-quality-control-test-on-a-batch",
-    "href": "slides/3_feature_based.html#example-quality-control-test-on-a-batch",
-    "title": "Feature-based analysis of time series",
-    "section": "Example: quality-control test on a batch",
-    "text": "Example: quality-control test on a batch\nConsider a batch of machined parts. For each part we measure two variables:\n\nlength\nweight\n\nThe design target is the mean vector \\[\n\\boldsymbol{\\mu}_0 =\n\\begin{bmatrix}\n50.0 \\\\\n100.0\n\\end{bmatrix}\n\\]\nWe want to test whether the batch mean is statistically compatible with this target, using a multivariate one-sample test"
-  },
-  {
-    "objectID": "slides/3_feature_based.html#example-data-cloud-and-target-point",
-    "href": "slides/3_feature_based.html#example-data-cloud-and-target-point",
-    "title": "Feature-based analysis of time series",
-    "section": "Example: data cloud and target point",
-    "text": "Example: data cloud and target point\n\n\nThis is not a time series problem:\n\neach point is one manufactured part\nthe two measured variables are correlated\nthe question concerns the joint mean of the batch\n\nThe red point is the target mean \\(\\boldsymbol{\\mu}_0\\), while the blue point is the sample mean\n\n\nPlotData\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# A tibble: 40 × 2\n   length weight\n    &lt;dbl&gt;  &lt;dbl&gt;\n 1   50.3  100. \n 2   50.2  100. \n 3   48.7   99.2\n 4   51.4  101. \n 5   49.3   99.5\n 6   50.3   99.6\n 7   51.1  102. \n 8   50.0  100. \n 9   51.3   99.9\n10   50.7  102. \n# ℹ 30 more rows"
-  },
-  {
-    "objectID": "slides/3_feature_based.html#example-manual-calculation-of-hotellings-t2",
-    "href": "slides/3_feature_based.html#example-manual-calculation-of-hotellings-t2",
-    "title": "Feature-based analysis of time series",
-    "section": "Example: manual calculation of Hotelling’s \\(T^2\\)",
-    "text": "Example: manual calculation of Hotelling’s \\(T^2\\)\n\n\nThe manual workflow is:\n\ncompute the sample mean vector \\(\\bar{\\mathbf{x}}\\)\ncompute the sample covariance matrix \\(\\mathbf{S}\\)\ncompute \\(T^2\\)\nconvert it to an F statistic\nobtain the p-value\n\n\n\n(xbar &lt;- colMeans(batch_x))\n\n[1]  50.42717 100.67922\n\n(s &lt;- cov(batch_x))\n\n          [,1]      [,2]\n[1,] 0.6610439 0.3443915\n[2,] 0.3443915 1.3580291\n\n(t2 &lt;- as.numeric(batch_n *\n  t(xbar - mu0) %*% solve(s) %*% (xbar - mu0)))\n\n[1] 18.11943\n\n(f &lt;- (n - p) / (p * (n - 1)) * t2)\n\n[1] 8.827413\n\n(p.value &lt;- 1 - pf(f, df1 = p, df2 = n - p))\n\n[1] 0.0007101244\n\n\n\n\n\n\n\n\n\nNote\n\n\nIf the p-value is smaller than the chosen significance level, the batch mean is declared significantly different from the design target in the joint two-variable sense."
-  },
-  {
-    "objectID": "slides/3_feature_based.html#example-the-same-test-with-desctools",
-    "href": "slides/3_feature_based.html#example-the-same-test-with-desctools",
-    "title": "Feature-based analysis of time series",
-    "section": "Example: the same test with DescTools",
-    "text": "Example: the same test with DescTools\nIf DescTools is available, the same test can be run directly:\n\nlibrary(DescTools)\n\nHotellingsT2Test(\n  x = as.matrix(batch_df),\n  mu = mu0\n)\n\n\n    Hotelling's one sample T2-test\n\ndata:  as.matrix(batch_df)\nT.2 = 8.8274, df1 = 2, df2 = 38, p-value = 0.0007101\nalternative hypothesis: true location is not equal to c(50,100)\n\n\nThis is the most compact way to perform the one-sample test in R, but the underlying quantity remains the same statistic defined earlier"
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-topic-matters-in-mechatronics",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-topic-matters-in-mechatronics",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Why this topic matters in mechatronics",
-    "text": "Why this topic matters in mechatronics\n\nCoordinate handling and geometric utilities\nSensor-data processing pipelines\nCalibration and test-bench software\nRobotics and automation support tools\nReusable numerical components inside larger systems\n\n\nMany engineering tools are built from small reusable software components. A class such as Vector2D is simple enough to understand in one lesson, but rich enough to discuss design choices, correctness, testing, and AI-assisted workflow."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#core-principle",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#core-principle",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Core principle",
-    "text": "Core principle\n\n\n\n\n\n\n\n\nWe decide\n\n\n\nrequirements\ninterface\nconstraints\nacceptance criteria\n\n\n\n\n\n\n\n\n\n\n\nAI proposes\n\n\n\ncandidate code\nalternatives\ntests\nexplanations\n\n\n\n\n\n\n\n\n\n\n\nWe verify\n\n\n\nreview\ncompilation\nnumerical checks\ntargeted tests\n\n\n\n\n\n\nThis is the whole lesson in one slide. Requirements, interfaces, assumptions, and validation criteria remain a human responsibility."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#learning-outcomes",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#learning-outcomes",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Learning outcomes",
-    "text": "Learning outcomes\nBy the end of the lesson, students should be able to:\n\ndefine requirements for a small C++ component\ndesign a minimal public interface\nuse AI in bounded, controllable steps\nreview generated code critically\nvalidate correctness with tests and numerical checks\n\n\nThis is not a lesson on advanced C++ techniques. It is a lesson on disciplined workflow."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-well",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-well",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "What AI does well",
-    "text": "What AI does well\n\n\n\n\n\n\n\n\nCode generation\n\n\n\nboilerplate\nrepetitive operators\nsmall utilities\n\n\n\n\n\n\n\n\n\n\n\nSupport work\n\n\n\ntest scaffolding\ndocumentation drafts\ncompiler-diagnostic explanations\n\n\n\n\n\n\n\n\n\n\n\nReview support\n\n\n\nalternative formulations\nrefactoring suggestions\nfirst-pass code review hints\n\n\n\n\n\n\nAI is useful for acceleration, not for authorship of the engineering intent."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-poorly",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#what-ai-does-poorly",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "What AI does poorly",
-    "text": "What AI does poorly\n\n\n\n\n\n\n\n\nDesign judgment\n\n\n\ninventing requirements\nchoosing abstractions\ndeciding public API boundaries\n\n\n\n\n\n\n\n\n\n\n\nTechnical judgment\n\n\n\nnumerical reasoning\nhidden assumptions\nsubtle domain mistakes\n\n\n\n\n\n\n\n\n\n\n\nProcess discipline\n\n\n\nscope control\nsignaling uncertainty\nstopping when evidence is weak\n\n\n\n\n\n\nPlausible-looking code is not the same as trustworthy code."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-strengths-and-weaknesses",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-strengths-and-weaknesses",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "AI strengths and weaknesses",
-    "text": "AI strengths and weaknesses\n\n\n\n\n\n\n\n\nUseful acceleration\n\n\nAI is effective for:\n\nboilerplate\nrepetitive operators\ntest skeletons\ncode explanations\n\n\n\n\n\n\n\n\n\n\n\nTypical risks\n\n\nAI often introduces:\n\nextra features\nhidden assumptions\nstyle inconsistency\nfragile numeric checks\n\n\n\n\n\n\n\n\n\n\n\nHuman role\n\n\nThe engineer must retain control of:\n\nrequirements\ninterface design\nacceptance criteria\nfinal validation\n\n\n\n\n\n\nUse this slide to reinforce the operational division of responsibility."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#example-problem",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#example-problem",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Example problem",
-    "text": "Example problem\nImplement a Vector2D class representing a 2D point/vector.\nRequired operations:\n\nconstruction\naccessors\naddition\nsubtraction\nscalar multiplication\nnorm\ndistance\nprinting\n\n\nThe example is deliberately small so the workflow stays visible."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#constraints",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#constraints",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Constraints",
-    "text": "Constraints\n\nSimple and readable\nSuitable for beginners\nNo dynamic allocation\nNo inheritance\nEasy to test\nClear separation of interface and implementation\n\n\nConstraints reduce ambiguity. Without them, AI tends to invent scope and style."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#design-before-code",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#design-before-code",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Design before code",
-    "text": "Design before code\nQuestions to answer before implementation:\n\nShould data be public or private?\nWhy use const?\nMember or non-member printing?\nExact equality or tolerance?\nWhat belongs in the public interface?\n\n\nThis is where engineering authorship begins. Design decisions precede syntax."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#proposed-public-interface",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#proposed-public-interface",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Proposed public interface",
-    "text": "Proposed public interface\nclass Vector2D {\npublic:\n    Vector2D();\n    Vector2D(double x, double y);\n\n    double x() const;\n    double y() const;\n\n    double norm() const;\n    double distanceTo(const Vector2D& other) const;\n\n    Vector2D operator+(const Vector2D& other) const;\n    Vector2D operator-(const Vector2D& other) const;\n    Vector2D operator*(double scalar) const;\n\nprivate:\n    double x_;\n    double y_;\n};\n\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v);\n\nThe interface is the contract. AI should implement this contract, not rewrite it unless asked."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-interface-is-reasonable",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#why-this-interface-is-reasonable",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Why this interface is reasonable",
-    "text": "Why this interface is reasonable\n\nPrivate representation limits accidental misuse\nSmall API reduces the error surface\nArithmetic operators improve readability\nconst clarifies intent and enables safer use\nStream output integrates with standard C++ I/O\n\n\nTranslate each design choice into a practical benefit."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#first-ai-prompt-generate-the-header",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#first-ai-prompt-generate-the-header",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "First AI prompt: generate the header",
-    "text": "First AI prompt: generate the header\nGenerate a simple C++ header for a class named Vector2D with private double\nmembers x_ and y_. Provide a default constructor, a constructor with x and y,\nconst accessors, norm(), distanceTo(), operators +, -, scalar multiplication by\ndouble, and a non-member stream output operator. Keep it minimal and\nbeginner-friendly. Do not add templates, comparisons, normalization, exceptions,\nor advanced features.\n\nA good prompt is mainly a well-bounded specification."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-generated-header",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-generated-header",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Review the generated header",
-    "text": "Review the generated header\nChecklist:\n\nDid AI add unwanted features?\nAre methods const where appropriate?\nAre members private?\nAre includes minimal?\nIs the interface still ours?\n\n\nModel rejection openly. Removing AI-generated extras is part of competent use."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#second-ai-prompt-generate-the-implementation",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#second-ai-prompt-generate-the-implementation",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Second AI prompt: generate the implementation",
-    "text": "Second AI prompt: generate the implementation\nGenerate the .cpp implementation for this Vector2D interface. Use std::sqrt for\nnorm and distance. Keep the code readable for engineering students with limited\nC++ background. Avoid unnecessary abstractions.\n\nOnce the interface is frozen, implementation can be delegated more safely."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-implementation",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#review-the-implementation",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Review the implementation",
-    "text": "Review the implementation\nCheck for:\n\ncorrect formulas\nclear naming\nminimal includes\nconsistent operator semantics\nno hidden complexity\n\n\nThis is where line-by-line review should be presented as normal engineering practice."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Reference implementation",
-    "text": "Reference implementation\n#ifndef VECTOR2D_H\n#define VECTOR2D_H\n\n#include &lt;iosfwd&gt;\n\nclass Vector2D {\npublic:\n    Vector2D();\n    Vector2D(double x, double y);\n\n    double x() const;\n    double y() const;\n\n    double norm() const;\n    double distanceTo(const Vector2D& other) const;\n\n    Vector2D operator+(const Vector2D& other) const;\n    Vector2D operator-(const Vector2D& other) const;\n    Vector2D operator*(double scalar) const;\n\nprivate:\n    double x_;\n    double y_;\n};\n\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v);\n\n#endif\n\nPresent this as an accepted baseline, not the only possible design."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation-.cpp",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-implementation-.cpp",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Reference implementation (.cpp)",
-    "text": "Reference implementation (.cpp)\n#include \"Vector2D.h\"\n\n#include &lt;cmath&gt;\n#include &lt;ostream&gt;\n\nVector2D::Vector2D() : x_(0.0), y_(0.0) {}\n\nVector2D::Vector2D(double x, double y) : x_(x), y_(y) {}\n\ndouble Vector2D::x() const {\n    return x_;\n}\n\ndouble Vector2D::y() const {\n    return y_;\n}\n\ndouble Vector2D::norm() const {\n    return std::sqrt(x_ * x_ + y_ * y_);\n}\n\ndouble Vector2D::distanceTo(const Vector2D& other) const {\n    const double dx = x_ - other.x_;\n    const double dy = y_ - other.y_;\n    return std::sqrt(dx * dx + dy * dy);\n}\n\nVector2D Vector2D::operator+(const Vector2D& other) const {\n    return Vector2D(x_ + other.x_, y_ + other.y_);\n}\n\nVector2D Vector2D::operator-(const Vector2D& other) const {\n    return Vector2D(x_ - other.x_, y_ - other.y_);\n}\n\nVector2D Vector2D::operator*(double scalar) const {\n    return Vector2D(x_ * scalar, y_ * scalar);\n}\n\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v) {\n    os &lt;&lt; \"(\" &lt;&lt; v.x() &lt;&lt; \", \" &lt;&lt; v.y() &lt;&lt; \")\";\n    return os;\n}"
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#example-usage",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#example-usage",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Example usage",
-    "text": "Example usage\n#include \"Vector2D.h\"\n#include &lt;iostream&gt;\n\nint main() {\n    Vector2D a(3.0, 4.0);\n    Vector2D b(1.0, 2.0);\n\n    std::cout &lt;&lt; \"a = \" &lt;&lt; a &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"b = \" &lt;&lt; b &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"a + b = \" &lt;&lt; (a + b) &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"a - b = \" &lt;&lt; (a - b) &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"2a = \" &lt;&lt; (a * 2.0) &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"norm(a) = \" &lt;&lt; a.norm() &lt;&lt; '\\n';\n    std::cout &lt;&lt; \"distance(a,b) = \" &lt;&lt; a.distanceTo(b) &lt;&lt; '\\n';\n\n    return 0;\n}"
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#compile-with-warnings",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#compile-with-warnings",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Compile with warnings",
-    "text": "Compile with warnings\ng++ -std=c++17 -Wall -Wextra -pedantic main.cpp Vector2D.cpp -o vector_demo\n\nWarnings are part of review\nGenerated code is not finished if diagnostics are sloppy\nBuild cleanliness is one acceptance criterion\n\n\nCompilation is not just “does it build”."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#what-could-go-wrong",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#what-could-go-wrong",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "What could go wrong",
-    "text": "What could go wrong\n\nMissing const\nToo many features\nPublic data without reason\nPoor header design\nExact float comparisons\nUnclear operator semantics\n\n\nThe class is small, but the failure modes are real and inspectable."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#validation-mindset",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#validation-mindset",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Validation mindset",
-    "text": "Validation mindset\nQuestion:\n\nWhat would convince us that this class is correct enough for use?\n\nPossible evidence:\n\nknown reference cases\nreadable implementation\nclean compilation\ntargeted tests\nexplicit numerical assumptions\n\n\nMove from coding to evidence."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-prompt-for-tests",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#ai-prompt-for-tests",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "AI prompt for tests",
-    "text": "AI prompt for tests\nGenerate a small C++ test program for Vector2D using &lt;cassert&gt;. Test default\nconstruction, addition, subtraction, scalar multiplication, norm of (3,4), and\ndistance between known points. Use a floating-point tolerance for numeric\ncomparisons.\n\nAI is often more valuable for generating test scaffolding than for inventing software design."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-test-program",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#reference-test-program",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Reference test program",
-    "text": "Reference test program\n#include \"Vector2D.h\"\n#include &lt;cassert&gt;\n#include &lt;cmath&gt;\n#include &lt;iostream&gt;\n\nbool approxEqual(double a, double b, double tol = 1e-9) {\n    return std::fabs(a - b) &lt; tol;\n}\n\nint main() {\n    Vector2D v0;\n    assert(approxEqual(v0.x(), 0.0));\n    assert(approxEqual(v0.y(), 0.0));\n\n    Vector2D a(3.0, 4.0);\n    assert(approxEqual(a.norm(), 5.0));\n\n    Vector2D b(1.0, 2.0);\n    Vector2D s = a + b;\n    assert(approxEqual(s.x(), 4.0));\n    assert(approxEqual(s.y(), 6.0));\n\n    Vector2D d = a - b;\n    assert(approxEqual(d.x(), 2.0));\n    assert(approxEqual(d.y(), 2.0));\n\n    Vector2D m = b * 3.0;\n    assert(approxEqual(m.x(), 3.0));\n    assert(approxEqual(m.y(), 6.0));\n\n    Vector2D p1(0.0, 0.0);\n    Vector2D p2(3.0, 4.0);\n    assert(approxEqual(p1.distanceTo(p2), 5.0));\n\n    std::cout &lt;&lt; \"All tests passed\\n\";\n}"
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#why-tolerance-matters",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#why-tolerance-matters",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Why tolerance matters",
-    "text": "Why tolerance matters\n\nFloating-point arithmetic is approximate\nExact equality is often fragile\nEngineering software usually needs tolerance-based checks\nTesting strategy should match numerical reality\n\n\nTie this directly to measurement uncertainty and numerical reasoning."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#good-prompt-vs-bad-prompt",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#good-prompt-vs-bad-prompt",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Good prompt vs bad prompt",
-    "text": "Good prompt vs bad prompt\n\n\nBad\nWrite a modern C++ vector class.\nTypical outcome:\n\nscope drift\nunrequested features\nharder idioms\nweaker pedagogical value\n\n\nGood\nGenerate a minimal beginner-friendly Vector2D \nwith exactly these operations...\nTypical outcome:\n\nbounded scope\npredictable output\neasier review\nbetter alignment with lesson goals"
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#practical-prompting-workflow",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#practical-prompting-workflow",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Practical prompting workflow",
-    "text": "Practical prompting workflow\n\nWrite requirements yourself\nAsk AI for the interface only\nReview and correct the interface\nAsk for the implementation only\nReview again\nAsk for tests\nCompile, run, and inspect results\nRefactor only what you understand\n\n\nThis is the reusable process students should take away."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#human-responsibilities-ai-cannot-take-over",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#human-responsibilities-ai-cannot-take-over",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Human responsibilities AI cannot take over",
-    "text": "Human responsibilities AI cannot take over\n\nChoosing requirements\nDeciding acceptable complexity\nChecking domain assumptions\nNumerical validation\nIntegration into the full application\nFinal responsibility\n\n\nAI can assist with code production, but not with engineering accountability."
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#in-class-exercise",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#in-class-exercise",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "In-class exercise",
-    "text": "In-class exercise\n\n\n\n\n\n\n\n\nSpecify\n\n\nExtend Vector2D with:\ndouble dot(const Vector2D& other) const;\nWrite the requirement in one sentence.\n\n\n\n\n\n\n\n\n\n\nGenerate\n\n\nUse AI only for bounded tasks:\n\nheader update\nimplementation update\ntest update\n\n\n\n\n\n\n\n\n\n\n\nVerify\n\n\nCheck:\n\nformula correctness\nconsistent style\nclean compilation\nupdated tests"
-  },
-  {
-    "objectID": "slides/ai_assisted_cpp_lesson_revealjs.html#closing-checklist",
-    "href": "slides/ai_assisted_cpp_lesson_revealjs.html#closing-checklist",
-    "title": "AI-Assisted C++ Development for Engineers",
-    "section": "Closing checklist",
-    "text": "Closing checklist\n\n\n\n\n\n\n\n\nBefore AI\n\n\n\ndefine requirements\ndefine interface\nstate constraints\n\n\n\n\n\n\n\n\n\n\n\nWith AI\n\n\n\nrequest one artifact at a time\nexclude unwanted features\nkeep prompts explicit\n\n\n\n\n\n\n\n\n\n\n\nAfter AI\n\n\n\nreview line by line\ncompile with warnings\ntest known cases\nsimplify what you do not understand\n\n\n\n\n\n\nEnd with the professional rule: use AI to accelerate only what you can still inspect, justify, and validate."
+    "objectID": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
+    "href": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
+    "title": "Distributed data acquisition and processing",
+    "section": "MADS: Multi-Agent Distributed System",
+    "text": "MADS: Multi-Agent Distributed System\n\n\nThe Multi-Agent Distributed System (MADS) is a lightweight and modular software framework for distributed data acquisition and processing\nGeneral purpose, but well-suited for smart manufacturing environments\n\n  \n\n\n\n\n\n\n\n\nWhere to start\n\n\nGo to mads-net-github.io for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing"
   },
   {
     "objectID": "slides/2_time_domain.html#time-series-statistics",
@@ -910,234 +672,444 @@
     "text": "Feature extraction and integration\nTo integrate frequency-domain analysis into a real-time monitoring system, we can follow these steps for Feature Extraction\nWe use FFT or SFFT to extract power in specific bands of interest:\n\nin chunks of data: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information\nwith sliding window approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate\nin overlapping chunks of data avoid the risk of loosing information between updates, but it can increase computational load"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#challenges",
-    "href": "slides/0_distributed_daq.html#challenges",
-    "title": "Distributed data acquisition and processing",
-    "section": "Challenges",
-    "text": "Challenges\nAcquiring multiple data from a variety of sensors and sources in a manufacturing environment poses several challenges:\n\nHeterogeneous data sources and formats\nReal-time processing requirements\nLarge volumes of data: storage and bandwidth constraints\nScalability and reliability\nNetwork- and Device-neutral architectures"
+    "objectID": "slides/3_feature_based.html#pca-data-matrix-and-centering",
+    "href": "slides/3_feature_based.html#pca-data-matrix-and-centering",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: data matrix and centering",
+    "text": "PCA: data matrix and centering\n\n\nLet the feature matrix of a MVTS be \\[\n\\mathbf{X} =\n\\begin{bmatrix}\n\\mathbf{x}_1^T \\\\\n\\mathbf{x}_2^T \\\\\n\\vdots \\\\\n\\mathbf{x}_N^T\n\\end{bmatrix}\n\\in \\mathbb{R}^{N \\times p}\n\\] where each row is a feature vector extracted at one time instant or from one time window statistics\nIn other words, uppercase \\(\\mathbf{X}\\) collects all observations, while lowercase \\(\\mathbf{x}_t\\) denotes the feature vector of the \\(t\\)-th observation\n\nPCA starts from the centered matrix \\(\\mathbf{X}_c\\): \\[\n\\mathbf{X}_c = \\mathbf{X} - \\boldsymbol{\\mu}^T\n\\] with sample means vector: \\[\n\\boldsymbol{\\mu} = \\frac{1}{N}\\sum_{t=1}^{N}\\mathbf{x}_t\n\\]\nIf variables have different physical units, one usually standardizes them before PCA"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#solutions",
-    "href": "slides/0_distributed_daq.html#solutions",
-    "title": "Distributed data acquisition and processing",
-    "section": "Solutions",
-    "text": "Solutions\n\nEdge computing for local processing and filtering (bandwidth reduction)\nDistributed IIoT data acquisition architectures (e.g., MQTT, ZeroMQ, OPC-UA)\nCloud-based platforms for centralized storage and analysis\nMachine learning models for anomaly detection and predictive maintenance"
+    "objectID": "slides/3_feature_based.html#pca-covariance-matrix-and-eigenproblem",
+    "href": "slides/3_feature_based.html#pca-covariance-matrix-and-eigenproblem",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: covariance matrix and eigenproblem",
+    "text": "PCA: covariance matrix and eigenproblem\n\n\nThe sample covariance matrix (\\(p\\times p\\))is: \\[\n\\mathbf{S} = \\frac{1}{N-1}\\mathbf{X}_c^T \\mathbf{X}_c\n\\]\nPCA solves the eigenvalue problem: \\[\n\\mathbf{S}\\mathbf{p}_i = \\lambda_i \\mathbf{p}_i,\n\\quad i = 1,\\dots,p\n\\]\n\nwhere:\n\n\\(\\lambda_i\\) is the variance explained by the \\(i\\)-th principal component\n\\(\\mathbf{p}_i\\) is the corresponding eigenvector, or loading vector\n\nThe indexes \\(i\\) are sorted so that: \\[\n\\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge \\lambda_p \\ge 0\n\\]\n\n\n\n\n\n\n\n\nNote\n\n\nThe eigenvectors \\(\\mathbf{p}_i\\) are orthogonal and form a new coordinate system in feature space, where the first axis captures the largest variance, the second axis captures the largest remaining variance, and so on."
   },
   {
-    "objectID": "slides/0_distributed_daq.html#where-to-process-data",
-    "href": "slides/0_distributed_daq.html#where-to-process-data",
-    "title": "Distributed data acquisition and processing",
-    "section": "Where to process data?",
-    "text": "Where to process data?\nSome measurement have high dimensionality (e.g., vibration spectra, 2-D or 3-Dimages) or high sampling rates (e.g., 10 kHz), which can lead to large data volumes\nEdge computing allows for local processing and filtering of data, reducing the bandwidth requirements for transmitting raw data over networks\nThis can involve techniques such as:\n\nfeature extraction\ndimensionality reduction\nanomaly detection\n\nat the edge, allowing only relevant information to be sent to the cloud or central servers for further analysis."
+    "objectID": "slides/3_feature_based.html#pca-scores-and-low-dimensional-representation",
+    "href": "slides/3_feature_based.html#pca-scores-and-low-dimensional-representation",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: scores and low-dimensional representation",
+    "text": "PCA: scores and low-dimensional representation\n\n\n\nThe projection of the data onto the principal axes gives the scores matrix (\\(N\\times p\\)): \\[\n\\mathbf{T} = \\mathbf{X}_c \\mathbf{P}\n\\] that is, \\[\n\\mathbf{T} =\n\\begin{bmatrix}\n\\mathbf{t}_1^T \\\\\n\\mathbf{t}_2^T \\\\\n\\vdots \\\\\n\\mathbf{t}_N^T\n\\end{bmatrix},\n~~~\n\\mathbf{t}_t^T = \\mathbf{x}_{c,t}^T \\mathbf{P},~~~\\mathbf{P} = [\\mathbf{p}_1,\\mathbf{p}_2,\\dots,\\mathbf{p}_p]\n\\]\n\nUsing only the first \\(a &lt; p\\) components yields the reduced model \\[\n\\mathbf{X}_c \\approx \\mathbf{T}_a \\mathbf{P}_a^T\n\\] where: \\[\n\\mathbf{T}_a = \\mathbf{X}_c \\mathbf{P}_a\n\\]\n\n\n\n\n\n\n\n\n\nNote\n\n\nFor a given subset of principal components \\(a\\), the explained variance ratio is: \\(\\eta_a = \\frac{\\sum_{i=1}^{a}\\lambda_i}{\\sum_{i=1}^{p}\\lambda_i}\\). This can be used to select the number of components to retain, for example by setting a threshold such as \\(\\eta_a \\ge 0.95\\).\n\n\n\n\n\nNote: We can use transpose rather than inverse because \\(\\mathbf{P}\\) is an orthonormal matrix, so \\(\\mathbf{P}^{-1} = \\mathbf{P}^T\\)."
   },
   {
-    "objectID": "slides/0_distributed_daq.html#edge-computing---real-time-processing",
-    "href": "slides/0_distributed_daq.html#edge-computing---real-time-processing",
-    "title": "Distributed data acquisition and processing",
-    "section": "Edge Computing - Real-time processing",
-    "text": "Edge Computing - Real-time processing\nEdge computing also can enable hard real-time processing of data (i.e. time-deterministic processing with guaranteed response times, order of 10–100 microseconds)\nSuch kind of processing is not trivial on general-purpose computing platforms (because of multithreading and other OS overheads), but can be achieved with:\n\nReal-time operating systems (e.g., FreeRTOS, RTLinux) (☠️☠️☠️)\nField-programmable gate arrays (FPGAs) (☠️💰💰)\nApplication-specific integrated circuits (ASICs) or digital signal processors (DSPs) (☠️☠️💰)\nbare-metal machine control units (MCUs)\n\n\n\n\n\n\n\nNote\n\n\nBare-metal MCus are microcontrollers without OS, which are small, low-power computing devices that can be used for real-time processing of sensor data in edge computing applications. Some of those (Arduino) are very cheap and quick for prototyping, but they have limited processing power and memory. More powerful MCUs (e.g., STM32, ESP32) can handle more complex tasks and larger data volumes, but they may require more development effort and cost."
+    "objectID": "slides/3_feature_based.html#pca-reconstruction-error-and-monitoring-statistics",
+    "href": "slides/3_feature_based.html#pca-reconstruction-error-and-monitoring-statistics",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: reconstruction error and monitoring statistics",
+    "text": "PCA: reconstruction error and monitoring statistics\n\n\n\nFor centered observation row \\(\\mathbf{x}_{c,t}^T\\), PCA computes the score row \\[\n\\mathbf{t}_t^T = \\mathbf{x}_{c,t}^T \\mathbf{P}_a\n\\] and then reconstructs it in feature space as \\[\n\\hat{\\mathbf{x}}_{c,t}^T = \\mathbf{t}_t^T \\mathbf{P}_a^T\n\\]\nTherefore the residual decomposition is: \\[\n\\mathbf{x}_{c,t}^T = \\hat{\\mathbf{x}}_{c,t}^T + \\boldsymbol{\\varepsilon}_t^T\n\\] where \\(\\hat{\\mathbf{x}}_{c,t}^T\\) lies in the retained latent subspace and \\(\\boldsymbol{\\varepsilon}_t^T\\) is the residual row\n\nTwo standard monitoring statistics are:\n\nHotelling’s \\(T^2\\) : \\[\nT_t^2 = \\sum_{i=1}^{a}\\frac{t_{ti}^2}{\\lambda_i}\n\\]\nSquared Prediction Error, SPE or \\(Q\\) statistic: \\[\nQ_t = \\|\\mathbf{\\varepsilon}_t\\|_2^2\n  = \\sum_{j=1}^{p}\\varepsilon_{tj}^2\n\\]\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\\(T^2\\) measures abnormality inside the retained subspace, while \\(Q_t\\) measures lack of fit outside it"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#iiot-protocols",
-    "href": "slides/0_distributed_daq.html#iiot-protocols",
-    "title": "Distributed data acquisition and processing",
-    "section": "IIoT Protocols",
-    "text": "IIoT Protocols\n\n\nNetwork communication happens in a layered fashion, according to the OSI model\nWe are mostly interested in layers 5–7 (host layers):\n\nresponsible for application-level communication and data exchange\neasily customizable at the user level\n\n\n\n\n\nOSI network model\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nMost famous protocols (eg HTTP, FTP, SMTP) are designed for human-in-the-loop applications, are often point-to-point, and are not suitable for machine-to-machine communication, with low latency and high reliability"
+    "objectID": "slides/3_feature_based.html#pca-why-it-is-useful-for-time-series",
+    "href": "slides/3_feature_based.html#pca-why-it-is-useful-for-time-series",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA: why it is useful for time series",
+    "text": "PCA: why it is useful for time series\nPCA is applied to time-series analysis after building features from samples or windows\nTypical uses are:\n\nreducing a multivariate signal to a few latent variables\ndetecting operating regimes and structural changes\ndecorrelating strongly coupled measurements\nidentifying dominant directions of variability\n\n\n\n\n\n\n\nImportant\n\n\nFor dynamic systems, PCA by itself does not describe how the system evolves over time. It only summarizes the data in feature space; any temporal information must be introduced explicitly, for example through window-based features or lagged variables, that is, past values of the same signal such as \\(x_{t-1}\\), \\(x_{t-2}\\), and so on, used together with the current value \\(x_t\\) to capture the temporal dynamics"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#iiot-protocols-requirements",
-    "href": "slides/0_distributed_daq.html#iiot-protocols-requirements",
-    "title": "Distributed data acquisition and processing",
-    "section": "IIoT Protocols requirements",
-    "text": "IIoT Protocols requirements\n\nLow latency\nLow overhead\nSimplified support for complex network topologies (e.g., publish-subscribe, peer-to-peer)\nScalability and reliability\nSecurity features (e.g., encryption, authentication)\n\n\n\n\n\n\n\nImportant\n\n\nIoP communication is focused on Human-to-Machine (H2M) interactions, where the mass of transmitted data is often more important than its frequency (eg a movie or a video stream), and where latency is not critical.\nIn contrast, IIoT communication is focused on Machine-to-Machine (M2M) interactions, where low latency and high reliability are crucial, and where the volume of transmitted data per communication can be limited (eg a single scalar)."
+    "objectID": "slides/3_feature_based.html#svm-supervised-binary-classification",
+    "href": "slides/3_feature_based.html#svm-supervised-binary-classification",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: supervised binary classification",
+    "text": "SVM: supervised binary classification\n\n\nAssume labeled feature vectors, where \\(\\mathbf{x_i}\\) is the vector of observations and \\(y_i\\) is the class label: \\[\n(\\mathbf{x}_i, y_i),\\quad y_i \\in \\{-1,+1\\},\\quad i=1,\\dots,N\n\\]\nThe goal is to learn a decision function \\[\nf(\\mathbf{x}) = \\mathrm{sign}(g(\\mathbf{x}))\n\\] that separates the two classes with maximum robustness\n\n\n\n\nSVM example in 2-D\n\n\n\n\nFor the linear case, \\(g(\\mathbf{x}) = \\mathbf{w}^T \\mathbf{x} + b\\) and the separating boundary is the hyperplane \\(\\mathbf{w}^T \\mathbf{x} + b = 0\\)"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#network-topologies",
-    "href": "slides/0_distributed_daq.html#network-topologies",
-    "title": "Distributed data acquisition and processing",
-    "section": "Network topologies",
-    "text": "Network topologies\nH2M communication almost always happens in a point-to-point fashion, where a client (e.g., a web browser) requests data from a server (e.g., a web server), and the server responds with the requested data.\nIn contrast, in M2M communication, more complex network topologies are often required, where multiple devices need to communicate with each other in a more flexible and scalable way. Using point-to-point communication in such scenarios can lead to scalability issues, as the number of connections grows exponentially with the number of devices, and keeping track of network addresses can become unmanageable/error prone\n\n\n\n\n\n\nTip\n\n\nCommon network topologies for M2M communication include:\n\nPublish-subscribe: devices can publish data to a topic, and other devices can subscribe to that topic to receive updates; traffic is managed by a central broker that handles message distribution\nDealer-worker: a device (dealer) can distribute messages to multiple, identical other devices (workers) in a round-robin fashion, with or without a central broker"
+    "objectID": "slides/3_feature_based.html#svm-maximum-margin-principle",
+    "href": "slides/3_feature_based.html#svm-maximum-margin-principle",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: maximum-margin principle",
+    "text": "SVM: maximum-margin principle\nIf the classes are linearly separable, the hard-margin SVM solves: \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2\n\\] subject to \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1,\\quad i=1,\\dots,N\n\\]\nThe geometric margin is \\[\n\\gamma = \\frac{2}{\\|\\mathbf{w}\\|_2}\n\\]\nTherefore, minimizing \\(\\|\\mathbf{w}\\|_2^2\\) is equivalent to maximizing the separation margin"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#publish-subscribe-architectures",
-    "href": "slides/0_distributed_daq.html#publish-subscribe-architectures",
-    "title": "Distributed data acquisition and processing",
-    "section": "Publish-subscribe architectures",
-    "text": "Publish-subscribe architectures\n\n\nPublish-Subscribe architectures are very flexible and suitable for distributed data acquisition\nData producers (publishers) send data to broker, which distributes the data to interested consumers (subscribers) based on subscriptions: no need for direct communication between publishers and subscribers\nOnly the IP address or hostname of the broker needs to be known by devices: simple network management and possible dynamic addition or removal of devices (scalability)\n\n\n\n\n\n\nflowchart LR\n    subgraph PUB[\"Publishers only\"]\n        direction TB\n        P1[\"device_1\"]\n        P2[\"device_2\"]\n    end\n\n    subgraph BOTH[\"Publishers + subscribers\"]\n        direction TB\n        B1[\"device_3\"]\n        B2[\"device_4\"]\n    end\n\n    MB[(\"broker\")]\n\n    subgraph SUB[\"Subscribers only\"]\n        direction TB\n        S1[\"device_5\"]\n        S2[\"device_6\"]\n    end\n\n    style PUB fill:none,stroke:#666,stroke-width:1px\n    style BOTH fill:none,stroke:#666,stroke-width:1px\n    style SUB fill:none,stroke:#666,stroke-width:1px\n\n    P1 --&gt;|\"publish: measure/sens_1\"| MB\n    P2 --&gt;|\"publish: measure/sens_2\"| MB\n\n    B1 --&gt;|\"publish: status/dev_3\"| MB\n    MB --&gt;|\"deliver: cmd/cnt_1\"| B1\n\n    B2 --&gt;|\"publish: event/dev_4\"| MB\n    MB --&gt;|\"deliver: cfg/dev_4\"| B2\n\n    MB --&gt;|\"deliver: measure/sens_1\"| S1\n    MB --&gt;|\"deliver: measure/sens_2\"| S1\n    MB --&gt;|\"deliver: status/dev_3\"| S2\n    MB --&gt;|\"deliver: event/dev_4\"| S2"
+    "objectID": "slides/3_feature_based.html#svm-interactive-example",
+    "href": "slides/3_feature_based.html#svm-interactive-example",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: Interactive Example",
+    "text": "SVM: Interactive Example\n\n\n\n\nWe select as decision boundary \\(\\mathbf{w} = [\\cos(\\theta), \\sin(\\theta)]^T\\)\n\\(||\\mathbf w||_2 = 1\\) (it is a unit vector)\n\\(b\\) the intercept with the vertical axis\n\nThe margin width is then \\(2/\\|\\mathbf{w}\\|_2 = 2\\) and the support vectors are those that satisfy \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b) = 1\\)\nTry and find \\(\\theta, b\\) that maximize the margin while correctly classifying all points\n\n\n\n\n\n\n\nCaution\n\n\nWith the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin."
   },
   {
-    "objectID": "slides/0_distributed_daq.html#commonly-used-iiot-protocols",
-    "href": "slides/0_distributed_daq.html#commonly-used-iiot-protocols",
-    "title": "Distributed data acquisition and processing",
-    "section": "Commonly used IIoT protocols",
-    "text": "Commonly used IIoT protocols\nThe most commonly used IIoT protocols include:\n\nMQTT (Message Queuing Telemetry Transport): a lightweight publish-subscribe protocol designed for low-bandwidth, high-latency, or unreliable networks; widely used in IIoT applications for its simplicity and efficiency (simple, limited architectures)\nZeroMQ (Zero Message Queue): a high-performance asynchronous messaging library that provides a simple and flexible API for building distributed applications; supports various messaging patterns, including publish-subscribe, request-reply, and dealer-worker; often used in IIoT applications for its scalability and low latency (very flexible)\nOPC-UA (Open Platform Communications, Unified Architecture): a platform-independent, service-oriented architecture for industrial automation; provides a standardized way to access and exchange data between devices and systems in industrial environments; supports both client-server and publish-subscribe communication models (industrial-grade, complex)"
+    "objectID": "slides/3_feature_based.html#svm-interactive-example-r-version",
+    "href": "slides/3_feature_based.html#svm-interactive-example-r-version",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: Interactive Example (R version)",
+    "text": "SVM: Interactive Example (R version)\n\n\nWe do a linear SVM classification and add predictions to it:\n\nfit &lt;- svm(\n  state ~ x1 + x2, data = df, \n  scale = FALSE, kernel = \"linear\"\n)\n\ndf &lt;-  df %&gt;% mutate(\n  id = 1:n(),\n  pred = predict(fit, .),\n  sv = if_else(id %in% fit$index, \"SV\", \"Other\")\n)\ncoef(fit)\n\n(Intercept)          x1          x2 \n       -0.2        -0.8         0.4 \n\n\nCoefficients are \\(b\\), \\(w_1\\), and \\(w_2\\) in the decision function \\(g(\\mathbf{x}) = w_1 x_1 + w_2 x_2 + b\\)"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#storage",
-    "href": "slides/0_distributed_daq.html#storage",
-    "title": "Distributed data acquisition and processing",
-    "section": "Storage",
-    "text": "Storage\nA plant can produce a staggering amount of data, which can be difficult to manage and analyze without proper storage strategies\n\nCloud storage: scalable and flexible, but can have latency and security concerns\nOn-premises storage: more control and security, but can be costly and less scalable\nHybrid storage: combines the benefits of both cloud and on-premises storage, allowing for a more flexible and cost-effective solution\n\n\n\n\n\n\n\nImportant\n\n\nRegardless of where data is stored, there are different storeage models to consider:\n\nData lakes: store raw, unstructured data in its native format, allowing for flexibility and scalability; can be more difficult to manage and analyze due to lack of structure\nData warehouses: store structured data in a predefined schema, optimized for querying and analysis; can be less flexible and scalable than data lakes\nData marts: store a subset of data from a data warehouse, focused on a specific business area or function; can provide faster access to relevant data, but can lead to data silos and inconsistencies"
+    "objectID": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
+    "href": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: soft margin and hinge loss",
+    "text": "SVM: soft margin and hinge loss\n\n\n\nReal process data are noisy, overlapping, and rarely perfectly separable\nThe soft-margin formulation introduces slack variables \\(\\xi_i \\ge 0\\): \\[\n\\min_{\\mathbf{w},b,\\boldsymbol{\\xi}}\n\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\xi_i\n\\] subject to: \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1-\\xi_i\n\\]\n\n\n\n\n\nSoft-margin SVM\n\n\n\n\nThe parameter \\(C\\) balances margin width against classification violations\n\n\n\n\n\n\nNote\n\n\nEquivalent empirical-risk view: \\(\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\)"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#data-lakes",
-    "href": "slides/0_distributed_daq.html#data-lakes",
-    "title": "Distributed data acquisition and processing",
-    "section": "Data lakes",
-    "text": "Data lakes\nData lakes are designed to store raw, unstructured data in its native format. They can handle a wide variety of data types, including structured, semi-structured, and unstructured data\nShape of data can be freely changed, which leads to flexibility and scalability, but can make data management and analysis more difficult due to lack of structure\nCommonly used technologies for data lakes include:\n\nHadoop Distributed File System (HDFS): a distributed file system that provides scalable and fault-tolerant storage for large volumes of data; often used in conjunction with the Hadoop ecosystem for big data processing\nAmazon S3: a cloud-based object storage service that provides scalable and durable storage\nAzure Data Lake Storage: a cloud-based data lake service that provides scalable and secure storage for big data analytics\nMongoDB: a NoSQL database that can be used as a data lake for storing unstructured data; provides flexibility, scalability, and can run on-premises, but may not be optimized for large-scale analytics. It stores data as collections of JSON documents"
+    "objectID": "slides/3_feature_based.html#equivalent-empirical-risk-view",
+    "href": "slides/3_feature_based.html#equivalent-empirical-risk-view",
+    "title": "Feature-based analysis of time series",
+    "section": "Equivalent empirical-risk view",
+    "text": "Equivalent empirical-risk view\n\n\nThe same soft-margin SVM can be written as \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 +\nC\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\n\\]\nThis has the standard machine-learning form \\[\n\\text{regularization} + \\text{empirical loss}\n\\]\n\n\\(\\frac{1}{2}\\|\\mathbf{w}\\|_2^2\\) penalizes complex models and favors a wider margin\n\\(\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\) is the hinge loss\n\\(C\\) controls the trade-off between margin size and training violations\n\n\nInterpretation:\n\nif \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1\\), the point is correctly classified and outside the margin, so the loss is 0\nif \\(0&lt;y_i(\\mathbf{w}^T\\mathbf{x}_i+b)&lt;1\\), the point is correctly classified but inside the margin\nif \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\le0\\), the point is misclassified\n\nSo this view is equivalent to the slack-variable formulation:\n\ngeometric view: maximize margin while allowing violations\nempirical-risk view: minimize regularized hinge loss on the training set"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#data-warehouses",
-    "href": "slides/0_distributed_daq.html#data-warehouses",
-    "title": "Distributed data acquisition and processing",
-    "section": "Data warehouses",
-    "text": "Data warehouses\nData warehouses are designed to store structured data in a predefined schema, optimized for querying and analysis\nThis often relies on a relational database management system (RDBMS), which organizes data into tables with rows and columns, and allows for complex queries using SQL\nWrt data lakes, data warehouses can provide faster access to relevant data for analysis, but can be less flexible and scalable due to the need for predefined schemas and the overhead of managing structured data\nAs such, RDBMS-based data warehouses are often used for mature, well-defined data that is used for reporting and analysis, while data lakes are often used for raw, unstructured data that may require more exploration and processing before analysis"
+    "objectID": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
+    "href": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: dual problem and kernel trick",
+    "text": "SVM: dual problem and kernel trick\n\n\nThe dual formulation is \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j K(\\mathbf{x}_i,\\mathbf{x}_j)\n\\] with constraints \\[\n\\alpha_i \\ge 0,\\qquad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\n\nThe kernel function \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] allows nonlinear separation in the original space through linear separation in a transformed feature space\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function, RBF: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#analysis",
-    "href": "slides/0_distributed_daq.html#analysis",
-    "title": "Distributed data acquisition and processing",
-    "section": "Analysis",
-    "text": "Analysis\nSome preliminary analysis and data manipulation can be performed on the data lake or data warehouse.\nFor example, MongoDB provides a powerful query language and aggregation (map-reduce actions) framework that can be used for data analysis and transformation (pipelines), allowing for some level of analysis to be performed directly on the data lake, without the need for a separate data warehouse\nMongoDB pipelines can be set as read-only virtual tables, or views, that can be queried like regular tables, but the underlying data is not duplicated, and the view is updated in real-time as the underlying data changes"
+    "objectID": "slides/3_feature_based.html#svm-understanding-the-dual-problem",
+    "href": "slides/3_feature_based.html#svm-understanding-the-dual-problem",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: understanding the dual problem",
+    "text": "SVM: understanding the dual problem\n\n\n\nInstead of optimizing the hyperplane parameters directly, the dual problem optimizes one coefficient \\(\\alpha_i\\) for each training sample: \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j \\mathbf{x}_i^T\\mathbf{x}_j\n\\]\nFor the soft-margin SVM, the constraints are \\[\n0 \\le \\alpha_i \\le C,\\qquad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\nThe primal and dual formulations are equivalent: they lead to the same classifier.\n\nInterpretation:\n\neach \\(\\alpha_i\\) measures how much training point \\(i\\) contributes to the solution\nmost \\(\\alpha_i\\) are zero\nonly points with \\(\\alpha_i &gt; 0\\) matter: these are the support vectors\nthe upper bound \\(C\\) limits the influence of a single sample\n\nWhy it is useful:\n\nthe data appear only through inner products \\(\\mathbf{x}_i^T\\mathbf{x}_j\\)\nthis makes the solution easier to reinterpret in geometric terms\nit prepares the ground for replacing inner products with kernels"
   },
   {
-    "objectID": "slides/0_distributed_daq.html#machine-learning-for-anomaly-detection-and-predictive-maintenance",
-    "href": "slides/0_distributed_daq.html#machine-learning-for-anomaly-detection-and-predictive-maintenance",
-    "title": "Distributed data acquisition and processing",
-    "section": "Machine learning for anomaly detection and predictive maintenance",
-    "text": "Machine learning for anomaly detection and predictive maintenance\nMachine learning models can be trained on the data stored in the data lake or data warehouse to later perform tasks such as anomaly detection and predictive maintenance, in real-time\nMachine learning models can be supervised or unsupervised, can be implemented with conventional algorithms (e.g., SVM, PCA) or deep learning architectures (e.g., CNNs, RNNs), and can be deployed on the edge or in the cloud, depending on the requirements of the application"
+    "objectID": "slides/3_feature_based.html#svm-the-kernel-trick",
+    "href": "slides/3_feature_based.html#svm-the-kernel-trick",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: the kernel trick",
+    "text": "SVM: the kernel trick\n\n\n\nIn the dual problem and in the decision function, the samples appear only through inner products: \\[\n\\mathbf{x}_i^T\\mathbf{x}_j\n\\]\nIf we first map the data into a feature space \\(\\phi(\\mathbf{x})\\), the same algorithm would use \\[\n\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\]\nThe kernel trick replaces this inner product with a kernel function \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] without computing \\(\\phi(\\mathbf{x})\\) explicitly.\n\nWhy this matters:\n\na linear separator in feature space becomes a nonlinear boundary in the original space\nthe optimization problem stays almost unchanged\nprediction still depends only on support vectors\n\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nNote: the dual formulation is what makes kernelized SVMs possible."
   },
   {
-    "objectID": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
-    "href": "slides/0_distributed_daq.html#mads-multi-agent-distributed-system",
-    "title": "Distributed data acquisition and processing",
-    "section": "MADS: Multi-Agent Distributed System",
-    "text": "MADS: Multi-Agent Distributed System\n\n\nThe Multi-Agent Distributed System (MADS) is a lightweight and modular software framework for distributed data acquisition and processing\nGeneral purpose, but well-suited for smart manufacturing environments\n\n  \n\n\n\n\n\n\n\n\nWhere to start\n\n\nGo to mads-net-github.io for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing"
+    "objectID": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
+    "href": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM: decision function and time-series use",
+    "text": "SVM: decision function and time-series use\nAfter training, the decision function is \\[\ng(\\mathbf{x}) = \\sum_{i \\in SV}\\alpha_i y_i K(\\mathbf{x}_i,\\mathbf{x}) + b\n\\] where only the support vectors contribute\nFor time-series analysis, SVM is applied to features extracted from samples or windows, for example:\n\ndirect multivariate measurements \\((x_{1,t},x_{2,t},\\dots)\\)\nlagged vectors \\((x_t,x_{t-1},\\dots,x_{t-L})\\)\nstatistical and spectral features over a window\n\nSVM is therefore a classification rule in feature space, not a stochastic time model"
   },
   {
-    "objectID": "slides/1_time_series.html#storing-time",
-    "href": "slides/1_time_series.html#storing-time",
-    "title": "Time series of stochastic process variables",
-    "section": "Storing time",
-    "text": "Storing time\nTwo common representations are used in practice:\n\nISO8601 date-time string, for example 2026-03-09T08:15:30.125Z\nNumeric offset from an epoch, for example seconds or milliseconds from a reference instant\n\nISO strings are readable, self-describing, and easy to exchange between systems, especially when they include time zone information\nEpoch-based values are compact and fast for storage, sorting, and arithmetic, but they require agreement on the epoch, units, and time zone convention\nIn industrial applications, timestamps are often stored with millisecond resolution, although sensor acquisition may internally use finer clocks"
+    "objectID": "slides/3_feature_based.html#synthetic-bivariate-time-series",
+    "href": "slides/3_feature_based.html#synthetic-bivariate-time-series",
+    "title": "Feature-based analysis of time series",
+    "section": "Synthetic bivariate time series",
+    "text": "Synthetic bivariate time series\n\n\nWe construct a bivariate time series with two process variables:\n\na normal regime with strong positive correlation\na fault regime with mean shift and changed covariance structure\n\nThis is enough to illustrate how PCA detects changes in latent structure"
   },
   {
-    "objectID": "slides/1_time_series.html#epoch-conventions-and-clocks",
-    "href": "slides/1_time_series.html#epoch-conventions-and-clocks",
-    "title": "Time series of stochastic process variables",
-    "section": "Epoch conventions and clocks",
-    "text": "Epoch conventions and clocks\n\n\nAn epoch is the reference instant from which a numeric timestamp is measured\nCommon conventions include:\n\nUnix epoch: 1970-01-01 00:00:00 UTC\nGPS epoch: 1980-01-06 00:00:00 UTC\nOther software-specific origins, used by spreadsheets, PLCs, or proprietary databases\n\nIf the epoch changes, the same numeric value refers to a different physical instant\n\nOperating systems expose different clocks:\n\nSystem clock: returns civil time and can jump because of NTP, manual updates, or daylight-saving adjustments\nMonotonic clock: only increases and is used to measure elapsed time reliably\n\nTherefore:\n\nuse the system clock for timestamps attached to data\nuse a monotonic clock for latency, timeout, and sampling-period measurements\n\n\n\n\nNever compute elapsed time by subtracting two readings of the wall-clock if the clock can be corrected while the program is running."
+    "objectID": "slides/3_feature_based.html#pca-analysis-14",
+    "href": "slides/3_feature_based.html#pca-analysis-14",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA Analysis 1/4",
+    "text": "PCA Analysis 1/4\n\n\nWe apply PCA to the standardized two-variable feature matrix\nSince \\(p=2\\), the model is simple enough to visualize directly:\n\nloadings describe the principal directions\nscores show how observations evolve in the latent space\nexplained variance quantifies dimensional compression"
   },
   {
-    "objectID": "slides/1_time_series.html#monotonic-clock-limitations",
-    "href": "slides/1_time_series.html#monotonic-clock-limitations",
-    "title": "Time series of stochastic process variables",
-    "section": "Monotonic clock limitations",
-    "text": "Monotonic clock limitations\nThe monotonic clock is usually referenced to an internal origin that depends on the current operating-system session, typically the last boot time\nTherefore, its zero is not a civil date and is generally different on each machine, even if the devices are nominally synchronized on the network\nAs a consequence, monotonic time is excellent for measuring:\n\nelapsed time\nlatency\ntimeout intervals\nlocal acquisition jitter\n\nHowever, it cannot be used to synchronize measurements collected on different devices, because the timestamps do not share a common physical epoch\nTo align data acquired by multiple systems, one needs timestamps derived from a shared wall-clock reference, typically UTC, distributed for example by NTP, PTP, or GNSS"
+    "objectID": "slides/3_feature_based.html#pca-analysis-24",
+    "href": "slides/3_feature_based.html#pca-analysis-24",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA Analysis 2/4",
+    "text": "PCA Analysis 2/4\nFirst we do the PCA fit and compute scores \\([\\mathbf{p}_1, \\mathbf{p}_2]\\):\n\npca_fit &lt;- prcomp(~x1+x2, data=ts_df, center = TRUE, scale. = TRUE)\nsummary(pca_fit)\n\nImportance of components:\n                          PC1    PC2\nStandard deviation     1.3272 0.4884\nProportion of Variance 0.8808 0.1192\nCumulative Proportion  0.8808 1.0000\n\nround(pca_fit$rotation, 3)\n\n      PC1    PC2\nx1 -0.707 -0.707\nx2 -0.707  0.707\n\nscores &lt;- as_tibble(pca_fit$x) %&gt;% mutate(t = ts_df$t, state = ts_df$state)\n\nWe also calculate \\(\\mathbf \\lambda\\) and rescale the data:\n\n(lambda &lt;- pca_fit$sdev^2)\n\n[1] 1.761512 0.238488\n\ncenter_vec &lt;- pca_fit$center\nscale_vec &lt;- pca_fit$scale\nx_scaled &lt;- scale(ts_df %&gt;% select(x1, x2), center = center_vec, scale = scale_vec)"
   },
   {
-    "objectID": "slides/1_time_series.html#time-in-r",
-    "href": "slides/1_time_series.html#time-in-r",
-    "title": "Time series of stochastic process variables",
-    "section": "Time in R",
-    "text": "Time in R\nR provides several complementary tools for time handling:\n\nDate: stores calendar dates without time-of-day\nPOSIXct: stores date-time as seconds from the Unix epoch\nts: for regularly sampled series with known frequency\nxts: for indexed time series, especially convenient for date-time filtering and irregular sampling\nlubridate: simplifies parsing, rounding, shifting, and extracting date-time components\n\nThe choice depends on whether time is regular, irregular, or mainly used for querying"
+    "objectID": "slides/3_feature_based.html#pca-analysis-34",
+    "href": "slides/3_feature_based.html#pca-analysis-34",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA Analysis 3/4",
+    "text": "PCA Analysis 3/4\nWe calculate the residuals vector \\(\\mathbf\\varepsilon = \\mathbf{x}_c - \\hat{\\mathbf{x}}_c\\) and the monitoring statistics. Given the \\(\\lambda\\) values, we only keep \\(\\mathbf{p}_1\\) so:\n\\[\n\\hat{\\mathbf{x}}_{c,t}^T = \\mathbf{t}_t^T \\mathbf{P}_a^T\n\\]\nbecomes:\n\nx_hat &lt;- tcrossprod(pca_fit$x[, 1, drop = FALSE], pca_fit$rotation[, 1, drop = FALSE])\nresiduals_mat &lt;- x_scaled - x_hat\n\nFinally we can calculate the monitoring statistics:\n\nspe &lt;- rowSums(residuals_mat^2)\nt2 &lt;- rowSums((pca_fit$x[, 1:2, drop = FALSE]^2) / matrix(rep(lambda[1:2], each = n), ncol = 2))"
   },
   {
-    "objectID": "slides/1_time_series.html#regular-series-with-ts",
-    "href": "slides/1_time_series.html#regular-series-with-ts",
-    "title": "Time series of stochastic process variables",
-    "section": "Regular series with ts",
-    "text": "Regular series with ts\n\n\nThe ts class is designed for regular sampling, such as monthly production, daily energy use, or hourly average demand\nIt does not store a full timestamp per sample. Instead, it stores:\n\na start instant\na frequency\nthe ordered values\n\nThis is efficient and works very well with classical time-series models"
+    "objectID": "slides/3_feature_based.html#pca-analysis-44",
+    "href": "slides/3_feature_based.html#pca-analysis-44",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA Analysis 4/4",
+    "text": "PCA Analysis 4/4\n\n\nFinally we make an overall plot:\n\np &lt;- autoplot(\n  pca_fit, data = ts_df, \n  colour = \"state\",\n  loadings = TRUE,\n  loadings.label = TRUE,\n  loadings.label.size = 3\n  ) +\n  labs(title = \"PCA score plot with loadings\") +\n  coord_fixed() +\n  coord_flip()\n\n\n\n\n\n\n\nNote\n\n\nThis is called a biplot. Another useful visualization is the screeplot, which shows the explained variance ratio \\(\\eta_a\\) as a function of the number of retained components \\(a\\)."
   },
   {
-    "objectID": "slides/1_time_series.html#indexed-series-with-xts",
-    "href": "slides/1_time_series.html#indexed-series-with-xts",
-    "title": "Time series of stochastic process variables",
-    "section": "Indexed series with xts",
-    "text": "Indexed series with xts\n\n\nThe xts class is more convenient when timestamps are explicit and may be irregular\nEach observation is paired with a time index, typically Date or POSIXct\nThis is useful for:\n\nsensor logs\nevent streams\nasynchronous acquisition\nfiltering by calendar date or time window\n\n\n\nPlotData\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIndex\n.\n\n\n\n\n1\n2026-03-09 08:00:00\n20.0\n\n\n2\n2026-03-09 08:05:00\n20.4\n\n\n3\n2026-03-09 08:08:00\n20.1\n\n\n4\n2026-03-09 08:15:00\n20.8\n\n\n5\n2026-03-09 08:23:00\n21.2\n\n\n6\n2026-03-09 08:31:00\n21.0"
+    "objectID": "slides/3_feature_based.html#pca-monitoring-statistics",
+    "href": "slides/3_feature_based.html#pca-monitoring-statistics",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA monitoring statistics",
+    "text": "PCA monitoring statistics\n\n\nFor each time instant we compute:\n\nscore coordinates PC1 and PC2\nSPE, squared prediction error\nHotelling’s \\(T^2\\)\n\nFor \\(T^2\\) we can define a control limit associated with a false-alarm probability \\(\\alpha\\): \\[\nT^2_{\\alpha} =\n\\frac{a(n-1)}{n-a}F_{a,n-a;1-\\alpha}\n\\] where \\(a\\) is the number of retained components and \\(n\\) is the reference sample size\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn this synthetic example, PCA is mainly used as an exploratory and monitoring tool: it reveals the regime change without using class labels during training."
   },
   {
-    "objectID": "slides/1_time_series.html#querying-xts-with-date-ranges",
-    "href": "slides/1_time_series.html#querying-xts-with-date-ranges",
-    "title": "Time series of stochastic process variables",
-    "section": "Querying xts with date ranges",
-    "text": "Querying xts with date ranges\n\n\nOne of the strengths of xts is its compact indexing syntax\nExamples:\n\none day: x[\"2026-03-09\"]\none range: x[\"2026-03-09/2026-03-10\"]\nfrom an instant onward: x[\"2026-03-09 08:10:00/\"]\nup to an instant: x[\"/2026-03-09 08:15:00\"]\n\n\n\nsensor_xts[\"2026-03-09 08:05:00/2026-03-09 08:20:00\"]\n\n                    [,1]\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1\n2026-03-09 08:15:00 20.8\n\n\n\nsensor_xts[\"/2026-03-09 08:08:00\"]\n\n                    [,1]\n2026-03-09 08:00:00 20.0\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1\n\n\n\nThis is often faster to read and write than manual logical filtering"
+    "objectID": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series",
+    "href": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM on the same bivariate time series",
+    "text": "SVM on the same bivariate time series\n\n\n\nNow we use the same observations, but with labels Normal and Fault\nThe feature vector is simply \\[\n\\mathbf{x}_t = [x_{1,t},x_{2,t}]^T\n\\]\nAn RBF-kernel SVM is trained to separate the two states:\n\n\nsvm(state ~ x1 + x2, data = ts_df,\n    kernel = \"radial\", cost = 5, gamma = 1,\n    scale = TRUE)\n\n\nCall:\nsvm(formula = state ~ x1 + x2, data = ts_df, kernel = \"radial\", \n    cost = 5, gamma = 1, scale = TRUE)\n\n\nParameters:\n   SVM-Type:  C-classification \n SVM-Kernel:  radial \n       cost:  5 \n\nNumber of Support Vectors:  65"
   },
   {
-    "objectID": "slides/1_time_series.html#lubridate-for-parsing-and-filtering",
-    "href": "slides/1_time_series.html#lubridate-for-parsing-and-filtering",
-    "title": "Time series of stochastic process variables",
-    "section": "lubridate for parsing and filtering",
-    "text": "lubridate for parsing and filtering\n\n\nlubridate helps create robust pipelines for date-time handling\nTypical tasks include:\n\nparsing strings with ymd_hms()\nchanging time zone with with_tz() or force_tz()\nrounding with floor_date() and ceiling_date()\nextracting fields such as year(), month(), wday(), hour()\n\n\n\nsensor_df %&gt;%\n  mutate(\n    minute_bin = floor_date(timestamp, \"10 min\"),\n    hour = hour(timestamp))\n\n# A tibble: 6 × 4\n  timestamp           value minute_bin           hour\n  &lt;dttm&gt;              &lt;dbl&gt; &lt;dttm&gt;              &lt;int&gt;\n1 2026-03-09 08:00:00  20   2026-03-09 08:00:00     8\n2 2026-03-09 08:05:00  20.4 2026-03-09 08:00:00     8\n3 2026-03-09 08:08:00  20.1 2026-03-09 08:00:00     8\n4 2026-03-09 08:15:00  20.8 2026-03-09 08:10:00     8\n5 2026-03-09 08:23:00  21.2 2026-03-09 08:20:00     8\n6 2026-03-09 08:31:00  21   2026-03-09 08:30:00     8\n\n\n\nsensor_df %&gt;% filter(\n  timestamp &gt;= ymd_hms(\"2026-03-09 08:05:00\"),\n  timestamp &lt;  ymd_hms(\"2026-03-09 08:25:00\"))\n\n# A tibble: 4 × 2\n  timestamp           value\n  &lt;dttm&gt;              &lt;dbl&gt;\n1 2026-03-09 08:05:00  20.4\n2 2026-03-09 08:08:00  20.1\n3 2026-03-09 08:15:00  20.8\n4 2026-03-09 08:23:00  21.2\n\n\n\n\n\n\n\n\n\nNote\n\n\nThis is especially useful before converting tabular data to xts"
+    "objectID": "slides/3_feature_based.html#svm-predicted-labels-over-time",
+    "href": "slides/3_feature_based.html#svm-predicted-labels-over-time",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM predicted labels over time",
+    "text": "SVM predicted labels over time\n\n\nThe decision boundary is learned in feature space, but the output can be mapped back to time\nThis makes it possible to compare:\n\ntrue process state\nSVM predicted state\nclassification errors and transition regions\n\n\n\n\n\n\n\nNote\n\n\nThis scheme can be carried out continuously in an online setting:\n\nwhere the SVM is trained on a reference dataset and then applied to new observations as they arrive, providing real-time classification of the process state\nor by chunking the time series into windows and applying the SVM to each window"
   },
   {
-    "objectID": "slides/1_time_series.html#from-data-frame-to-xts",
-    "href": "slides/1_time_series.html#from-data-frame-to-xts",
-    "title": "Time series of stochastic process variables",
-    "section": "From data frame to xts",
-    "text": "From data frame to xts\nTo work efficiently with time series in R, a common workflow is:\n\n\n\nimport tabular data\nparse the timestamp column as POSIXct\nsort by time\nconvert to xts\nquery and aggregate\n\n\n\nsensor_tbl &lt;- tibble(\n  timestamp = c(\"2026-03-09 08:00:00\",\n                \"2026-03-09 08:05:00\",\n                \"2026-03-09 08:08:00\"),\n  temperature = c(20.0, 20.4, 20.1)\n)\n\nsensor_tbl2 &lt;- sensor_tbl %&gt;%\n  mutate(timestamp = ymd_hms(timestamp)) %&gt;%\n  arrange(timestamp)\n\nsensor_xts2 &lt;- xts::xts(\n  x = sensor_tbl2$temperature,\n  order.by = sensor_tbl2$timestamp\n)\n\nsensor_xts2\n\n                    [,1]\n2026-03-09 08:00:00 20.0\n2026-03-09 08:05:00 20.4\n2026-03-09 08:08:00 20.1"
+    "objectID": "slides/3_feature_based.html#python-example-same-synthetic-dataset",
+    "href": "slides/3_feature_based.html#python-example-same-synthetic-dataset",
+    "title": "Feature-based analysis of time series",
+    "section": "Python example: same synthetic dataset",
+    "text": "Python example: same synthetic dataset\nThe same bivariate time series can be generated in Python with numpy and stored in a pandas data frame\nimport numpy as np\nimport pandas as pd\n\nnp.random.seed(0)\n\nn = 240\nt = np.arange(1, n + 1)\nfault_idx = np.arange(150, 210)\n\nx1 = np.cumsum(np.random.normal(0, 0.06, n)) \\\n     + 0.7 * np.sin(2 * np.pi * t / 24)\nx2 = 0.8 * x1 + np.random.normal(0, 0.18, n)\n\nx1[fault_idx] = x1[fault_idx] + 1.0\nx2[fault_idx] = -0.2 * x1[fault_idx] \\\n                + np.random.normal(0, 0.22, len(fault_idx)) + 0.7\n\nstate = np.where(np.isin(t, fault_idx + 1), \"Fault\", \"Normal\")\n\ndf = pd.DataFrame({\"t\": t, \"x1\": x1, \"x2\": x2, \"state\": state})"
   },
   {
-    "objectID": "slides/1_time_series.html#time-series-in-python",
-    "href": "slides/1_time_series.html#time-series-in-python",
-    "title": "Time series of stochastic process variables",
-    "section": "Time series in Python",
-    "text": "Time series in Python\nPython offers libraries with roles similar to those seen in R:\n\ndatetime: basic date-time objects, time zones, timedeltas\npandas: indexed time series, resampling, rolling windows, filtering by date range\nnumpy: efficient numerical arrays and vectorized operations\nstatsmodels: AR, MA, ARIMA, seasonal models, ACF and PACF\npolars: fast tabular processing, useful before conversion to time-indexed data\nxarray: labeled multi-dimensional arrays, useful for sensor grids and scientific data\n\nIn practice, pandas plays a role similar to a combination of data.frame, xts, and part of lubridate"
+    "objectID": "slides/3_feature_based.html#pca-on-the-bivariate-series-in-python",
+    "href": "slides/3_feature_based.html#pca-on-the-bivariate-series-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA on the bivariate series in Python",
+    "text": "PCA on the bivariate series in Python\n\n\nThe PCA workflow in Python is analogous to the R one:\n\nstandardize the variables\nfit a PCA model\ninspect explained variance and loadings\nproject the observations to obtain principal scores\n\n\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\nX = df[[\"x1\", \"x2\"]].to_numpy()\n\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\npca = PCA(n_components=2)\nscores = pca.fit_transform(X_scaled)\n\ndf[\"PC1\"] = scores[:, 0]\ndf[\"PC2\"] = scores[:, 1]\n\nprint(pca.explained_variance_ratio_)\nprint(pca.components_)"
   },
   {
-    "objectID": "slides/1_time_series.html#time-series-in-python-1",
-    "href": "slides/1_time_series.html#time-series-in-python-1",
-    "title": "Time series of stochastic process variables",
-    "section": "Time series in Python",
-    "text": "Time series in Python\n\n\nTypical workflow in Python:\n\nparse timestamps with pd.to_datetime()\nset the timestamp as index\nsort the index\nslice by date or time range\nresample or aggregate if needed\n\nThis is very close to the xts workflow in R\n\nimport pandas as pd\n\ndf = pd.DataFrame({\n    \"timestamp\": [\n        \"2026-03-09T08:00:00Z\",\n        \"2026-03-09T08:05:00Z\",\n        \"2026-03-09T08:08:00Z\"\n    ],\n    \"value\": [20.0, 20.4, 20.1]\n})\n\ndf[\"timestamp\"] = pd.to_datetime(df[\"timestamp\"], utc=True)\ndf = df.sort_values(\"timestamp\")\ndf = df.set_index(\"timestamp\")\n\nwindow = df.loc[\"2026-03-09 08:00:00\":\"2026-03-09 08:06:00\"]"
+    "objectID": "slides/3_feature_based.html#pca-monitoring-statistics-in-python",
+    "href": "slides/3_feature_based.html#pca-monitoring-statistics-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA monitoring statistics in Python",
+    "text": "PCA monitoring statistics in Python\n\n\nAs in R, we can reconstruct the retained subspace and compute:\n\nthe score trajectories\nHotelling’s \\(T^2\\)\nthe residual SPE statistic\n\nThis provides a direct parallel with the PCA monitoring slide shown earlier\n\nimport numpy as np\n\nlam = pca.explained_variance_\nX_hat = scores @ pca.components_\nE = X_scaled - X_hat\n\ndf[\"SPE\"] = np.sum(E**2, axis=1)\ndf[\"T2\"] = np.sum((scores**2) / lam, axis=1)\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(2, 1, figsize=(8, 5), sharex=True)\nax[0].plot(df[\"t\"], df[\"PC1\"])\nax[0].set_ylabel(\"PC1\")\nax[1].plot(df[\"t\"], df[\"SPE\"])\nax[1].set_ylabel(\"SPE\")\nax[1].set_xlabel(\"Time index\")"
   },
   {
-    "objectID": "slides/1_time_series.html#r-and-python-correspondence",
-    "href": "slides/1_time_series.html#r-and-python-correspondence",
-    "title": "Time series of stochastic process variables",
-    "section": "R and Python correspondence",
-    "text": "R and Python correspondence\n\n\nUseful parallels are:\n\nts in R and statsmodels regular-series tools in Python\nxts in R and pandas with DatetimeIndex in Python\nlubridate in R and pandas date-time accessors, plus datetime, in Python\n\n\n# resample every 10 minutes\nagg = df.resample(\"10min\").mean()\n\n# rolling mean\nsmooth = df[\"value\"].rolling(3).mean()\n\n# month and hour extraction\ndf[\"hour\"] = df.index.hour\ndf[\"day\"] = df.index.day\n\n\n\n\n\n\n\nNote\n\n\nThe conceptual workflow is almost the same:\nparse  index  filter  resample  model"
+    "objectID": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series-in-python",
+    "href": "slides/3_feature_based.html#svm-on-the-same-bivariate-time-series-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM on the same bivariate time series in Python",
+    "text": "SVM on the same bivariate time series in Python\n\n\nUsing scikit-learn, the same classification problem is solved by fitting an RBF-kernel SVM to the two features\nThe workflow is:\n\nbuild X and class labels y\nfit SVC\npredict the class of each observation\nevaluate accuracy and inspect the decision regions\n\n\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\nX = df[[\"x1\", \"x2\"]].to_numpy()\ny = df[\"state\"].to_numpy()\n\nsvc = SVC(kernel=\"rbf\", C=5.0, gamma=1.0)\nsvc.fit(X, y)\n\ndf[\"pred\"] = svc.predict(X)\nacc = accuracy_score(y, df[\"pred\"])\nprint(acc)"
   },
   {
-    "objectID": "slides/1_time_series.html#querying-a-time-range-in-mongodb",
-    "href": "slides/1_time_series.html#querying-a-time-range-in-mongodb",
-    "title": "Time series of stochastic process variables",
-    "section": "Querying a time range in MongoDB",
-    "text": "Querying a time range in MongoDB\n\n\n{\n  \"_id\": {\n    \"$oid\": \"698afb51c3b4084d840b9c85\"\n  },\n  \"timestamp\": {\n    \"$date\": \"2026-02-10T09:33:05.344Z\"\n  },\n  \"measure\": {\n    \"back_bend\": -0.5168184041976929,\n    \"back_flex\": -1.20260488986969,\n    \"back_rot\": 1.749389410018921,\n    \"cervical_flex\": 17.3467960357666,\n    \"horiz_reach_left\": 0.20939064025878906,\n    \"horiz_reach_right\": 0.20467370748519897,\n    \"hostname\": \"nuc3\",\n    \"stability_margin\": 0.11027171462774277,\n    \"timecode\": 37985.2,\n    \"vert_reach_left\": 14.016213417053223,\n    \"vert_reach_right\": 10.769205093383789\n  }\n}\n\nThe standard pattern is:\n\ninclusive lower bound: $gte\nexclusive upper bound: $lt\n\nThis avoids overlap when adjacent windows are queried one after another\ndb.measurements.find({\n  timestamp: {\n    $gte: ISODate(\"2026-02-10T08:00:00.000Z\"),\n    $lt:  ISODate(\"2026-02-10T10:00:00.000Z\")\n  }\n}).sort({ timestamp: 1 })\n\n\n\n\nFor performance, a range query on timestamp should be supported by an index on the same field, or by a compound index such as { machine_id: 1, timestamp: 1 }."
+    "objectID": "slides/3_feature_based.html#svm-decision-regions-and-predicted-labels-in-python",
+    "href": "slides/3_feature_based.html#svm-decision-regions-and-predicted-labels-in-python",
+    "title": "Feature-based analysis of time series",
+    "section": "SVM decision regions and predicted labels in Python",
+    "text": "SVM decision regions and predicted labels in Python\n\n\nThe decision map in feature space can be visualized by evaluating the classifier on a regular grid\nThe predicted labels can then be plotted back against time exactly as done in the R example\n\nx1g = np.linspace(df[\"x1\"].min() - 0.3, df[\"x1\"].max() + 0.3, 160)\nx2g = np.linspace(df[\"x2\"].min() - 0.3, df[\"x2\"].max() + 0.3, 160)\nxx1, xx2 = np.meshgrid(x1g, x2g)\nXg = np.column_stack([xx1.ravel(), xx2.ravel()])\nzg = svc.predict(Xg).reshape(xx1.shape)\nfig, ax = plt.subplots(1, 2, figsize=(10, 4))\nax[0].contourf(xx1, xx2, (zg == \"Fault\").astype(float), alpha=0.25)\nax[0].scatter(df[\"x1\"], df[\"x2\"], c=(df[\"state\"] == \"Fault\"))\nax[0].set_xlabel(\"x1\")\nax[0].set_ylabel(\"x2\")\n\nax[1].plot(df[\"t\"], df[\"state\"].eq(\"Fault\").astype(int), label=\"True\")\nax[1].plot(df[\"t\"], df[\"pred\"].eq(\"Fault\").astype(int), \"--\",\n           label=\"Predicted\")\nax[1].set_xlabel(\"Time index\")\nax[1].legend()"
   },
   {
-    "objectID": "slides/1_time_series.html#mongodb-query-in-javascript",
-    "href": "slides/1_time_series.html#mongodb-query-in-javascript",
-    "title": "Time series of stochastic process variables",
-    "section": "MongoDB query in JavaScript",
-    "text": "MongoDB query in JavaScript\nconst t0 = ISODate(\"2026-03-09T08:00:00.000Z\");\nconst t1 = ISODate(\"2026-03-09T09:00:00.000Z\");\n\ndb.measurements.find(\n  {\n    machine_id: \"M01\",\n    timestamp: { $gte: t0, $lt: t1 }\n  },\n  {\n    _id: 0,\n    machine_id: 1,\n    timestamp: 1,\n    temperature: 1,\n    vibration: 1\n  }\n).sort({ timestamp: 1 });"
+    "objectID": "slides/3_feature_based.html#pca-and-svm-complementary-roles",
+    "href": "slides/3_feature_based.html#pca-and-svm-complementary-roles",
+    "title": "Feature-based analysis of time series",
+    "section": "PCA and SVM: complementary roles",
+    "text": "PCA and SVM: complementary roles\nPCA and SVM serve different purposes:\n\nPCA is unsupervised and looks for directions of maximum variance\nSVM is supervised and looks for a boundary that best separates known classes\n\nIn practice they are often combined:\n\nPCA for denoising or dimensionality reduction\nSVM for classification on the retained principal scores\n\nFor high-dimensional time-series features this PCA plus SVM pipeline is often more stable than direct classification on raw variables alone"
   },
   {
-    "objectID": "slides/1_time_series.html#mongodb-query-in-python",
-    "href": "slides/1_time_series.html#mongodb-query-in-python",
-    "title": "Time series of stochastic process variables",
-    "section": "MongoDB query in Python",
-    "text": "MongoDB query in Python\nfrom datetime import datetime, timezone\nfrom pymongo import MongoClient\nclient = MongoClient(\"mongodb://localhost:27017\")\ndb = client[\"plant\"]\ncol = db[\"measurements\"]\nt0 = datetime(2026, 3, 9, 8, 0, 0, tzinfo=timezone.utc)\nt1 = datetime(2026, 3, 9, 9, 0, 0, tzinfo=timezone.utc)\ncursor = col.find(\n    {\n        \"machine_id\": \"M01\",\n        \"timestamp\": {\"$gte\": t0, \"$lt\": t1}\n    },\n    {\n        \"_id\": 0,\n        \"machine_id\": 1,\n        \"timestamp\": 1,\n        \"temperature\": 1,\n        \"vibration\": 1\n    }\n).sort(\"timestamp\", 1)\nrows = list(cursor)"
+    "objectID": "slides/3_feature_based.html#hotellings-t2-distribution",
+    "href": "slides/3_feature_based.html#hotellings-t2-distribution",
+    "title": "Feature-based analysis of time series",
+    "section": "Hotelling’s \\(T^2\\) distribution",
+    "text": "Hotelling’s \\(T^2\\) distribution\nHotelling’s \\(T^2\\) is the multivariate extension of Student’s \\(t\\) test when the parameter of interest is a mean vector rather than a scalar mean\nIf \\[\n\\mathbf{x}_1,\\dots,\\mathbf{x}_n \\in \\mathbb{R}^p\n\\] are independent observations from a multivariate normal population, the one-sample null hypothesis is \\[\nH_0:\\boldsymbol{\\mu}=\\boldsymbol{\\mu}_0\n\\]\nThe sample mean vector and covariance matrix are \\[\n\\bar{\\mathbf{x}}=\\frac{1}{n}\\sum_{i=1}^{n}\\mathbf{x}_i,\n\\qquad\n\\mathbf{S}=\\frac{1}{n-1}\\sum_{i=1}^{n}\n(\\mathbf{x}_i-\\bar{\\mathbf{x}})\n(\\mathbf{x}_i-\\bar{\\mathbf{x}})^T\n\\]"
   },
   {
-    "objectID": "slides/1_time_series.html#mongodb-query-in-r",
-    "href": "slides/1_time_series.html#mongodb-query-in-r",
-    "title": "Time series of stochastic process variables",
-    "section": "MongoDB query in R",
-    "text": "MongoDB query in R\nlibrary(mongolite)\nlibrary(glue)\nm &lt;- mongo(collection = \"measurements\", db = \"plant\", url = \"mongodb://localhost:27017\")\nt0 &lt;- \"2026-03-09T08:00:00.000Z\"\nt1 &lt;- \"2026-03-09T09:00:00.000Z\"\nquery &lt;- glue(\n'{{\n  \"machine_id\": \"M01\",\n  \"timestamp\": {{\n    \"$gte\": {{\"$date\": \"{t0}\"}},\n    \"$lt\":  {{\"$date\": \"{t1}\"}}\n  }}\n}}'\n)\nfields &lt;- '{\"_id\": 0, \"machine_id\": 1,\n            \"timestamp\": 1, \"temperature\": 1,\n            \"vibration\": 1}'\ndf &lt;- m$find(query = query, fields = fields, sort = '{\"timestamp\": 1}')"
+    "objectID": "slides/3_feature_based.html#one-sample-hotellings-t2",
+    "href": "slides/3_feature_based.html#one-sample-hotellings-t2",
+    "title": "Feature-based analysis of time series",
+    "section": "One-sample Hotelling’s \\(T^2\\)",
+    "text": "One-sample Hotelling’s \\(T^2\\)\nThe test statistic is \\[\nT^2 = n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)^T\n\\mathbf{S}^{-1}\n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)\n\\]\nInterpretation:\n\n\\((\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_0)\\) is the deviation from the target mean vector\n\\(\\mathbf{S}^{-1}\\) scales that deviation by the covariance structure\nlarge values of \\(T^2\\) indicate that the observed mean is too far from the target to be explained by normal variability\n\nFor \\(p=1\\), this reduces to the usual Student’s \\(t^2\\)"
   },
   {
-    "objectID": "slides/1_time_series.html#from-mongodb-query-to-time-series",
-    "href": "slides/1_time_series.html#from-mongodb-query-to-time-series",
-    "title": "Time series of stochastic process variables",
-    "section": "From MongoDB query to time series",
-    "text": "From MongoDB query to time series\nOnce the query result is available, the workflow is again the same:\n\nparse the returned timestamp\nsort rows by time\nconvert to a time-indexed object\nanalyze or visualize the selected window\n\n\n\nsensor_df %&gt;%\n  arrange(timestamp) %&gt;%\n  ggplot(aes(x = timestamp, y = value)) +\n  geom_line() +\n  geom_point() +\n  labs(x = \"Timestamp\", y = \"Value\",\n       title = \"Selected time window\")"
+    "objectID": "slides/3_feature_based.html#relation-with-the-f-distribution",
+    "href": "slides/3_feature_based.html#relation-with-the-f-distribution",
+    "title": "Feature-based analysis of time series",
+    "section": "Relation with the F distribution",
+    "text": "Relation with the F distribution\nUnder multivariate normality and under \\(H_0\\), the statistic can be converted into an F test: \\[\nF = \\frac{n-p}{p(n-1)}T^2\n\\] with \\[\nF \\sim F_{p,n-p}\n\\]\nTherefore, at significance level \\(\\alpha\\), we reject \\(H_0\\) when \\[\nT^2 &gt;\n\\frac{p(n-1)}{n-p}F_{p,n-p;1-\\alpha}\n\\]\nThis gives an exact critical region for the one-sample test"
   },
   {
-    "objectID": "slides/1_time_series.html#summary",
-    "href": "slides/1_time_series.html#summary",
-    "title": "Time series of stochastic process variables",
-    "section": "Summary",
-    "text": "Summary\n\nTime can be stored as readable ISO text or as numeric offset from an epoch\nEpoch convention, time zone, and clock type must be known to avoid semantic errors\nIn R, ts is convenient for regular series, while xts is preferable for explicit timestamp indexing\nIn Python, pandas provides the closest workflow to xts plus data-frame filtering\nMongoDB range queries on ISO dates are naturally expressed with $gte and $lt\nOnce data are extracted, the main tasks are always parse, index, filter, aggregate, and model"
+    "objectID": "slides/3_feature_based.html#two-sample-hotellings-t2",
+    "href": "slides/3_feature_based.html#two-sample-hotellings-t2",
+    "title": "Feature-based analysis of time series",
+    "section": "Two-sample Hotelling’s \\(T^2\\)",
+    "text": "Two-sample Hotelling’s \\(T^2\\)\nIf two independent populations are compared, \\[\nH_0:\\boldsymbol{\\mu}_1=\\boldsymbol{\\mu}_2\n\\] the pooled-covariance version of the statistic is \\[\nT^2 =\n\\frac{n_1 n_2}{n_1+n_2}\n(\\bar{\\mathbf{x}}_1-\\bar{\\mathbf{x}}_2)^T\n\\mathbf{S}_p^{-1}\n(\\bar{\\mathbf{x}}_1-\\bar{\\mathbf{x}}_2)\n\\] where \\[\n\\mathbf{S}_p =\n\\frac{(n_1-1)\\mathbf{S}_1 + (n_2-1)\\mathbf{S}_2}\n{n_1+n_2-2}\n\\]\nThis is the multivariate analogue of the classical two-sample t test"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#assumptions-and-interpretation",
+    "href": "slides/3_feature_based.html#assumptions-and-interpretation",
+    "title": "Feature-based analysis of time series",
+    "section": "Assumptions and interpretation",
+    "text": "Assumptions and interpretation\nHotelling’s \\(T^2\\) is appropriate when:\n\nobservations are independent\nthe population is approximately multivariate normal\nthe covariance matrix is nonsingular\n\nIts main advantage over multiple univariate t tests is that it tests the mean vector jointly, accounting for correlation between variables\nThis avoids contradictory conclusions caused by ignoring covariance structure"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-quality-control-test-on-a-batch",
+    "href": "slides/3_feature_based.html#example-quality-control-test-on-a-batch",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: quality-control test on a batch",
+    "text": "Example: quality-control test on a batch\nConsider a batch of machined parts. For each part we measure two variables:\n\nlength\nweight\n\nThe design target is the mean vector \\[\n\\boldsymbol{\\mu}_0 =\n\\begin{bmatrix}\n50.0 \\\\\n100.0\n\\end{bmatrix}\n\\]\nWe want to test whether the batch mean is statistically compatible with this target, using a multivariate one-sample test"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-data-cloud-and-target-point",
+    "href": "slides/3_feature_based.html#example-data-cloud-and-target-point",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: data cloud and target point",
+    "text": "Example: data cloud and target point\n\n\nThis is not a time series problem:\n\neach point is one manufactured part\nthe two measured variables are correlated\nthe question concerns the joint mean of the batch\n\nThe red point is the target mean \\(\\boldsymbol{\\mu}_0\\), while the blue point is the sample mean\n\n\nPlotData\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# A tibble: 40 × 2\n   length weight\n    &lt;dbl&gt;  &lt;dbl&gt;\n 1   50.3  100. \n 2   50.2  100. \n 3   48.7   99.2\n 4   51.4  101. \n 5   49.3   99.5\n 6   50.3   99.6\n 7   51.1  102. \n 8   50.0  100. \n 9   51.3   99.9\n10   50.7  102. \n# ℹ 30 more rows"
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-manual-calculation-of-hotellings-t2",
+    "href": "slides/3_feature_based.html#example-manual-calculation-of-hotellings-t2",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: manual calculation of Hotelling’s \\(T^2\\)",
+    "text": "Example: manual calculation of Hotelling’s \\(T^2\\)\n\n\nThe manual workflow is:\n\ncompute the sample mean vector \\(\\bar{\\mathbf{x}}\\)\ncompute the sample covariance matrix \\(\\mathbf{S}\\)\ncompute \\(T^2\\)\nconvert it to an F statistic\nobtain the p-value\n\n\n\n(xbar &lt;- colMeans(batch_x))\n\n[1]  50.42717 100.67922\n\n(s &lt;- cov(batch_x))\n\n          [,1]      [,2]\n[1,] 0.6610439 0.3443915\n[2,] 0.3443915 1.3580291\n\n(t2 &lt;- as.numeric(batch_n *\n  t(xbar - mu0) %*% solve(s) %*% (xbar - mu0)))\n\n[1] 18.11943\n\n(f &lt;- (n - p) / (p * (n - 1)) * t2)\n\n[1] 8.827413\n\n(p.value &lt;- 1 - pf(f, df1 = p, df2 = n - p))\n\n[1] 0.0007101244\n\n\n\n\n\n\n\n\n\nNote\n\n\nIf the p-value is smaller than the chosen significance level, the batch mean is declared significantly different from the design target in the joint two-variable sense."
+  },
+  {
+    "objectID": "slides/3_feature_based.html#example-the-same-test-with-desctools",
+    "href": "slides/3_feature_based.html#example-the-same-test-with-desctools",
+    "title": "Feature-based analysis of time series",
+    "section": "Example: the same test with DescTools",
+    "text": "Example: the same test with DescTools\nIf DescTools is available, the same test can be run directly:\n\nlibrary(DescTools)\n\nHotellingsT2Test(\n  x = as.matrix(batch_df),\n  mu = mu0\n)\n\n\n    Hotelling's one sample T2-test\n\ndata:  as.matrix(batch_df)\nT.2 = 8.8274, df1 = 2, df2 = 38, p-value = 0.0007101\nalternative hypothesis: true location is not equal to c(50,100)\n\n\nThis is the most compact way to perform the one-sample test in R, but the underlying quantity remains the same statistic defined earlier"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#huge-and-fast-transformation",
+    "href": "slides/ai_assisted.html#huge-and-fast-transformation",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Huge and FAST transformation",
+    "text": "Huge and FAST transformation\n\nLLM for code generation is leading the change\nWe need to adapt the way we develop software\nAI is not a magic wand for engineering problems\nAI is not replacing software developmemnt (yet)\nThere is a substantial market lock-in risk"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#core-principle",
+    "href": "slides/ai_assisted.html#core-principle",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Core principle",
+    "text": "Core principle\nFor robust AI-assisted code development:\n\n\n\n\n\n\n\n\nWe decide\n\n\n\nrequirements\ninterface\nconstraints\nacceptance criteria\n\n\n\n\n\n\n\n\n\n\n\nAI proposes\n\n\n\ncandidate code\nalternatives\ntests\nexplanations\n\n\n\n\n\n\n\n\n\n\n\nWe verify\n\n\n\nreview\ncompilation\nnumerical checks\ntargeted tests"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#learning-outcomes",
+    "href": "slides/ai_assisted.html#learning-outcomes",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Learning outcomes",
+    "text": "Learning outcomes\nBy the end of the lesson, you should be able to:\n\ndefine requirements for a small C++ component\ndesign a minimal public interface\nuse AI in bounded, controllable steps\nreview generated code critically\nvalidate correctness with tests and numerical checks"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#what-ai-does-well",
+    "href": "slides/ai_assisted.html#what-ai-does-well",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "What AI does well",
+    "text": "What AI does well\nFor these tasks, AI can be a powerful accelerator, significantly reducing effort and boosting prodiuctivity:\n\n\n\n\n\n\n\n\nCode generation\n\n\n\nboilerplate\nrepetitive operators\nsmall utilities\n\n\n\n\n\n\n\n\n\n\n\nSupport work\n\n\n\ntest scaffolding\ndocumentation drafts\ncompiler-diagnostic explanations\n\n\n\n\n\n\n\n\n\n\n\nReview support\n\n\n\nalternative formulations\nrefactoring suggestions\nfirst-pass code review hints"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#what-ai-does-poorly",
+    "href": "slides/ai_assisted.html#what-ai-does-poorly",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "What AI does poorly",
+    "text": "What AI does poorly\nBut to excessively rely on AI can prove risky, especially for tasks that require deep engineering judgment, domain expertise, and careful validation:\n\n\n\n\n\n\n\n\nDesign judgment\n\n\n\ninventing requirements\nchoosing abstractions\ndeciding public API boundaries\n\n\n\n\n\n\n\n\n\n\n\nTechnical judgment\n\n\n\nnumerical reasoning\nhidden assumptions\nsubtle domain mistakes\n\n\n\n\n\n\n\n\n\n\n\nProcess discipline\n\n\n\nscope control\nsignaling uncertainty\nstopping when evidence is weak\n\n\n\n\n\n\nPlausible-looking code is not the same as trustworthy code."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#ai-strengths-and-weaknesses",
+    "href": "slides/ai_assisted.html#ai-strengths-and-weaknesses",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "AI strengths and weaknesses",
+    "text": "AI strengths and weaknesses\nIn brief:\n\n\n\n\n\n\n\n\nUseful acceleration\n\n\nAI is effective for:\n\nboilerplate\nrepetitive operators\ntest skeletons\ncode explanations\n\n\n\n\n\n\n\n\n\n\n\nTypical risks\n\n\nAI often introduces:\n\nextra features\nhidden assumptions\nstyle inconsistency\nfragile numeric checks\n\n\n\n\n\n\n\n\n\n\n\nHuman role\n\n\nThe engineer must retain control of:\n\nrequirements\ninterface design\nacceptance criteria\nfinal validation\n\n\n\n\n\n\nUse this slide to reinforce the operational division of responsibility."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#the-vector2d-class",
+    "href": "slides/ai_assisted.html#the-vector2d-class",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "The Vector2D class",
+    "text": "The Vector2D class\nImplement a Vector2D class representing a 2D point/vector.\nRequired operations:\n\nconstruction\naccessors\naddition\nsubtraction\nscalar multiplication\nnorm\ndistance\nprinting"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#constraints",
+    "href": "slides/ai_assisted.html#constraints",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Constraints",
+    "text": "Constraints\n\nSimple and readable\nSuitable for beginners\nNo dynamic allocation\nNo inheritance\nEasy to test\nClear separation of interface and implementation\n\n\nConstraints reduce ambiguity. Without them, AI tends to invent scope and style."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#design-before-code",
+    "href": "slides/ai_assisted.html#design-before-code",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Design before code",
+    "text": "Design before code\nQuestions to answer before implementation:\n\nShould data be public or private?\nWhy use const?\nMember or non-member printing?\nExact equality or tolerance?\nWhat belongs in the public interface?"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#proposed-public-interface",
+    "href": "slides/ai_assisted.html#proposed-public-interface",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Proposed public interface",
+    "text": "Proposed public interface\nclass Vector2D {\npublic:\n  Vector2D();\n  Vector2D(double x, double y);\n  double x() const;\n  double y() const;\n  double norm() const;\n  double distanceTo(const Vector2D& other) const;\n  Vector2D operator+(const Vector2D& other) const;\n  Vector2D operator-(const Vector2D& other) const;\n  Vector2D operator*(double scalar) const;\nprivate:\n  double x_;\n  double y_;\n};\nstd::ostream& operator&lt;&lt;(std::ostream& os, const Vector2D& v);\n\nThe interface is the contract. AI should implement this contract, not rewrite it unless asked."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#why-this-interface-is-reasonable",
+    "href": "slides/ai_assisted.html#why-this-interface-is-reasonable",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Why this interface is reasonable",
+    "text": "Why this interface is reasonable\n\nPrivate representation limits accidental misuse\nSmall API reduces the error surface\nArithmetic operators improve readability\nconst clarifies intent and enables safer use\nStream output integrates with standard C++ I/O\n\n\nTranslate each design choice into a practical benefit."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#first-ai-prompt-generate-the-header",
+    "href": "slides/ai_assisted.html#first-ai-prompt-generate-the-header",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "First AI prompt: generate the header",
+    "text": "First AI prompt: generate the header\nA possible prompt can be:\nGenerate a simple C++ header for a class named Vector2D with private double\nmembers x_ and y_. Provide a default constructor, a constructor with x and y,\nconst accessors, norm(), distanceTo(), operators +, -, scalar multiplication by\ndouble, and a non-member stream output operator. Keep it minimal and\nbeginner-friendly. Do not add templates, comparisons, normalization, exceptions,\nor advanced features.\n\n\n\n\n\n\nTip\n\n\nCompare the result to the proposed interface. What are the differences? Are they acceptable? If not, how would you modify the prompt or the interface?"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#review-the-generated-header",
+    "href": "slides/ai_assisted.html#review-the-generated-header",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Review the generated header",
+    "text": "Review the generated header\nChecklist:\n\nDid AI add unwanted features?\nAre methods const where appropriate?\nAre members private?\nAre includes minimal?\nIs the interface still ours?\n\n\nModel rejection openly. Removing AI-generated extras is part of competent use."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#second-ai-prompt-generate-the-implementation",
+    "href": "slides/ai_assisted.html#second-ai-prompt-generate-the-implementation",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Second AI prompt: generate the implementation",
+    "text": "Second AI prompt: generate the implementation\nNext step is to define the implementation of the methods declared in the interface. A possible prompt is:\nGenerate the .cpp implementation for this Vector2D interface. Use std::sqrt for\nnorm and distance. Keep the code readable for engineering students with limited\nC++ background. Avoid unnecessary abstractions.\n\nOnce the interface is frozen, implementation can be delegated more safely."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#review-the-implementation",
+    "href": "slides/ai_assisted.html#review-the-implementation",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Review the implementation",
+    "text": "Review the implementation\nCheck for:\n\ncorrect formulas\nclear naming\nminimal includes\nconsistent operator semantics\nno hidden complexity\n\n\nThis is where line-by-line review should be presented as normal engineering practice."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#compile-with-warnings",
+    "href": "slides/ai_assisted.html#compile-with-warnings",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Compile with warnings",
+    "text": "Compile with warnings\ng++ -std=c++17 -Wall -Wextra -pedantic main.cpp Vector2D.cpp -o vector_demo\n\nWarnings are part of review\nGenerated code is not finished if diagnostics are sloppy\nBuild cleanliness is one acceptance criterion\n\n\n\n\n\n\n\nImportant\n\n\nCompilation is not just “does it build”."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#what-could-go-wrong",
+    "href": "slides/ai_assisted.html#what-could-go-wrong",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "What could go wrong",
+    "text": "What could go wrong\n\nMissing const\nToo many features\nPublic data without reason\nPoor header design\nExact float comparisons\nUnclear operator semantics\n\n\nThe class is small, but the failure modes are real and inspectable."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#validation-mindset",
+    "href": "slides/ai_assisted.html#validation-mindset",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Validation mindset",
+    "text": "Validation mindset\nQuestion:\n\nWhat would convince us that this class is correct enough for use?\n\nPossible evidence:\n\nknown reference cases\nreadable implementation\nclean compilation\ntargeted tests\nexplicit numerical assumptions\n\n\nMove from coding to evidence."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#ai-prompt-for-tests",
+    "href": "slides/ai_assisted.html#ai-prompt-for-tests",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "AI prompt for tests",
+    "text": "AI prompt for tests\nTo write tests is a good task to be demanded from AI, since it is often more tedious than creative. A possible prompt is:\nGenerate a small C++ test program for Vector2D using &lt;cassert&gt;. Test default\nconstruction, addition, subtraction, scalar multiplication, norm of (3,4), and\ndistance between known points. Use a floating-point tolerance for numeric\ncomparisons.\n\nAI is often more valuable for generating test scaffolding than for inventing software design."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#why-tolerance-matters",
+    "href": "slides/ai_assisted.html#why-tolerance-matters",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Why tolerance matters",
+    "text": "Why tolerance matters\n\nFloating-point arithmetic is approximate\nExact equality is often fragile\nEngineering software usually needs tolerance-based checks\nTesting strategy should match numerical reality\n\n\nTie this directly to measurement uncertainty and numerical reasoning."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#good-prompt-vs-bad-prompt",
+    "href": "slides/ai_assisted.html#good-prompt-vs-bad-prompt",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Good prompt vs bad prompt",
+    "text": "Good prompt vs bad prompt\n\n\nBad\nWrite a modern C++ vector class.\nTypical outcome:\n\nscope drift\nunrequested features\nharder idioms\nharder to integrate with the rest of the code\n\n\nGood\nGenerate a minimal beginner-friendly Vector2D \nwith exactly these operations...\nTypical outcome:\n\nbounded scope\npredictable output\neasier review\nbetter alignment with your real goals"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#practical-prompting-workflow",
+    "href": "slides/ai_assisted.html#practical-prompting-workflow",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Practical prompting workflow",
+    "text": "Practical prompting workflow\n\nWrite requirements yourself\nAsk AI for the interface only\nReview and correct the interface\nAsk for the implementation only\nReview again\nAsk for tests\nCompile, run, and inspect results\nRefactor only what you understand\n\n\nThis is the reusable process students should take away."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#human-responsibilities-ai-cannot-take-over",
+    "href": "slides/ai_assisted.html#human-responsibilities-ai-cannot-take-over",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Human responsibilities AI cannot take over",
+    "text": "Human responsibilities AI cannot take over\n\nChoosing requirements\nDeciding acceptable complexity\nChecking domain assumptions\nNumerical validation\nIntegration into the full application\nFinal responsibility\n\n\nAI can assist with code production, but not with engineering accountability."
+  },
+  {
+    "objectID": "slides/ai_assisted.html#in-class-exercise",
+    "href": "slides/ai_assisted.html#in-class-exercise",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "In-class exercise",
+    "text": "In-class exercise\n\n\n\n\n\n\n\n\nSpecify\n\n\nExtend Vector2D with:\ndouble dot(const Vector2D& other) const;\nWrite the requirement in one sentence.\n\n\n\n\n\n\n\n\n\n\nGenerate\n\n\nUse AI only for bounded tasks:\n\nheader update\nimplementation update\ntest update\n\n\n\n\n\n\n\n\n\n\n\nVerify\n\n\nCheck:\n\nformula correctness\nconsistent style\nclean compilation\nupdated tests"
+  },
+  {
+    "objectID": "slides/ai_assisted.html#closing-checklist",
+    "href": "slides/ai_assisted.html#closing-checklist",
+    "title": "AI-Assisted C++ Development for Engineers",
+    "section": "Closing checklist",
+    "text": "Closing checklist\n\n\n\n\n\n\n\n\nBefore AI\n\n\n\ndefine requirements\ndefine interface\nstate constraints\n\n\n\n\n\n\n\n\n\n\n\nWith AI\n\n\n\nrequest one artifact at a time\nexclude unwanted features\nkeep prompts explicit\n\n\n\n\n\n\n\n\n\n\n\nAfter AI\n\n\n\nreview line by line\ncompile with warnings\ntest known cases\nsimplify what you do not understand\n\n\n\n\n\n\nEnd with the professional rule: use AI to accelerate only what you can still inspect, justify, and validate."
   }
 ]
