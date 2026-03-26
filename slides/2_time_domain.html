@@ -218,7 +218,7 @@ Paolo Bosetti
 </section>
 <section id="time-series-statistics" class="slide level2">
 <h2>Time-series statistics</h2>
-<p>All regression methods seen so far are based on the assumption that the random variable is <span class="math inline">\(x\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)\)</span>. That is, all observations <strong>must be uncorrelated</strong></p>
+<p>Regression methods are usually based on the assumption that the random variable is <span class="math inline">\(x\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)\)</span>. That is, all observations <strong>must be uncorrelated</strong></p>
 <p>This assumption is, among other things, the basis for the recommendation to randomize the operating sequence</p>
 <p>Suppose we can treat a measurement as a time-dependent signal. It is clear that by reducing the signal sampling interval, sooner or later each sample will be correlated with the previous one</p>
 <p>There is therefore a <strong>maximum sampling frequency</strong> above which every measurement turns out to be autocorrelated, that is, <strong>the observations of <span class="math inline">\(x\)</span> are no longer IID</strong></p>
@@ -378,7 +378,19 @@ It is a time series for which the probabilistic behavior of any collection of va
 It is a time series for which the mean value of the series is constant, independent of time, and the autocovariance function <span class="math inline">\(\gamma(s,t)\)</span> depends on <span class="math inline">\(s\)</span> and <span class="math inline">\(t\)</span> only through their difference <span class="math inline">\(|s-t|\)</span>
 </dd>
 </dl>
-<p>For a <strong>wide-sense stationary series</strong> one may assume <span class="math inline">\(\sigma_x(0)=\sigma_x(\ell)=\sigma_x\)</span> and <span class="math inline">\(\bar x_0=\bar x_\ell\)</span> and, therefore, <span class="math inline">\(\rho_x(\ell) = \gamma_x(\ell)/\sigma_x\)</span></p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>For a <strong>strict-sense stationary series</strong> one may assume <span class="math inline">\(\sigma_x(0)=\sigma_x(\ell)=\sigma_x\)</span> and <span class="math inline">\(\bar x_0=\bar x_\ell\)</span> and, therefore, <span class="math inline">\(\rho_x(\ell) = \gamma_x(\ell)/\sigma_x\)</span></p>
+</div>
+</div>
+</div>
 </section>
 <section id="stabilization" class="slide level2">
 <h2>Stabilization</h2>
@@ -456,10 +468,20 @@ It is a time series for which the mean value of the series is constant, independ
 </div>
 </div>
 </div></div>
-
-<aside><div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
 <p>We can therefore say that the historical chicken price series shows a <em>trend</em> that <strong>stabilizes at first-order</strong> differencing, has dynamics that show <strong>autocorrelation up to the previous three points</strong>, and a <strong>periodic</strong> pattern with period equal to 12 <em>lags</em>.</p>
-</div></aside></section></section>
+</div>
+</div>
+</div>
+</section></section>
 <section>
 <section id="statistical-models" class="title-slide slide level1 center">
 <h1>Statistical models</h1>
