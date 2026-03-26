@@ -605,10 +605,20 @@ x_t=\Theta_q(B)w_t
 </div>
 </div>
 </div></div>
-
-<aside><div>
-<p><strong>Warning</strong>: in these ACF and PACF plots the <em>lag</em> starts from 1.</p>
-</div></aside></section>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>In these ACF and PACF plots the <em>lag</em> starts from 1. Always pay attention: different plots may start at lag 0 or lag 1!</p>
+</div>
+</div>
+</div>
+</section>
 <section id="ma-models-and-pacf" class="slide level2">
 <h2>MA models and PACF</h2>
 <div class="columns">
@@ -757,10 +767,20 @@ x_t = 0.5x_{t-1}-0.5w_{t-1} + w_t
 <pre><code>[1] 0.5+0i 0.5+0i</code></pre>
 </div>
 </div>
-
-<aside><div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
 <p><strong>Note</strong>: if <span class="math inline">\(z_i,~ i=1,\dots,n\)</span> are the roots of the polynomial <span class="math inline">\(p(z)\)</span> of degree <span class="math inline">\(n\)</span>, then the polynomial can be factorized into <span class="math inline">\((1-1/z_1 z)\cdot(1-1/z_2 z)\dots(1-1/z_n z)\)</span>.</p>
-</div></aside></section>
+</div>
+</div>
+</div>
+</section>
 <section id="redundancy-2" class="slide level2">
 <h2>Redundancy</h2>
 <p>As can be seen, one can write <span class="math display">\[

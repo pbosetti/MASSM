@@ -438,7 +438,7 @@
     "href": "slides/2_time_domain.html#ar-models-and-pacf-1",
     "title": "Time-domain analysis of time series",
     "section": "AR models and PACF",
-    "text": "AR models and PACF\n\n\nIn general, therefore, if the ACF shows an infinite memory, AR model, and the PACF shows few peaks, the number of peaks is the order of the AR model\nWarning: peaks after the first cut-off are not considered, that is, the lag at which the autocorrelation falls below the confidence limit for the first time\n\n\n\n\n\n\n\n\n\n\n\n\n\nWarning: in these ACF and PACF plots the lag starts from 1."
+    "text": "AR models and PACF\n\n\nIn general, therefore, if the ACF shows an infinite memory, AR model, and the PACF shows few peaks, the number of peaks is the order of the AR model\nWarning: peaks after the first cut-off are not considered, that is, the lag at which the autocorrelation falls below the confidence limit for the first time\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCaution\n\n\nIn these ACF and PACF plots the lag starts from 1. Always pay attention: different plots may start at lag 0 or lag 1!"
   },
   {
     "objectID": "slides/2_time_domain.html#ma-models-and-pacf",
@@ -501,7 +501,7 @@
     "href": "slides/2_time_domain.html#redundancy-1",
     "title": "Time-domain analysis of time series",
     "section": "Redundancy",
-    "text": "Redundancy\nFor example, consider the process \\(x_t=0.4x_{t-1}+0.45x_{t-2}+w_t + w_{t-1}+0.25w_{t-2}\\), which using the operator \\(B\\) becomes: \\[\n(1-0.4B-0.45B^2)x_t = (1+B+0.25B^2)w_t.\n\\]\nIn this form the process looks like \\(\\mathrm{ARMA}(2,2)\\), however we can factor the two polynomials using polyroot() to compute the roots:\n\n# per Phi:\n-1/polyroot(c(1, -0.4, -0.45))\n\n[1] -0.9-6.887768e-21i  0.5+2.125854e-21i\n\n# per Theta:\n-1/polyroot(c(1, 1, 0.25))\n\n[1] 0.5+0i 0.5+0i\n\n\n\n\nNote: if \\(z_i,~ i=1,\\dots,n\\) are the roots of the polynomial \\(p(z)\\) of degree \\(n\\), then the polynomial can be factorized into \\((1-1/z_1 z)\\cdot(1-1/z_2 z)\\dots(1-1/z_n z)\\)."
+    "text": "Redundancy\nFor example, consider the process \\(x_t=0.4x_{t-1}+0.45x_{t-2}+w_t + w_{t-1}+0.25w_{t-2}\\), which using the operator \\(B\\) becomes: \\[\n(1-0.4B-0.45B^2)x_t = (1+B+0.25B^2)w_t.\n\\]\nIn this form the process looks like \\(\\mathrm{ARMA}(2,2)\\), however we can factor the two polynomials using polyroot() to compute the roots:\n\n# per Phi:\n-1/polyroot(c(1, -0.4, -0.45))\n\n[1] -0.9-6.887768e-21i  0.5+2.125854e-21i\n\n# per Theta:\n-1/polyroot(c(1, 1, 0.25))\n\n[1] 0.5+0i 0.5+0i\n\n\n\n\n\n\n\n\nNote\n\n\nNote: if \\(z_i,~ i=1,\\dots,n\\) are the roots of the polynomial \\(p(z)\\) of degree \\(n\\), then the polynomial can be factorized into \\((1-1/z_1 z)\\cdot(1-1/z_2 z)\\dots(1-1/z_n z)\\)."
   },
   {
     "objectID": "slides/2_time_domain.html#redundancy-2",
