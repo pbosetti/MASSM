@@ -503,10 +503,20 @@ x_t-\mu&amp;=\phi_1( x_{t-1}-\mu) + \phi_2 (x_{t-2}-\mu)+\dots+\phi_p (x_{t-p}-\
 x_t&amp;=\alpha + \phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t,~~~\alpha=\mu(1-\phi_1-\phi_2-\dots-\phi_p)
 \end{align}
 \]</span></p>
-
-<aside><div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
 <p>The <span class="math inline">\(w_t\)</span> are also called <strong>innovations</strong>, since they are the only <strong>new</strong> contribution of a point with respect to the previous ones.</p>
-</div></aside></section>
+</div>
+</div>
+</div>
+</section>
 <section id="ar-models-regression" class="slide level2">
 <h2>AR models — regression</h2>
 <p>Recalling the definition of the <strong>backshift operator</strong>, the definition of <span class="math inline">\(w_t\)</span> can be written as:</p>
@@ -654,8 +664,8 @@ x_t=\phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t + \theta_1 w_{t-1
 \Phi_p(B)x_t=\Theta_q(B)w_t
 \]</span></p>
 </section>
-<section id="ma-models-and-pacf-1" class="slide level2">
-<h2>MA models and PACF</h2>
+<section id="arma-models-and-pacf" class="slide level2">
+<h2>ARMA models and PACF</h2>
 <div class="columns">
 <div class="column">
 <p>Comparing both ACF and PACF</p>
@@ -756,12 +766,12 @@ x_t = 0.5x_{t-1}-0.5w_{t-1} + w_t
 \]</span></p>
 <p>In this form the process looks like <span class="math inline">\(\mathrm{ARMA}(2,2)\)</span>, however we can factor the two polynomials using <code>polyroot()</code> to compute the roots:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># per Phi:</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Phi roots:</span></span>
 <span id="cb5-2"><a></a><span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="fu">polyroot</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="fl">0.4</span>, <span class="sc">-</span><span class="fl">0.45</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.9-6.887768e-21i  0.5+2.125854e-21i</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># per Theta:</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># Theta roots:</span></span>
 <span id="cb7-2"><a></a><span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="fu">polyroot</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.25</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.5+0i 0.5+0i</code></pre>
