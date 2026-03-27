@@ -438,7 +438,7 @@
     "href": "slides/2_time_domain.html#ar-models-and-pacf-1",
     "title": "Time-domain analysis of time series",
     "section": "AR models and PACF",
-    "text": "AR models and PACF\n\n\nIn general, therefore, if the ACF shows an infinite memory, AR model, and the PACF shows few peaks, the number of peaks is the order of the AR model\nWarning: peaks after the first cut-off are not considered, that is, the lag at which the autocorrelation falls below the confidence limit for the first time\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCaution\n\n\nIn these ACF and PACF plots the lag starts from 1. Always pay attention: different plots may start at lag 0 or lag 1!"
+    "text": "AR models and PACF\n\n\nIn general, therefore, if the ACF shows an infinite memory (AR model) and the PACF shows few peaks, the number of peaks is the order of the AR model\nWarning: peaks after the first cut-off are not considered, that is, the lag at which the autocorrelation falls below the confidence limit for the first time\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCaution\n\n\nIn these ACF and PACF plots the lag starts from 1. Always pay attention: different plots may start at lag 0 or lag 1!"
   },
   {
     "objectID": "slides/2_time_domain.html#ma-models-and-pacf",
