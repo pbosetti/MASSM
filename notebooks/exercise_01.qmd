@@ -1,6 +1,6 @@
 ---
 title: "Multi-agent system for smart machining, part II"
-subtitle: "Chapter I-a: exercise"
+subtitle: "Chapter I-b: exercises"
 author: "Paolo Bosetti"
 date: "2026-03-20"
 date-modified: today

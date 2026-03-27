@@ -120,13 +120,19 @@ $body-color: #777777;
   
   code {
     color: $code-color;
-    font-size: 95%;
+    font-size: 90%;
   }
   
   .cell-output-stdout {
-    font-size: 66%;
+    font-size: 75%;
   }
-  
+
+  .cell-output code {
+    background-color: #f9f9ff;
+    margin-left: 25px;
+    border-radius: 5px;
+  }
+
   .bblue {
     font-weight: bold;
     color: $my-blue;

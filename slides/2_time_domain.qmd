@@ -28,7 +28,7 @@ A **time series** consists of a sequence of observations of a random variable su
 
 ## Time-series statistics
 
-All regression methods seen so far are based on the assumption that the random variable is $x\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)$. That is, all observations **must be uncorrelated**
+Regression methods are usually based on the assumption that the random variable is $x\overset{IID}\sim \mathcal{N}(\mu, \sigma^2)$. That is, all observations **must be uncorrelated**
 
 This assumption is, among other things, the basis for the recommendation to randomize the operating sequence
 
@@ -235,7 +235,9 @@ Time series stationary in the **strict sense**
 : It is a time series for which the mean value of the series is constant, independent of time,
   and the autocovariance function $\gamma(s,t)$ depends on $s$ and $t$ only through their difference $|s-t|$ 
 
-For a **wide-sense stationary series** one may assume $\sigma_x(0)=\sigma_x(\ell)=\sigma_x$ and $\bar x_0=\bar x_\ell$ and, therefore, $\rho_x(\ell) = \gamma_x(\ell)/\sigma_x$
+::: {.callout-note}
+For a **strict-sense stationary series** one may assume $\sigma_x(0)=\sigma_x(\ell)=\sigma_x$ and $\bar x_0=\bar x_\ell$ and, therefore, $\rho_x(\ell) = \gamma_x(\ell)/\sigma_x$
+:::
 
 
 ## Stabilization
@@ -300,7 +302,7 @@ p1 <- with(acf(as.numeric(chicken), lag.max = 50, plot=F), data.frame(lag, acf))
   geom_hline(yintercept=c(-1,1)*qnorm((1 + 0.95)/2)/sqrt(1020),
              linetype=2, color="blue") +
   geom_segment(mapping = aes(xend = lag, yend = 0)) +
-  labs(title="ACF ST Chicken Price", x="lag", y=TeX("$\\rho_x$"))
+  labs(title="ACF Chicken Price TS", x="lag", y=TeX("$\\rho_x$"))
 
 p2 <- with(acf(f$res, lag.max = 50, plot=F), data.frame(lag, acf)) %>%
   ggplot(aes(x=lag, y=acf)) + 
@@ -316,7 +318,7 @@ p3 <- with(acf(diff(chicken), lag.max = 50, plot=F), data.frame(lag=1:51, acf)) 
   geom_hline(yintercept=c(-1,1)*qnorm((1 + 0.95)/2)/sqrt(1020),
              linetype=2, color="blue") +
   geom_segment(mapping = aes(xend = lag, yend = 0)) +
-  labs(title="ACF ST Differenced", x="lag", y=TeX("$\\rho_x$"))
+  labs(title="ACF Differenced TS", x="lag", y=TeX("$\\rho_x$"))
 
 p1 / (p2 + p3)
 ```
@@ -341,7 +343,7 @@ p3
 
 :::
 
-:::aside
+::: {.callout-note}
 We can therefore say that the historical chicken price series shows a *trend* that **stabilizes at first-order** differencing, has dynamics that show **autocorrelation up to the previous three points**, and a **periodic** pattern with period equal to 12 *lags*.
 :::
 
@@ -371,7 +373,7 @@ x_t&=\alpha + \phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t,~~~\alp
 \end{align}
 $$
 
-:::aside
+:::callout-note
 The $w_t$ are also called **innovations**, since they are the only **new** contribution of a point with respect to the previous ones.
 :::
 
@@ -382,7 +384,7 @@ Recalling the definition of the **backshift operator**, the definition of $w_t$ 
 $$
 (1-\phi_1 B - \phi_2 B^2 -\dots-\phi_p B^p)x_t=w_t
 $$
-o ancora più concisamente come:
+or, more briefly, as:
 
 $$
 \Phi_p(B)x_t=w_t
@@ -415,7 +417,7 @@ $$
 x_t=\Theta_q(B)w_t
 $$
 
-As above, regressing an $\mathrm{MA}(q)$ model onto a historical series $x_t$ means identifying the terms of $\Theta_q(B)$ that minimize the mean squared residuals, defined as $\varepsilon_t = x_t - \hat{x_t} = x_t - \Theta_q(B)$, note that this time there is no inverse.
+As above, regressing an $\mathrm{MA}(q)$ model onto a historical series $x_t$ means identifying the terms of $\Theta_q(B)$ that minimize the mean squared residuals, defined as $\varepsilon_t = x_t - \hat{x_t} = x_t - \Theta_q(B)$ (note that this time there is no inverse)
 
 
 ## MA models and ACF
@@ -427,11 +429,11 @@ tsma <- arima.sim(model=list(ma=c(-0.5, 0.7, -0.75)), n=200)
 :::columns
 
 :::column
-An $MA(q)$ time series has a memory extending up to *lag* $q$, in the sense that innovations at distances greater than $q$ have no effect on the last observation
+An $\mathrm{MA}(q)$ time series has a memory extending up to *lag* $q$, in the sense that innovations at distances greater than $q$ have no effect on the last observation
 
-Therefore, given an $MA(q)$ time series, one can often identify the order from its ACF by counting the peaks after the one at *lag* 0:
+Therefore, given an $\mathrm{MA}(q)$ time series, one can often identify the order from its ACF by counting the peaks after the one at *lag* 0:
 
-* three peaks outside the confidence band mean an $MA(3)$ model
+* three peaks outside the confidence band mean an $\mathrm{MA}(3)$ model
 * the signs of the peaks correspond to the signs of the coefficients
 
 
@@ -450,7 +452,7 @@ autoplot(tsma, xlab="#", ylab="Value") /
 :::
 
 
-## MA models and ACF
+## AR models and ACF
 ```{r}
 set.seed(0)
 tsar <- arima.sim(model=list(ar=c(0.5, 0.3)), n=200)
@@ -459,7 +461,7 @@ tsar <- arima.sim(model=list(ar=c(0.5, 0.3)), n=200)
 :::columns
 
 :::column
-If instead the time series is of type $AR(p)$, each observation depends on the innovation and on all previous observations, recursively
+If instead the time series is of type $\mathrm{AR}(p)$, each observation depends on the innovation and on all previous observations, recursively
 
 In this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations
 
@@ -480,7 +482,7 @@ autoplot(tsar, xlab="#", ylab="Value") /
 
 ## AR models and PACF
 
-For models of type $AR(p)$ it is still possible to identify the order through the **partial autocorrelation function**, or PACF, defined as follows:
+For models of type $\mathrm{AR}(p)$ it is still possible to identify the order through the **partial autocorrelation function**, or PACF, defined as follows:
 
 $$
 \begin{align}
@@ -497,7 +499,7 @@ where $\hat{z_{t+k}}$ and $\hat{z_t}$ are linear combinations of $\{z_{t+1}, z_{
 :::columns
 
 :::column
-In general, therefore, if the ACF shows an infinite memory, AR model, and the PACF shows few peaks, the number of peaks is the order of the AR model
+In general, therefore, if the ACF shows an infinite memory (**AR model**) and the PACF shows few peaks, the number of peaks is the order of the AR model
 
 **Warning**: peaks after the first *cut-off* are not considered, that is, the *lag* at which the autocorrelation falls below the confidence limit for the first time
 :::
@@ -511,8 +513,8 @@ forecast::ggtsdisplay(tsar, main="AR Series")
 :::
 
 
-:::aside
-**Warning**: in these ACF and PACF plots the *lag* starts from 1.
+:::::: {.callout-caution}
+In these ACF and PACF plots the *lag* starts from 1. Always pay attention: different plots may start at lag 0 or lag 1!
 :::
 
 ## MA models and PACF
@@ -523,8 +525,8 @@ forecast::ggtsdisplay(tsar, main="AR Series")
 Comparing both ACF and PACF
 
 * pure noise: ACF and PACF are zero for *lag* greater than 0
-* $AR(p)$: ACF decreases slowly, PACF is non-zero for *lags* less than or equal to $p$, zero otherwise
-* $MA(q)$: ACF shows $q$ peaks; if $PACF(1) > 0$, PACF oscillates to 0, otherwise it decays geometrically to 0
+* $\mathrm{AR}(p)$: ACF decreases slowly, PACF is non-zero for *lags* less than or equal to $p$, zero otherwise
+* $\mathrm{MA}(q)$: ACF shows $q$ peaks; if $\mathrm{PACF}(1) > 0$, PACF oscillates to 0, otherwise it decays geometrically to 0
 :::
 
 :::column
@@ -553,7 +555,7 @@ $$
 \Phi_p(B)x_t=\Theta_q(B)w_t
 $$
 
-## MA models and PACF
+## ARMA models and PACF
 
 :::columns
 
@@ -561,9 +563,9 @@ $$
 Comparing both ACF and PACF
 
 * pure noise: ACF and PACF are zero for *lag* greater than 0
-* $AR(p)$: ACF decreases slowly, PACF is non-zero for *lags* less than or equal to $p$, zero otherwise
-* $MA(q)$: ACF shows $q$ peaks; if $PACF(1) > 0$, PACF oscillates to 0, otherwise it decays geometrically to 0
-* $ARMA(p,q)$: ACF shows $q$ peaks; PACF decays geometrically to 0 only after *lag* $p$
+* $\mathrm{AR}(p)$: ACF decreases slowly, PACF is non-zero for *lags* less than or equal to $p$, zero otherwise
+* $\mathrm{MA}(q)$: ACF shows $q$ peaks; if $\mathrm{PACF}(1) > 0$, PACF oscillates to 0, otherwise it decays geometrically to 0
+* $\mathrm{ARMA}(p,q)$: ACF shows $q$ peaks; PACF decays geometrically to 0 only after *lag* $p$
 :::
 
 :::column
@@ -620,7 +622,7 @@ x_t &= w_t + \theta w_{t-1}, ~w_t\sim\mathcal{N}(0, 1) \\
 y_t &= \nu_t + 1/\theta \nu_{t-1}, ~\nu_t\sim\mathcal{N}(0, \theta^2) 
 \end{align}
 $$
-It is clear that $x_t$ and $\nu_t$ have the same ACF and are indistinguishable, since we do not know the innovations $w_t$ and $\nu_t$ but only the two series. It can be shown that the result is general, that is, it does not depend on the order $q$. 
+It is clear that $x_t$ and $y_t$ have the same ACF and are indistinguishable, since we do not know the innovations $w_t$ and $\nu_t$ but only the two series. It can be shown that the result is general, that is, it does not depend on the order $q$. 
 
 It is therefore necessary to choose one of the two alternative forms. To determine which one, we rewrite the series as $w_t=-\theta x_{t-1}+x_t$, which has the same form as $\mathrm{AR}(1)$. We can then choose the alternative that satisfies the same *stability* criterion:
 $$
@@ -640,13 +642,13 @@ $$
 $$ 
 are **all strictly outside the unit circle** in the complex plane
 
-For example: $\mathrm{ARMA}(2,2)$ with $\Phi_2(z)= 1 + 0.9z + 0.1z^2$ and $\theta_q(z) = 1 + 2z + 15z^2$:
+For example: $\mathrm{ARMA}(2,2)$ with $\Phi_2(z)= 1 + 0.9z + 0.1z^2$ and $\Theta_2(z) = 1 + 2z + 15z^2$:
 ```{r echo=T}
 abs(polyroot(c(1, -0.9, -0.1)))
 abs(polyroot(c(1, 2, 15)))
 ```
 
-That is, the AR term is not causal and the MA term is not invertible, but $\theta_q(z) = 1 + 1/2z + 1/15z^2$ would be
+That is, the AR term is not causal but the MA term $\Theta_2(z) = 1 + 1/2z + 1/15z^2$ is invertible, and therefore the model is not stable but is unique
 
 
 ## Redundancy
@@ -674,12 +676,12 @@ $$
 
 In this form the process looks like $\mathrm{ARMA}(2,2)$, however we can factor the two polynomials using `polyroot()` to compute the roots:
 ```{r echo=T}
-# per Phi:
+# Phi roots:
 -1/polyroot(c(1, -0.4, -0.45))
-# per Theta:
+# Theta roots:
 -1/polyroot(c(1, 1, 0.25))
 ```
-:::aside
+:::callout-note
 **Note**: if $z_i,~ i=1,\dots,n$ are the roots of the polynomial $p(z)$ of degree $n$, then the polynomial can be factorized into $(1-1/z_1 z)\cdot(1-1/z_2 z)\dots(1-1/z_n z)$.
 :::
 
@@ -826,3 +828,8 @@ forecast::forecast(fit,h=20) %>%
 :::
 
 :::
+
+
+
+# Exercises
+Look at the [exercise notebook](/notebooks/exercise_02.qmd){target="_blank"} for exercises on ARIMA analysis in R, Python, and MongoDB.

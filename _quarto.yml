@@ -10,6 +10,9 @@ format:
     margin: 0.1
     logo: images/logo.png
     slide-number: true
+    controls: true
+    progress: true
+    transition: fade
     code-line-numbers: true
     code-annotations: below
     preview-links: auto

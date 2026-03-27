@@ -251,5 +251,5 @@ General purpose, but well-suited for smart manufacturing environments
 
 ::: {.callout-important}
 ### Where to start
-Go to [mads-net-github.io](https://mads-net-github.io/) for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing
+Go to [mads-net.github.io](https://mads-net.github.io/) for documentation, examples, and tutorials on how to use MADS for distributed data acquisition and processing
 :::
