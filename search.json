@@ -396,7 +396,7 @@
     "href": "slides/2_time_domain.html#ar-models-regression",
     "title": "Time-domain analysis of time series",
     "section": "AR models — regression",
-    "text": "AR models — regression\nRecalling the definition of the backshift operator, the definition of \\(w_t\\) can be written as:\n\\[\n(1-\\phi_1 B - \\phi_2 B^2 -\\dots-\\phi_p B^p)x_t=w_t\n\\] o ancora più concisamente come:\n\\[\n\\Phi_p(B)x_t=w_t\n\\] where \\(\\Phi_p(B):=1-\\phi_1B-\\phi_2B^2-\\dots-\\phi_pB^p\\) is called the autoregressive operator.\nPerforming the regression of an \\(\\mathrm{AR}(p)\\) model on a historical series \\(x_t\\) therefore means fitting the model \\(\\Phi_p(B)\\hat{ x_t}=w_t\\) by identifying the coefficients of \\(\\Phi_p(B)\\) that minimize the mean squared residuals, where the residuals are \\(\\varepsilon_t = x_t - \\hat{ x_t} = x_t - \\Phi_p^{-1}(B)w_t\\), assuming the inverse \\(\\Phi_p^{-1}(B)\\) exists."
+    "text": "AR models — regression\nRecalling the definition of the backshift operator, the definition of \\(w_t\\) can be written as:\n\\[\n(1-\\phi_1 B - \\phi_2 B^2 -\\dots-\\phi_p B^p)x_t=w_t\n\\] or, more briefly, as:\n\\[\n\\Phi_p(B)x_t=w_t\n\\] where \\(\\Phi_p(B):=1-\\phi_1B-\\phi_2B^2-\\dots-\\phi_pB^p\\) is called the autoregressive operator.\nPerforming the regression of an \\(\\mathrm{AR}(p)\\) model on a historical series \\(x_t\\) therefore means fitting the model \\(\\Phi_p(B)\\hat{ x_t}=w_t\\) by identifying the coefficients of \\(\\Phi_p(B)\\) that minimize the mean squared residuals, where the residuals are \\(\\varepsilon_t = x_t - \\hat{ x_t} = x_t - \\Phi_p^{-1}(B)w_t\\), assuming the inverse \\(\\Phi_p^{-1}(B)\\) exists."
   },
   {
     "objectID": "slides/2_time_domain.html#ma-models-definition",
@@ -410,28 +410,28 @@
     "href": "slides/2_time_domain.html#ma-models-regression",
     "title": "Time-domain analysis of time series",
     "section": "MA models — regression",
-    "text": "MA models — regression\nSimilarly to the \\(\\mathrm{AR}(p)\\) case, for \\(\\mathrm{MA}(q)\\) it is possible to define the moving-average operator of order \\(q\\): \\[\n\\Theta_q(B)=(1+\\theta_1 B+\\theta_2 B^2+\\dots+\\theta_q B^q)\n\\] such that the equation for \\(x_t\\) can be written as:\n\\[\nx_t=\\Theta_q(B)w_t\n\\]\nAs above, regressing an \\(\\mathrm{MA}(q)\\) model onto a historical series \\(x_t\\) means identifying the terms of \\(\\Theta_q(B)\\) that minimize the mean squared residuals, defined as \\(\\varepsilon_t = x_t - \\hat{x_t} = x_t - \\Theta_q(B)\\), note that this time there is no inverse."
+    "text": "MA models — regression\nSimilarly to the \\(\\mathrm{AR}(p)\\) case, for \\(\\mathrm{MA}(q)\\) it is possible to define the moving-average operator of order \\(q\\): \\[\n\\Theta_q(B)=(1+\\theta_1 B+\\theta_2 B^2+\\dots+\\theta_q B^q)\n\\] such that the equation for \\(x_t\\) can be written as:\n\\[\nx_t=\\Theta_q(B)w_t\n\\]\nAs above, regressing an \\(\\mathrm{MA}(q)\\) model onto a historical series \\(x_t\\) means identifying the terms of \\(\\Theta_q(B)\\) that minimize the mean squared residuals, defined as \\(\\varepsilon_t = x_t - \\hat{x_t} = x_t - \\Theta_q(B)\\) (note that this time there is no inverse)"
   },
   {
     "objectID": "slides/2_time_domain.html#ma-models-and-acf",
     "href": "slides/2_time_domain.html#ma-models-and-acf",
     "title": "Time-domain analysis of time series",
     "section": "MA models and ACF",
-    "text": "MA models and ACF\n\n\nAn \\(MA(q)\\) time series has a memory extending up to lag \\(q\\), in the sense that innovations at distances greater than \\(q\\) have no effect on the last observation\nTherefore, given an \\(MA(q)\\) time series, one can often identify the order from its ACF by counting the peaks after the one at lag 0:\n\nthree peaks outside the confidence band mean an \\(MA(3)\\) model\nthe signs of the peaks correspond to the signs of the coefficients"
+    "text": "MA models and ACF\n\n\nAn \\(\\mathrm{MA}(q)\\) time series has a memory extending up to lag \\(q\\), in the sense that innovations at distances greater than \\(q\\) have no effect on the last observation\nTherefore, given an \\(\\mathrm{MA}(q)\\) time series, one can often identify the order from its ACF by counting the peaks after the one at lag 0:\n\nthree peaks outside the confidence band mean an \\(\\mathrm{MA}(3)\\) model\nthe signs of the peaks correspond to the signs of the coefficients"
   },
   {
     "objectID": "slides/2_time_domain.html#ar-models-and-acf",
     "href": "slides/2_time_domain.html#ar-models-and-acf",
     "title": "Time-domain analysis of time series",
     "section": "AR models and ACF",
-    "text": "AR models and ACF\n\n\nIf instead the time series is of type \\(AR(p)\\), each observation depends on the innovation and on all previous observations, recursively\nIn this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations"
+    "text": "AR models and ACF\n\n\nIf instead the time series is of type \\(\\mathrm{AR}(p)\\), each observation depends on the innovation and on all previous observations, recursively\nIn this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations"
   },
   {
     "objectID": "slides/2_time_domain.html#ar-models-and-pacf",
     "href": "slides/2_time_domain.html#ar-models-and-pacf",
     "title": "Time-domain analysis of time series",
     "section": "AR models and PACF",
-    "text": "AR models and PACF\nFor models of type \\(AR(p)\\) it is still possible to identify the order through the partial autocorrelation function, or PACF, defined as follows:\n\\[\n\\begin{align}\n\\mathrm{PACF}_1 &= \\mathrm{ACF}(z_{t+1}, z_t) \\\\\n\\mathrm{PACF}_k &= \\mathrm{ACF}(z_{t+k} - \\hat{z_{t+k}}, z_t - \\hat{z_t}),~~~k\\geq2 \\\\\n\\end{align}\n\\] where \\(\\hat{z_{t+k}}\\) and \\(\\hat{z_t}\\) are linear combinations of \\(\\{z_{t+1}, z_{t+2},\\dots,z_{t+k-1}\\}\\) that minimize the mean squared error of \\(z_{t+k}\\) and \\(z_t\\), respectively"
+    "text": "AR models and PACF\nFor models of type \\(\\mathrm{AR}(p)\\) it is still possible to identify the order through the partial autocorrelation function, or PACF, defined as follows:\n\\[\n\\begin{align}\n\\mathrm{PACF}_1 &= \\mathrm{ACF}(z_{t+1}, z_t) \\\\\n\\mathrm{PACF}_k &= \\mathrm{ACF}(z_{t+k} - \\hat{z_{t+k}}, z_t - \\hat{z_t}),~~~k\\geq2 \\\\\n\\end{align}\n\\] where \\(\\hat{z_{t+k}}\\) and \\(\\hat{z_t}\\) are linear combinations of \\(\\{z_{t+1}, z_{t+2},\\dots,z_{t+k-1}\\}\\) that minimize the mean squared error of \\(z_{t+k}\\) and \\(z_t\\), respectively"
   },
   {
     "objectID": "slides/2_time_domain.html#ar-models-and-pacf-1",
@@ -445,7 +445,7 @@
     "href": "slides/2_time_domain.html#ma-models-and-pacf",
     "title": "Time-domain analysis of time series",
     "section": "MA models and PACF",
-    "text": "MA models and PACF\n\n\nComparing both ACF and PACF\n\npure noise: ACF and PACF are zero for lag greater than 0\n\\(AR(p)\\): ACF decreases slowly, PACF is non-zero for lags less than or equal to \\(p\\), zero otherwise\n\\(MA(q)\\): ACF shows \\(q\\) peaks; if \\(PACF(1) &gt; 0\\), PACF oscillates to 0, otherwise it decays geometrically to 0\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOften, in practice, these indications are hard to observe and it is therefore difficult to identify \\(p,q\\) in a certain and unambiguous way"
+    "text": "MA models and PACF\n\n\nComparing both ACF and PACF\n\npure noise: ACF and PACF are zero for lag greater than 0\n\\(\\mathrm{AR}(p)\\): ACF decreases slowly, PACF is non-zero for lags less than or equal to \\(p\\), zero otherwise\n\\(\\mathrm{MA}(q)\\): ACF shows \\(q\\) peaks; if \\(\\mathrm{PACF}(1) &gt; 0\\), PACF oscillates to 0, otherwise it decays geometrically to 0\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOften, in practice, these indications are hard to observe and it is therefore difficult to identify \\(p,q\\) in a certain and unambiguous way"
   },
   {
     "objectID": "slides/2_time_domain.html#arma-models",
@@ -459,7 +459,7 @@
     "href": "slides/2_time_domain.html#arma-models-and-pacf",
     "title": "Time-domain analysis of time series",
     "section": "ARMA models and PACF",
-    "text": "ARMA models and PACF\n\n\nComparing both ACF and PACF\n\npure noise: ACF and PACF are zero for lag greater than 0\n\\(AR(p)\\): ACF decreases slowly, PACF is non-zero for lags less than or equal to \\(p\\), zero otherwise\n\\(MA(q)\\): ACF shows \\(q\\) peaks; if \\(PACF(1) &gt; 0\\), PACF oscillates to 0, otherwise it decays geometrically to 0\n\\(ARMA(p,q)\\): ACF shows \\(q\\) peaks; PACF decays geometrically to 0 only after lag \\(p\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOften, in practice, these indications are hard to observe and it is therefore difficult to identify \\(p,q\\) in a certain and unambiguous way"
+    "text": "ARMA models and PACF\n\n\nComparing both ACF and PACF\n\npure noise: ACF and PACF are zero for lag greater than 0\n\\(\\mathrm{AR}(p)\\): ACF decreases slowly, PACF is non-zero for lags less than or equal to \\(p\\), zero otherwise\n\\(\\mathrm{MA}(q)\\): ACF shows \\(q\\) peaks; if \\(\\mathrm{PACF}(1) &gt; 0\\), PACF oscillates to 0, otherwise it decays geometrically to 0\n\\(\\mathrm{ARMA}(p,q)\\): ACF shows \\(q\\) peaks; PACF decays geometrically to 0 only after lag \\(p\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOften, in practice, these indications are hard to observe and it is therefore difficult to identify \\(p,q\\) in a certain and unambiguous way"
   },
   {
     "objectID": "slides/2_time_domain.html#arima-models",
@@ -480,14 +480,14 @@
     "href": "slides/2_time_domain.html#stability-and-uniqueness-of-models-1",
     "title": "Time-domain analysis of time series",
     "section": "Stability and uniqueness of models",
-    "text": "Stability and uniqueness of models\nFor an \\(\\mathrm{MA}(1)\\) model, instead, consider two models: \\[\n\\begin{align}\nx_t &= w_t + \\theta w_{t-1}, ~w_t\\sim\\mathcal{N}(0, 1) \\\\\ny_t &= \\nu_t + 1/\\theta \\nu_{t-1}, ~\\nu_t\\sim\\mathcal{N}(0, \\theta^2)\n\\end{align}\n\\] It is clear that \\(x_t\\) and \\(\\nu_t\\) have the same ACF and are indistinguishable, since we do not know the innovations \\(w_t\\) and \\(\\nu_t\\) but only the two series. It can be shown that the result is general, that is, it does not depend on the order \\(q\\).\nIt is therefore necessary to choose one of the two alternative forms. To determine which one, we rewrite the series as \\(w_t=-\\theta x_{t-1}+x_t\\), which has the same form as \\(\\mathrm{AR}(1)\\). We can then choose the alternative that satisfies the same stability criterion: \\[\n\\left|\\sum_{i=1}^q \\theta_i\\right| &lt; 1\n\\] This alternative is called invertible"
+    "text": "Stability and uniqueness of models\nFor an \\(\\mathrm{MA}(1)\\) model, instead, consider two models: \\[\n\\begin{align}\nx_t &= w_t + \\theta w_{t-1}, ~w_t\\sim\\mathcal{N}(0, 1) \\\\\ny_t &= \\nu_t + 1/\\theta \\nu_{t-1}, ~\\nu_t\\sim\\mathcal{N}(0, \\theta^2)\n\\end{align}\n\\] It is clear that \\(x_t\\) and \\(y_t\\) have the same ACF and are indistinguishable, since we do not know the innovations \\(w_t\\) and \\(\\nu_t\\) but only the two series. It can be shown that the result is general, that is, it does not depend on the order \\(q\\).\nIt is therefore necessary to choose one of the two alternative forms. To determine which one, we rewrite the series as \\(w_t=-\\theta x_{t-1}+x_t\\), which has the same form as \\(\\mathrm{AR}(1)\\). We can then choose the alternative that satisfies the same stability criterion: \\[\n\\left|\\sum_{i=1}^q \\theta_i\\right| &lt; 1\n\\] This alternative is called invertible"
   },
   {
     "objectID": "slides/2_time_domain.html#stability-and-uniqueness-of-models-2",
     "href": "slides/2_time_domain.html#stability-and-uniqueness-of-models-2",
     "title": "Time-domain analysis of time series",
     "section": "Stability and uniqueness of models",
-    "text": "Stability and uniqueness of models\nIn general, it can be shown that the criteria seen above correspond to imposing the requirement that the complex roots of the polynomials \\[\n\\begin{align}\n\\Phi_p(z)&=1-\\phi_1 z-\\phi_2 z^2 - \\dots -\\phi_p z^p \\\\\n\\Theta_q(z)&=1+\\theta_1 z+\\theta_2 z^2 + \\dots +\\theta_q z^q\n\\end{align}\n\\] are all strictly outside the unit circle in the complex plane\nFor example: \\(\\mathrm{ARMA}(2,2)\\) with \\(\\Phi_2(z)= 1 + 0.9z + 0.1z^2\\) and \\(\\theta_q(z) = 1 + 2z + 15z^2\\):\n\nabs(polyroot(c(1, -0.9, -0.1)))\n\n[1]  1 10\n\nabs(polyroot(c(1, 2, 15)))\n\n[1] 0.2581989 0.2581989\n\n\nThat is, the AR term is not causal and the MA term is not invertible, but \\(\\theta_q(z) = 1 + 1/2z + 1/15z^2\\) would be"
+    "text": "Stability and uniqueness of models\nIn general, it can be shown that the criteria seen above correspond to imposing the requirement that the complex roots of the polynomials \\[\n\\begin{align}\n\\Phi_p(z)&=1-\\phi_1 z-\\phi_2 z^2 - \\dots -\\phi_p z^p \\\\\n\\Theta_q(z)&=1+\\theta_1 z+\\theta_2 z^2 + \\dots +\\theta_q z^q\n\\end{align}\n\\] are all strictly outside the unit circle in the complex plane\nFor example: \\(\\mathrm{ARMA}(2,2)\\) with \\(\\Phi_2(z)= 1 + 0.9z + 0.1z^2\\) and \\(\\Theta_2(z) = 1 + 2z + 15z^2\\):\n\nabs(polyroot(c(1, -0.9, -0.1)))\n\n[1]  1 10\n\nabs(polyroot(c(1, 2, 15)))\n\n[1] 0.2581989 0.2581989\n\n\nThat is, the AR term is not causal but the MA term \\(\\Theta_2(z) = 1 + 1/2z + 1/15z^2\\) is invertible, and therefore the model is not stable but is unique"
   },
   {
     "objectID": "slides/2_time_domain.html#redundancy",

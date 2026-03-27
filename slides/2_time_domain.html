@@ -522,7 +522,7 @@ x_t&amp;=\alpha + \phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t,~~~
 <p>Recalling the definition of the <strong>backshift operator</strong>, the definition of <span class="math inline">\(w_t\)</span> can be written as:</p>
 <p><span class="math display">\[
 (1-\phi_1 B - \phi_2 B^2 -\dots-\phi_p B^p)x_t=w_t
-\]</span> o ancora più concisamente come:</p>
+\]</span> or, more briefly, as:</p>
 <p><span class="math display">\[
 \Phi_p(B)x_t=w_t
 \]</span> where <span class="math inline">\(\Phi_p(B):=1-\phi_1B-\phi_2B^2-\dots-\phi_pB^p\)</span> is called the <strong>autoregressive operator</strong>.</p>
@@ -546,16 +546,16 @@ x_t = w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q}
 <p><span class="math display">\[
 x_t=\Theta_q(B)w_t
 \]</span></p>
-<p>As above, regressing an <span class="math inline">\(\mathrm{MA}(q)\)</span> model onto a historical series <span class="math inline">\(x_t\)</span> means identifying the terms of <span class="math inline">\(\Theta_q(B)\)</span> that minimize the mean squared residuals, defined as <span class="math inline">\(\varepsilon_t = x_t - \hat{x_t} = x_t - \Theta_q(B)\)</span>, note that this time there is no inverse.</p>
+<p>As above, regressing an <span class="math inline">\(\mathrm{MA}(q)\)</span> model onto a historical series <span class="math inline">\(x_t\)</span> means identifying the terms of <span class="math inline">\(\Theta_q(B)\)</span> that minimize the mean squared residuals, defined as <span class="math inline">\(\varepsilon_t = x_t - \hat{x_t} = x_t - \Theta_q(B)\)</span> (note that this time there is no inverse)</p>
 </section>
 <section id="ma-models-and-acf" class="slide level2">
 <h2>MA models and ACF</h2>
 <div class="columns">
 <div class="column">
-<p>An <span class="math inline">\(MA(q)\)</span> time series has a memory extending up to <em>lag</em> <span class="math inline">\(q\)</span>, in the sense that innovations at distances greater than <span class="math inline">\(q\)</span> have no effect on the last observation</p>
-<p>Therefore, given an <span class="math inline">\(MA(q)\)</span> time series, one can often identify the order from its ACF by counting the peaks after the one at <em>lag</em> 0:</p>
+<p>An <span class="math inline">\(\mathrm{MA}(q)\)</span> time series has a memory extending up to <em>lag</em> <span class="math inline">\(q\)</span>, in the sense that innovations at distances greater than <span class="math inline">\(q\)</span> have no effect on the last observation</p>
+<p>Therefore, given an <span class="math inline">\(\mathrm{MA}(q)\)</span> time series, one can often identify the order from its ACF by counting the peaks after the one at <em>lag</em> 0:</p>
 <ul>
-<li>three peaks outside the confidence band mean an <span class="math inline">\(MA(3)\)</span> model</li>
+<li>three peaks outside the confidence band mean an <span class="math inline">\(\mathrm{MA}(3)\)</span> model</li>
 <li>the signs of the peaks correspond to the signs of the coefficients</li>
 </ul>
 </div><div class="column">
@@ -574,7 +574,7 @@ x_t=\Theta_q(B)w_t
 <h2>AR models and ACF</h2>
 <div class="columns">
 <div class="column">
-<p>If instead the time series is of type <span class="math inline">\(AR(p)\)</span>, each observation depends on the innovation and on all previous observations, recursively</p>
+<p>If instead the time series is of type <span class="math inline">\(\mathrm{AR}(p)\)</span>, each observation depends on the innovation and on all previous observations, recursively</p>
 <p>In this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations</p>
 </div><div class="column">
 <div class="cell">
@@ -590,7 +590,7 @@ x_t=\Theta_q(B)w_t
 </section>
 <section id="ar-models-and-pacf" class="slide level2">
 <h2>AR models and PACF</h2>
-<p>For models of type <span class="math inline">\(AR(p)\)</span> it is still possible to identify the order through the <strong>partial autocorrelation function</strong>, or PACF, defined as follows:</p>
+<p>For models of type <span class="math inline">\(\mathrm{AR}(p)\)</span> it is still possible to identify the order through the <strong>partial autocorrelation function</strong>, or PACF, defined as follows:</p>
 <p><span class="math display">\[
 \begin{align}
 \mathrm{PACF}_1 &amp;= \mathrm{ACF}(z_{t+1}, z_t) \\
@@ -636,8 +636,8 @@ x_t=\Theta_q(B)w_t
 <p>Comparing both ACF and PACF</p>
 <ul>
 <li>pure noise: ACF and PACF are zero for <em>lag</em> greater than 0</li>
-<li><span class="math inline">\(AR(p)\)</span>: ACF decreases slowly, PACF is non-zero for <em>lags</em> less than or equal to <span class="math inline">\(p\)</span>, zero otherwise</li>
-<li><span class="math inline">\(MA(q)\)</span>: ACF shows <span class="math inline">\(q\)</span> peaks; if <span class="math inline">\(PACF(1) &gt; 0\)</span>, PACF oscillates to 0, otherwise it decays geometrically to 0</li>
+<li><span class="math inline">\(\mathrm{AR}(p)\)</span>: ACF decreases slowly, PACF is non-zero for <em>lags</em> less than or equal to <span class="math inline">\(p\)</span>, zero otherwise</li>
+<li><span class="math inline">\(\mathrm{MA}(q)\)</span>: ACF shows <span class="math inline">\(q\)</span> peaks; if <span class="math inline">\(\mathrm{PACF}(1) &gt; 0\)</span>, PACF oscillates to 0, otherwise it decays geometrically to 0</li>
 </ul>
 </div><div class="column">
 <div class="cell">
@@ -671,9 +671,9 @@ x_t=\phi_1 x_{t-1} + \phi_2 x_{t-2}+\dots+\phi_p x_{t-p} + w_t + \theta_1 w_{t-1
 <p>Comparing both ACF and PACF</p>
 <ul>
 <li>pure noise: ACF and PACF are zero for <em>lag</em> greater than 0</li>
-<li><span class="math inline">\(AR(p)\)</span>: ACF decreases slowly, PACF is non-zero for <em>lags</em> less than or equal to <span class="math inline">\(p\)</span>, zero otherwise</li>
-<li><span class="math inline">\(MA(q)\)</span>: ACF shows <span class="math inline">\(q\)</span> peaks; if <span class="math inline">\(PACF(1) &gt; 0\)</span>, PACF oscillates to 0, otherwise it decays geometrically to 0</li>
-<li><span class="math inline">\(ARMA(p,q)\)</span>: ACF shows <span class="math inline">\(q\)</span> peaks; PACF decays geometrically to 0 only after <em>lag</em> <span class="math inline">\(p\)</span></li>
+<li><span class="math inline">\(\mathrm{AR}(p)\)</span>: ACF decreases slowly, PACF is non-zero for <em>lags</em> less than or equal to <span class="math inline">\(p\)</span>, zero otherwise</li>
+<li><span class="math inline">\(\mathrm{MA}(q)\)</span>: ACF shows <span class="math inline">\(q\)</span> peaks; if <span class="math inline">\(\mathrm{PACF}(1) &gt; 0\)</span>, PACF oscillates to 0, otherwise it decays geometrically to 0</li>
+<li><span class="math inline">\(\mathrm{ARMA}(p,q)\)</span>: ACF shows <span class="math inline">\(q\)</span> peaks; PACF decays geometrically to 0 only after <em>lag</em> <span class="math inline">\(p\)</span></li>
 </ul>
 </div><div class="column">
 <div class="cell">
@@ -720,7 +720,7 @@ x_t =&amp; \phi x_{t-1}+w_t = \phi(\phi x_{t-2}+w_{t-1}) + w_t \\
 x_t &amp;= w_t + \theta w_{t-1}, ~w_t\sim\mathcal{N}(0, 1) \\
 y_t &amp;= \nu_t + 1/\theta \nu_{t-1}, ~\nu_t\sim\mathcal{N}(0, \theta^2)
 \end{align}
-\]</span> It is clear that <span class="math inline">\(x_t\)</span> and <span class="math inline">\(\nu_t\)</span> have the same ACF and are indistinguishable, since we do not know the innovations <span class="math inline">\(w_t\)</span> and <span class="math inline">\(\nu_t\)</span> but only the two series. It can be shown that the result is general, that is, it does not depend on the order <span class="math inline">\(q\)</span>.</p>
+\]</span> It is clear that <span class="math inline">\(x_t\)</span> and <span class="math inline">\(y_t\)</span> have the same ACF and are indistinguishable, since we do not know the innovations <span class="math inline">\(w_t\)</span> and <span class="math inline">\(\nu_t\)</span> but only the two series. It can be shown that the result is general, that is, it does not depend on the order <span class="math inline">\(q\)</span>.</p>
 <p>It is therefore necessary to choose one of the two alternative forms. To determine which one, we rewrite the series as <span class="math inline">\(w_t=-\theta x_{t-1}+x_t\)</span>, which has the same form as <span class="math inline">\(\mathrm{AR}(1)\)</span>. We can then choose the alternative that satisfies the same <em>stability</em> criterion: <span class="math display">\[
 \left|\sum_{i=1}^q \theta_i\right| &lt; 1
 \]</span> This alternative is called <strong>invertible</strong></p>
@@ -733,7 +733,7 @@ y_t &amp;= \nu_t + 1/\theta \nu_{t-1}, ~\nu_t\sim\mathcal{N}(0, \theta^2)
 \Theta_q(z)&amp;=1+\theta_1 z+\theta_2 z^2 + \dots +\theta_q z^q
 \end{align}
 \]</span> are <strong>all strictly outside the unit circle</strong> in the complex plane</p>
-<p>For example: <span class="math inline">\(\mathrm{ARMA}(2,2)\)</span> with <span class="math inline">\(\Phi_2(z)= 1 + 0.9z + 0.1z^2\)</span> and <span class="math inline">\(\theta_q(z) = 1 + 2z + 15z^2\)</span>:</p>
+<p>For example: <span class="math inline">\(\mathrm{ARMA}(2,2)\)</span> with <span class="math inline">\(\Phi_2(z)= 1 + 0.9z + 0.1z^2\)</span> and <span class="math inline">\(\Theta_2(z) = 1 + 2z + 15z^2\)</span>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">abs</span>(<span class="fu">polyroot</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="fl">0.9</span>, <span class="sc">-</span><span class="fl">0.1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -744,7 +744,7 @@ y_t &amp;= \nu_t + 1/\theta \nu_{t-1}, ~\nu_t\sim\mathcal{N}(0, \theta^2)
 <pre><code>[1] 0.2581989 0.2581989</code></pre>
 </div>
 </div>
-<p>That is, the AR term is not causal and the MA term is not invertible, but <span class="math inline">\(\theta_q(z) = 1 + 1/2z + 1/15z^2\)</span> would be</p>
+<p>That is, the AR term is not causal but the MA term <span class="math inline">\(\Theta_2(z) = 1 + 1/2z + 1/15z^2\)</span> is invertible, and therefore the model is not stable but is unique</p>
 </section>
 <section id="redundancy" class="slide level2">
 <h2>Redundancy</h2>
