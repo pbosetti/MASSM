@@ -420,11 +420,11 @@
     "text": "MA models and ACF\n\n\nAn \\(MA(q)\\) time series has a memory extending up to lag \\(q\\), in the sense that innovations at distances greater than \\(q\\) have no effect on the last observation\nTherefore, given an \\(MA(q)\\) time series, one can often identify the order from its ACF by counting the peaks after the one at lag 0:\n\nthree peaks outside the confidence band mean an \\(MA(3)\\) model\nthe signs of the peaks correspond to the signs of the coefficients"
   },
   {
-    "objectID": "slides/2_time_domain.html#ma-models-and-acf-1",
-    "href": "slides/2_time_domain.html#ma-models-and-acf-1",
+    "objectID": "slides/2_time_domain.html#ar-models-and-acf",
+    "href": "slides/2_time_domain.html#ar-models-and-acf",
     "title": "Time-domain analysis of time series",
-    "section": "MA models and ACF",
-    "text": "MA models and ACF\n\n\nIf instead the time series is of type \\(AR(p)\\), each observation depends on the innovation and on all previous observations, recursively\nIn this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations"
+    "section": "AR models and ACF",
+    "text": "AR models and ACF\n\n\nIf instead the time series is of type \\(AR(p)\\), each observation depends on the innovation and on all previous observations, recursively\nIn this case the autocorrelogram will show an exponential decay possibly followed by harmonic oscillations"
   },
   {
     "objectID": "slides/2_time_domain.html#ar-models-and-pacf",
