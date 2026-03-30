@@ -423,31 +423,38 @@ f(\mathbf{x}) = \mathrm{sign}(g(\mathbf{x}))
 </div>
 </div></div>
 <!-- end columns -->
-<p>For the linear case, <span class="math inline">\(g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b\)</span> and the separating boundary is the hyperplane <span class="math inline">\(\mathbf{w}^T \mathbf{x} + b = 0\)</span></p>
+<p>For the linear case, <span class="math inline">\(g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} - b\)</span> and the separating boundary is the hyperplane <span class="math inline">\(\mathbf{w}^T \mathbf{x} - b = 0\)</span></p>
 </section>
 <section id="svm-maximum-margin-principle" class="slide level2">
 <h2>SVM: maximum-margin principle</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <p>If the classes are linearly separable, the hard-margin SVM solves: <span class="math display">\[
-\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2
-\]</span> subject to <span class="math display">\[
-y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1,\quad i=1,\dots,N
+\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 \\
+\textrm{subject to:}\quad y_i(\mathbf{w}^T\mathbf{x}_i-b)\ge1,\quad i=1,\dots,N
 \]</span></p>
-<p>The geometric margin is <span class="math display">\[
-\gamma = \frac{2}{\|\mathbf{w}\|_2}
-\]</span></p>
+<p>The geometric margin is <span class="math inline">\(\gamma = \frac{2}{\|\mathbf{w}\|_2}\)</span></p>
 <p>Therefore, minimizing <span class="math inline">\(\|\mathbf{w}\|_2^2\)</span> is equivalent to maximizing the separation margin</p>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/SVM_margin.png/960px-SVM_margin.png"></p>
+<figcaption>Maximum-margin hyperplane in 2-D</figcaption>
+</figure>
+</div>
+</div></div>
+<!-- end columns -->
 </section>
-<section id="svm-interactive-example" class="slide level2">
-<h2>SVM: Interactive Example</h2>
+<section id="svm-interactive-example-in-mathbb-r2" class="slide level2">
+<h2>SVM: Interactive Example in <span class="math inline">\(\mathbb R^2\)</span></h2>
 <div class="columns">
 <div class="column">
 <div class="smaller">
 <ul>
-<li>We select as decision boundary <span class="math inline">\(\mathbf{w} = [\cos(\theta), \sin(\theta)]^T\)</span></li>
-<li><span class="math inline">\(||\mathbf w||_2 = 1\)</span> (it is a <strong>unit vector</strong>)</li>
-<li><span class="math inline">\(b\)</span> the intercept with the vertical axis</li>
+<li>we search for two <strong>parallel</strong> (same <span class="math inline">\(\mathbf w = \mathbf w(\theta, b)\)</span>) lines (i.e.&nbsp;2-D hyperplanes) that separate the two classes and are as far apart as possible</li>
+<li>the zone between them is called the <strong>margin</strong></li>
+<li>the <strong>support vectors</strong> are those that satisfy <span class="math inline">\(y_i(\mathbf{w}^T\mathbf{x}_i-b) = 1\)</span></li>
 </ul>
-<p>The margin width is then <span class="math inline">\(2/\|\mathbf{w}\|_2 = 2\)</span> and the support vectors are those that satisfy <span class="math inline">\(y_i(\mathbf{w}^T\mathbf{x}_i+b) = 1\)</span></p>
 <p>Try and find <span class="math inline">\(\theta, b\)</span> that <strong>maximize the margin</strong> while correctly classifying all points</p>
 </div>
 <div class="callout callout-caution callout-titled callout-style-default">
@@ -513,10 +520,9 @@ y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1,\quad i=1,\dots,N
 <p>Real process data are noisy, overlapping, and rarely perfectly separable</p>
 <p>The soft-margin formulation introduces <strong>slack variables</strong> <span class="math inline">\(\xi_i \ge 0\)</span>: <span class="math display">\[
 \min_{\mathbf{w},b,\boldsymbol{\xi}}
-\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i
-\]</span> subject to: <span class="math display">\[
-y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
-\]</span></p>
+\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i \\
+\textrm{subject to:}\quad y_i(\mathbf{w}^T\mathbf{x}_i-b)\ge1-\xi_i
+\]</span> The parameter <span class="math inline">\(C\)</span> balances margin width against classification violations</p>
 </div>
 </div><div class="column">
 <div class="quarto-figure quarto-figure-center">
@@ -527,7 +533,6 @@ y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
 </div>
 </div></div>
 <!-- end columns -->
-<p>The parameter <span class="math inline">\(C\)</span> balances margin width against classification violations</p>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -577,17 +582,30 @@ C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))
 <h2>SVM: dual problem and kernel trick</h2>
 <div class="columns">
 <div class="column">
-<p>The dual formulation is <span class="math display">\[
+<p>The Lagrangian dual formulation is: <span class="math display">\[
 \max_{\boldsymbol{\alpha}}
 \sum_{i=1}^{N}\alpha_i -
 \frac{1}{2}\sum_{i=1}^{N}\sum_{j=1}^{N}
-\alpha_i\alpha_j y_i y_j K(\mathbf{x}_i,\mathbf{x}_j)
-\]</span> with constraints <span class="math display">\[
-\alpha_i \ge 0,\qquad
+\alpha_i\alpha_j y_i y_j K(\mathbf{x}_i,\mathbf{x}_j) \\
+\textrm{subject to:}\quad
+\alpha_i \ge 0,\quad
 \sum_{i=1}^{N}\alpha_i y_i = 0
 \]</span></p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>The LD formulation of any minimization problem is a maximization problem and <em>vice versa</em>. The dual is a quadratic function subject to linear constraints, which is <strong>easier to solve</strong> than the original problem.</p>
+</div>
+</div>
+</div>
 </div><div class="column">
-<p>The kernel function <span class="math display">\[
+<p>The <strong>kernel function</strong>: <span class="math display">\[
 K(\mathbf{x}_i,\mathbf{x}_j)=\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
 \]</span> allows nonlinear separation in the original space through linear separation in a transformed feature space</p>
 <p>Common kernels:</p>
@@ -654,7 +672,7 @@ K(\mathbf{x}_i,\mathbf{x}_j)=\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
 <ul>
 <li>a linear separator in feature space becomes a nonlinear boundary in the original space</li>
 <li>the optimization problem stays almost unchanged</li>
-<li>prediction still depends only on support vectors</li>
+<li>prediction still depends <strong>only on support vectors</strong></li>
 </ul>
 <p>Common kernels:</p>
 <ul>
@@ -685,7 +703,7 @@ K(\mathbf{x},\mathbf{z})=\exp(-\gamma\|\mathbf{x}-\mathbf{z}\|_2^2)
 <h2>SVM: decision function and time-series use</h2>
 <p>After training, the decision function is <span class="math display">\[
 g(\mathbf{x}) = \sum_{i \in SV}\alpha_i y_i K(\mathbf{x}_i,\mathbf{x}) + b
-\]</span> where only the <strong>support vectors</strong> contribute</p>
+\]</span> where only the <strong>support vectors</strong> <span class="math inline">\(x_i,~i \in SV\)</span> contribute</p>
 <p>For time-series analysis, SVM is applied to features extracted from samples or windows, for example:</p>
 <ul>
 <li>direct multivariate measurements <span class="math inline">\((x_{1,t},x_{2,t},\dots)\)</span></li>

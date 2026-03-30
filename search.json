@@ -235,21 +235,21 @@
     "href": "slides/3_feature_based.html#svm-supervised-binary-classification",
     "title": "Feature-based analysis of time series",
     "section": "SVM: supervised binary classification",
-    "text": "SVM: supervised binary classification\n\n\nAssume labeled feature vectors, where \\(\\mathbf{x_i}\\) is the vector of observations and \\(y_i\\) is the class label: \\[\n(\\mathbf{x}_i, y_i),\\quad y_i \\in \\{-1,+1\\},\\quad i=1,\\dots,N\n\\]\nThe goal is to learn a decision function \\[\nf(\\mathbf{x}) = \\mathrm{sign}(g(\\mathbf{x}))\n\\] that separates the two classes with maximum robustness\n\n\n\n\nSVM example in 2-D\n\n\n\n\nFor the linear case, \\(g(\\mathbf{x}) = \\mathbf{w}^T \\mathbf{x} + b\\) and the separating boundary is the hyperplane \\(\\mathbf{w}^T \\mathbf{x} + b = 0\\)"
+    "text": "SVM: supervised binary classification\n\n\nAssume labeled feature vectors, where \\(\\mathbf{x_i}\\) is the vector of observations and \\(y_i\\) is the class label: \\[\n(\\mathbf{x}_i, y_i),\\quad y_i \\in \\{-1,+1\\},\\quad i=1,\\dots,N\n\\]\nThe goal is to learn a decision function \\[\nf(\\mathbf{x}) = \\mathrm{sign}(g(\\mathbf{x}))\n\\] that separates the two classes with maximum robustness\n\n\n\n\nSVM example in 2-D\n\n\n\n\nFor the linear case, \\(g(\\mathbf{x}) = \\mathbf{w}^T \\mathbf{x} - b\\) and the separating boundary is the hyperplane \\(\\mathbf{w}^T \\mathbf{x} - b = 0\\)"
   },
   {
     "objectID": "slides/3_feature_based.html#svm-maximum-margin-principle",
     "href": "slides/3_feature_based.html#svm-maximum-margin-principle",
     "title": "Feature-based analysis of time series",
     "section": "SVM: maximum-margin principle",
-    "text": "SVM: maximum-margin principle\nIf the classes are linearly separable, the hard-margin SVM solves: \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2\n\\] subject to \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1,\\quad i=1,\\dots,N\n\\]\nThe geometric margin is \\[\n\\gamma = \\frac{2}{\\|\\mathbf{w}\\|_2}\n\\]\nTherefore, minimizing \\(\\|\\mathbf{w}\\|_2^2\\) is equivalent to maximizing the separation margin"
+    "text": "SVM: maximum-margin principle\n\n\nIf the classes are linearly separable, the hard-margin SVM solves: \\[\n\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 \\\\\n\\textrm{subject to:}\\quad y_i(\\mathbf{w}^T\\mathbf{x}_i-b)\\ge1,\\quad i=1,\\dots,N\n\\]\nThe geometric margin is \\(\\gamma = \\frac{2}{\\|\\mathbf{w}\\|_2}\\)\nTherefore, minimizing \\(\\|\\mathbf{w}\\|_2^2\\) is equivalent to maximizing the separation margin\n\n\n\n\nMaximum-margin hyperplane in 2-D"
   },
   {
-    "objectID": "slides/3_feature_based.html#svm-interactive-example",
-    "href": "slides/3_feature_based.html#svm-interactive-example",
+    "objectID": "slides/3_feature_based.html#svm-interactive-example-in-mathbb-r2",
+    "href": "slides/3_feature_based.html#svm-interactive-example-in-mathbb-r2",
     "title": "Feature-based analysis of time series",
-    "section": "SVM: Interactive Example",
-    "text": "SVM: Interactive Example\n\n\n\n\nWe select as decision boundary \\(\\mathbf{w} = [\\cos(\\theta), \\sin(\\theta)]^T\\)\n\\(||\\mathbf w||_2 = 1\\) (it is a unit vector)\n\\(b\\) the intercept with the vertical axis\n\nThe margin width is then \\(2/\\|\\mathbf{w}\\|_2 = 2\\) and the support vectors are those that satisfy \\(y_i(\\mathbf{w}^T\\mathbf{x}_i+b) = 1\\)\nTry and find \\(\\theta, b\\) that maximize the margin while correctly classifying all points\n\n\n\n\n\n\n\nCaution\n\n\nWith the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin."
+    "section": "SVM: Interactive Example in \\(\\mathbb R^2\\)",
+    "text": "SVM: Interactive Example in \\(\\mathbb R^2\\)\n\n\n\n\nwe search for two parallel (same \\(\\mathbf w = \\mathbf w(\\theta, b)\\)) lines (i.e. 2-D hyperplanes) that separate the two classes and are as far apart as possible\nthe zone between them is called the margin\nthe support vectors are those that satisfy \\(y_i(\\mathbf{w}^T\\mathbf{x}_i-b) = 1\\)\n\nTry and find \\(\\theta, b\\) that maximize the margin while correctly classifying all points\n\n\n\n\n\n\n\nCaution\n\n\nWith the hard margin formulation, there is no solution if the data are not linearly separable, which is often the case in real applications. This motivates the introduction of the soft margin formulation, which allows for some misclassifications while still maximizing the margin."
   },
   {
     "objectID": "slides/3_feature_based.html#svm-interactive-example-r-version",
@@ -263,7 +263,7 @@
     "href": "slides/3_feature_based.html#svm-soft-margin-and-hinge-loss",
     "title": "Feature-based analysis of time series",
     "section": "SVM: soft margin and hinge loss",
-    "text": "SVM: soft margin and hinge loss\n\n\n\nReal process data are noisy, overlapping, and rarely perfectly separable\nThe soft-margin formulation introduces slack variables \\(\\xi_i \\ge 0\\): \\[\n\\min_{\\mathbf{w},b,\\boldsymbol{\\xi}}\n\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\xi_i\n\\] subject to: \\[\ny_i(\\mathbf{w}^T\\mathbf{x}_i+b)\\ge1-\\xi_i\n\\]\n\n\n\n\n\nSoft-margin SVM\n\n\n\n\nThe parameter \\(C\\) balances margin width against classification violations\n\n\n\n\n\n\nNote\n\n\nEquivalent empirical-risk view: \\(\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\)"
+    "text": "SVM: soft margin and hinge loss\n\n\n\nReal process data are noisy, overlapping, and rarely perfectly separable\nThe soft-margin formulation introduces slack variables \\(\\xi_i \\ge 0\\): \\[\n\\min_{\\mathbf{w},b,\\boldsymbol{\\xi}}\n\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\xi_i \\\\\n\\textrm{subject to:}\\quad y_i(\\mathbf{w}^T\\mathbf{x}_i-b)\\ge1-\\xi_i\n\\] The parameter \\(C\\) balances margin width against classification violations\n\n\n\n\n\nSoft-margin SVM\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nEquivalent empirical-risk view: \\(\\min_{\\mathbf{w},b}\\frac{1}{2}\\|\\mathbf{w}\\|_2^2 + C\\sum_{i=1}^{N}\\max(0,1-y_i(\\mathbf{w}^T\\mathbf{x}_i+b))\\)"
   },
   {
     "objectID": "slides/3_feature_based.html#equivalent-empirical-risk-view",
@@ -277,7 +277,7 @@
     "href": "slides/3_feature_based.html#svm-dual-problem-and-kernel-trick",
     "title": "Feature-based analysis of time series",
     "section": "SVM: dual problem and kernel trick",
-    "text": "SVM: dual problem and kernel trick\n\n\nThe dual formulation is \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j K(\\mathbf{x}_i,\\mathbf{x}_j)\n\\] with constraints \\[\n\\alpha_i \\ge 0,\\qquad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\n\nThe kernel function \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] allows nonlinear separation in the original space through linear separation in a transformed feature space\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function, RBF: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]"
+    "text": "SVM: dual problem and kernel trick\n\n\nThe Lagrangian dual formulation is: \\[\n\\max_{\\boldsymbol{\\alpha}}\n\\sum_{i=1}^{N}\\alpha_i -\n\\frac{1}{2}\\sum_{i=1}^{N}\\sum_{j=1}^{N}\n\\alpha_i\\alpha_j y_i y_j K(\\mathbf{x}_i,\\mathbf{x}_j) \\\\\n\\textrm{subject to:}\\quad\n\\alpha_i \\ge 0,\\quad\n\\sum_{i=1}^{N}\\alpha_i y_i = 0\n\\]\n\n\n\n\n\n\nNote\n\n\nThe LD formulation of any minimization problem is a maximization problem and vice versa. The dual is a quadratic function subject to linear constraints, which is easier to solve than the original problem.\n\n\n\n\nThe kernel function: \\[\nK(\\mathbf{x}_i,\\mathbf{x}_j)=\\phi(\\mathbf{x}_i)^T\\phi(\\mathbf{x}_j)\n\\] allows nonlinear separation in the original space through linear separation in a transformed feature space\nCommon kernels:\n\nlinear: \\(K(\\mathbf{x},\\mathbf{z})=\\mathbf{x}^T\\mathbf{z}\\)\npolynomial\nradial basis function, RBF: \\[\nK(\\mathbf{x},\\mathbf{z})=\\exp(-\\gamma\\|\\mathbf{x}-\\mathbf{z}\\|_2^2)\n\\]"
   },
   {
     "objectID": "slides/3_feature_based.html#svm-understanding-the-dual-problem",
@@ -298,7 +298,7 @@
     "href": "slides/3_feature_based.html#svm-decision-function-and-time-series-use",
     "title": "Feature-based analysis of time series",
     "section": "SVM: decision function and time-series use",
-    "text": "SVM: decision function and time-series use\nAfter training, the decision function is \\[\ng(\\mathbf{x}) = \\sum_{i \\in SV}\\alpha_i y_i K(\\mathbf{x}_i,\\mathbf{x}) + b\n\\] where only the support vectors contribute\nFor time-series analysis, SVM is applied to features extracted from samples or windows, for example:\n\ndirect multivariate measurements \\((x_{1,t},x_{2,t},\\dots)\\)\nlagged vectors \\((x_t,x_{t-1},\\dots,x_{t-L})\\)\nstatistical and spectral features over a window\n\nSVM is therefore a classification rule in feature space, not a stochastic time model"
+    "text": "SVM: decision function and time-series use\nAfter training, the decision function is \\[\ng(\\mathbf{x}) = \\sum_{i \\in SV}\\alpha_i y_i K(\\mathbf{x}_i,\\mathbf{x}) + b\n\\] where only the support vectors \\(x_i,~i \\in SV\\) contribute\nFor time-series analysis, SVM is applied to features extracted from samples or windows, for example:\n\ndirect multivariate measurements \\((x_{1,t},x_{2,t},\\dots)\\)\nlagged vectors \\((x_t,x_{t-1},\\dots,x_{t-L})\\)\nstatistical and spectral features over a window\n\nSVM is therefore a classification rule in feature space, not a stochastic time model"
   },
   {
     "objectID": "slides/3_feature_based.html#synthetic-bivariate-time-series",
