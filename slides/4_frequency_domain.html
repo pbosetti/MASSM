@@ -567,7 +567,7 @@ Paolo Bosetti
 <p>We use FFT or SFFT to extract power in specific bands of interest:</p>
 <ul>
 <li>in <strong>chunks of data</strong>: if computation time exceeds sampling time, there’s a risk of falling behind and loosing information</li>
-<li>with <strong>sliding window</strong> approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate</li>
+<li>with <strong>sliding window</strong> approach to continuously update the features as new data arrives, reducing the computational load but with a potentially higher latency in feature updates</li>
 <li>in <strong>overlapping chunks of data</strong> avoid the risk of loosing information between updates, but it can increase computational load</li>
 </ul>
 
