@@ -79,6 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome-7-free-7.2.0/fontawesome.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -106,6 +107,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<style>
+div.callout-prompt.callout {
+  border-left-color: #b3ff00;
+}
+div.callout-prompt.callout-style-default .callout-header {
+  background-color: rgba(179, 255, 0, 0.13);
+}
+div.callout-prompt .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-prompt.callout-style-default .callout-icon::before, div.callout-prompt.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 7 Free';
+  font-weight: 900;
+  font-style: normal;
+  content: '\e2ca' !important;
+  background-image: none;
+}
+div.callout-thumbs-up.callout {
+  border-left-color: #008000;
+}
+div.callout-thumbs-up.callout-style-default .callout-header {
+  background-color: rgba(0, 128, 0, 0.13);
+}
+div.callout-thumbs-up .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-thumbs-up.callout-style-default .callout-icon::before, div.callout-thumbs-up.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 7 Free';
+  font-weight: 900;
+  font-style: normal;
+  content: '\f164' !important;
+  background-image: none;
+}
+div.callout-todo.callout {
+  border-left-color: pink;
+}
+div.callout-todo.callout-style-default .callout-header {
+  background-color: rgb(from pink r g b / 13%);
+}
+div.callout-todo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.callout-titled .callout-icon::before {
+  content: '📝';
+  background-image: none;
+}
+</style>
 
 
 </head>
@@ -166,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 2, 2026</p>
+      <p class="date-modified">April 3, 2026</p>
     </div>
   </div>
     
@@ -193,9 +235,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>unwind</strong>: unwind the <code>message.measurements.microphone</code> array to create</li>
 </ol>
 <p>In practice, you might ask the AI assistant in Compass to write the aggregation pipeline for you, by giving it the following instruction:</p>
-<blockquote class="blockquote">
+<div class="callout callout-style-default callout-prompt callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Prompt</span>Prompt this:
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Write an aggregation pipeline that selects the <code>message.timestamp</code> and <code>message.measurements.microphone</code> fields from the <code>acceleration</code> collection, and unwinds the <code>message.measurements.microphone</code> array to create a single time series of the microphone measurements, together with the original index of the sample in the 10-sample window.</p>
-</blockquote>
+</div>
+</div>
 <p>You should get the following pipeline:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
@@ -272,9 +324,19 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>Learn to exploit the aggregation pipeline and the views in MongoDB to simplify your queries and make them more efficient. For example, you can create a view that already computes the <code>time</code> variable, so that you can directly query it without having to do any post-processing in R or Python. The AI asistant in MongoDB Compass can help you to write the aggregation pipeline for the view, by giving it the following instruction:</p>
-<blockquote class="blockquote">
+<div class="callout callout-style-default callout-prompt callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Prompt</span>Prompt this:
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Write an aggregation pipeline that selects the <code>message.timestamp</code> and <code>message.measurements.microphone</code> fields from the <code>acceleration</code> collection, unwinds the <code>message.measurements.microphone</code> array to create a single time series of the microphone measurements, together with the original index of the sample in the 10-sample window, and then creates a new field <code>time</code> that represents the time in seconds from the start of the recording, using the <code>timestamp</code> field and the <code>index</code> field.</p>
-</blockquote>
+</div>
+</div>
 </div>
 </div>
 </section>

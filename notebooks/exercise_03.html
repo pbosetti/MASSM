@@ -79,6 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome-7-free-7.2.0/fontawesome.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -106,6 +107,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<style>
+div.callout-todo.callout {
+  border-left-color: pink;
+}
+div.callout-todo.callout-style-default .callout-header {
+  background-color: rgb(from pink r g b / 13%);
+}
+div.callout-todo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.callout-titled .callout-icon::before {
+  content: '📝';
+  background-image: none;
+}
+div.callout-prompt.callout {
+  border-left-color: #b3ff00;
+}
+div.callout-prompt.callout-style-default .callout-header {
+  background-color: rgba(179, 255, 0, 0.13);
+}
+div.callout-prompt .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-prompt.callout-style-default .callout-icon::before, div.callout-prompt.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 7 Free';
+  font-weight: 900;
+  font-style: normal;
+  content: '\e2ca' !important;
+  background-image: none;
+}
+div.callout-thumbs-up.callout {
+  border-left-color: #008000;
+}
+div.callout-thumbs-up.callout-style-default .callout-header {
+  background-color: rgba(0, 128, 0, 0.13);
+}
+div.callout-thumbs-up .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-thumbs-up.callout-style-default .callout-icon::before, div.callout-thumbs-up.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 7 Free';
+  font-weight: 900;
+  font-style: normal;
+  content: '\f164' !important;
+  background-image: none;
+}
+</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -156,6 +198,11 @@ window.Quarto = {
   <li><a href="#example-in-r" id="toc-example-in-r" class="nav-link" data-scroll-target="#example-in-r"><span class="header-section-number">1.1</span> Example in R</a></li>
   <li><a href="#example-in-python" id="toc-example-in-python" class="nav-link" data-scroll-target="#example-in-python"><span class="header-section-number">1.2</span> Example in Python</a></li>
   </ul></li>
+  <li><a href="#exercise-3-analyze-the-mongodb-massm_1-database" id="toc-exercise-3-analyze-the-mongodb-massm_1-database" class="nav-link" data-scroll-target="#exercise-3-analyze-the-mongodb-massm_1-database"><span class="header-section-number">2</span> Exercise 3: Analyze the MongoDB <code>MASSM_1</code> database</a>
+  <ul class="collapse">
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">2.1</span> Data preparation</a></li>
+  <li><a href="#data-query" id="toc-data-query" class="nav-link" data-scroll-target="#data-query"><span class="header-section-number">2.2</span> Data query</a></li>
+  </ul></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="exercise_03.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
@@ -189,7 +236,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 2, 2026</p>
+      <p class="date-modified">April 3, 2026</p>
     </div>
   </div>
     
@@ -491,7 +538,7 @@ Cumulative Proportion  0.5465 0.9761 1.00000</code></pre>
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_aspect(<span class="st">"equal"</span>, adjustable<span class="op">=</span><span class="st">"box"</span>)</span>
 <span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>fig.colorbar(sc2, ax<span class="op">=</span>axes[<span class="dv">1</span>], label<span class="op">=</span><span class="st">"V1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;matplotlib.colorbar.Colorbar object at 0x16c196840&gt;</code></pre>
+<pre><code>&lt;matplotlib.colorbar.Colorbar object at 0x1660a1ca0&gt;</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -668,7 +715,7 @@ PC3            0.215596                0.015339               1.000000</code></p
 <span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">"equal"</span>, adjustable<span class="op">=</span><span class="st">"box"</span>)</span>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>fig.colorbar(sc, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">"Residual"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;matplotlib.colorbar.Colorbar object at 0x173f866c0&gt;</code></pre>
+<pre><code>&lt;matplotlib.colorbar.Colorbar object at 0x1748214c0&gt;</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -677,6 +724,261 @@ PC3            0.215596                0.015339               1.000000</code></p
 <p><img src="exercise_03_files/figure-html/unnamed-chunk-22-9.png" class="img-fluid figure-img" width="576"></p>
 </figure>
 </div>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise-3-analyze-the-mongodb-massm_1-database" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Exercise 3: Analyze the MongoDB <code>MASSM_1</code> database</h1>
+<section id="data-preparation" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">2.1</span> Data preparation</h2>
+<p>The <code>MASSM_1</code> database contains both the <code>acceleration</code> and the <code>force</code> collections. The <code>acceleration</code> collection contains the raw sensor data collected every 1 ms, each packing arrays of 10 elements corresponding to 10 kHz sampling rate. The <code>force</code> collection, conversely, contains data sampled every 5 ms, and therefore contains only one sample every 5 documents in the <code>acceleration</code> collection.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Force signals have been collected at a lower sampling rate because they are less dynamic than the acceleration signals, and therefore do not require a high sampling rate to capture their behavior. This is a common practice in data collection, where different types of signals are sampled at different rates based on their characteristics and the requirements of the analysis, aspecially after performing preliminary analysys via FFT (to define the minimum sampling frequency for each signal) and autocorrelation (to define the maximum sampling frequency based on the correlation time of the signal).</p>
+</div>
+</div>
+<p>Before analyzing the data with PCA we have to perform a set of steps:</p>
+<ol type="1">
+<li>Unwind the four arrays <code>Ax</code>, <code>Ay</code>, <code>Az</code> and <code>microphone</code> in <code>measurements</code> so that we have one document for each element in the array. Keep all other fields as they are, and add a new field <code>measurements.idx</code> that is equal to the corresponding array index that originated the document.</li>
+<li>Merge the force collection using the <code>message.timestamp</code> field as key. Carry over the last known value fields in force that are not present in this collection, merging the content of <code>measurements</code> from both collections.</li>
+<li>Create a view that contains the merged data, and query it to load the data in R or Python for further analysis.</li>
+</ol>
+<p>The corresponding pipelines are not trivial, but the AI assistant in MongoDB Compass can help you to write them. Let’s start with the unwinding of the <code>acceleration</code> collection:</p>
+<div class="callout callout-style-default callout-prompt callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Prompt</span>Prompt this:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>unwind the four arrays <code>Ax</code>, <code>Ay</code>, <code>Az</code> and <code>microphone</code> in <code>measurements</code> so that we have une document for each element in the array. Keep all other fields as they are, and add a new field <code>measurements.idx</code> that is equal to the correponding array index that originated the document.</p>
+</div>
+</div>
+<p>Save the result of this pipeline as a view <code>acceleration_exp</code>, and then don’t forget to look at it and check that it contains the expected data. You should see that each document now contains a single value for <code>Ax</code>, <code>Ay</code>, <code>Az</code> and <code>microphone</code>, and a new field <code>measurements.idx</code> that indicates the index of the sample in the original array.</p>
+<p>Next, we merge this view with the <code>force</code> collection, using the <code>message.timestamp</code> field as key. Again, liberally use the AI assistant in MongoDB Compass to write the aggregation pipeline for this merge, by giving it the following instruction:</p>
+<div class="callout callout-style-default callout-prompt callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Prompt</span>Prompt this:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Merge the force collection using the <code>message.timestamp</code> field as key. Carry over the last known value fields in force that are not present in this collection, merging the content of <code>measurements</code> from both collections.</p>
+</div>
+</div>
+<p>Before saving the result as view, open the aggregation pipeline and at the end add a new <code>$project</code> stage with the following content:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="er">_id</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">timestamp</span><span class="fu">:</span> <span class="st">"$message.timestamp"</span><span class="fu">,</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">Fx</span><span class="fu">:</span> <span class="st">"$message.measurements.Fx"</span><span class="fu">,</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">Fy</span><span class="fu">:</span> <span class="st">"$message.measurements.Fy"</span><span class="fu">,</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="er">Fz</span><span class="fu">:</span> <span class="st">"$message.measurements.Fz"</span><span class="fu">,</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">Mz</span><span class="fu">:</span> <span class="st">"$message.measurements.Mz"</span><span class="fu">,</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">sd_Fx</span><span class="fu">:</span> <span class="st">"$message.measurements.sd_Fx"</span><span class="fu">,</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">sd_Fy</span><span class="fu">:</span> <span class="st">"$message.measurements.sd_Fy"</span><span class="fu">,</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="er">sd_Fz</span><span class="fu">:</span> <span class="st">"$message.measurements.sd_Fz"</span><span class="fu">,</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="er">sd_Mz</span><span class="fu">:</span> <span class="st">"$message.measurements.sd_Mz"</span><span class="fu">,</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="er">Ax</span><span class="fu">:</span> <span class="st">"$message.measurements.Ax"</span><span class="fu">,</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="er">Ay</span><span class="fu">:</span> <span class="st">"$message.measurements.Ay"</span><span class="fu">,</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="er">Az</span><span class="fu">:</span> <span class="st">"$message.measurements.Az"</span><span class="fu">,</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="er">microphone</span><span class="fu">:</span> <span class="st">"$message.measurements.microphone"</span><span class="fu">,</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="er">idx</span><span class="fu">:</span> <span class="st">"$message.measurements.idx"</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This way, we only keep the fields that are relevant for our analysis in a flat structure, easier and more simple to manage in R or Python.</p>
+<p>Save the result as a new view called <code>all_data</code>. Now we can quesry this view to load the data in R or Python for further analysis. The view should contain all the fields from both collections, and you should be able to see the merged data when you query it.</p>
+</section>
+<section id="data-query" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="data-query"><span class="header-section-number">2.2</span> Data query</h2>
+<p>Now that we have the <code>all_data</code> view, we can query it to load the data in R or Python for further analysis. For example, we can select the <code>Ax</code>, <code>Ay</code>, <code>Az</code>, <code>microphone</code>, and <code>Fx</code>, <code>Fy</code>, <code>Fz</code> and <code>Mz</code> fields, and create a data frame with these fields.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We also filter the data to avoid documents that do not contain both acceleration and force measurements.</p>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">mongo</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">"all_data"</span>, <span class="at">db =</span> <span class="st">"MASSM_1"</span>, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">"mongodb://localhost:27017"</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">'{ </span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="st">  "Fx": { "$exists": true }</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> m<span class="sc">$</span><span class="fu">find</span>(<span class="at">query=</span>query, <span class="at">limit=</span><span class="dv">10000</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Note that for PCA analysis we do not need the timestamp field, so we don’t need to synthesize the time field from <code>timestamp</code> and <code>idx</code> fields.</p>
+<p>To start, we calculate the correlation matrix and plot it on a heatmap to see the relationships between the different variables:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>cor_mat <span class="ot">&lt;-</span> <span class="fu">cor</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(Ax, Ay, Az, microphone, Fx, Fy, Fz, Mz))</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(cor_mat, <span class="at">method=</span><span class="st">"circle"</span>, <span class="at">show.diag =</span> <span class="cn">FALSE</span>, <span class="at">lab=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Scale for fill is already present.
+Adding another scale for fill, which will replace the existing scale.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise_03_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>ggcorrplot</code> function (<code>install.packages("ggcorrplot")</code>) shows the size of the circles proportional to the absolute value of the correlation, and the color indicates the sign of the correlation (yellow for positive, violet for negative). We are removing the diagonal elements of the correlation matrix (which are all 1) to fully exploit the color scale.</p>
+</div>
+</div>
+<p>Now we look at the distribution of each variable with a histogram:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(idx, timestamp)) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name, <span class="at">scales =</span> <span class="st">"free"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise_03_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that forces and moment have a strong peak arund zero, which corresponds to the idle state of the machine; also, as expected the standard deviations look as <span class="math inline">\(\Chi ^2\)</span> distributed, with a peak at zero and a long tail.</p>
+<div class="callout callout-style-default callout-todo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Todo</span>Todo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Repeat the analysis after filtering out the observations corresponding to idle state.</p>
+</div>
+</div>
+<p>Finally, we can apply PCA to the data to see if we can identify some patterns in the data. We will use the <code>prcomp</code> function, which performs PCA by computing the singular value decomposition of the centered and scaled data. We will only use the <code>Ax</code>, <code>Ay</code>, <code>Az</code>, <code>microphone</code>, <code>Fx</code>, <code>Fy</code>, <code>Fz</code> and <code>Mz</code> fields for PCA, as they are the features of interest for our analysis.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pca_fit <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="sc">~</span>Ax <span class="sc">+</span> Ay <span class="sc">+</span> Az <span class="sc">+</span> microphone <span class="sc">+</span> Fx <span class="sc">+</span> Fy <span class="sc">+</span> Fz <span class="sc">+</span> Mz, <span class="at">data=</span>df, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pca_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Importance of components:
+                          PC1    PC2    PC3    PC4    PC5     PC6     PC7
+Standard deviation     1.3480 1.1420 1.0412 0.9861 0.9787 0.88606 0.73828
+Proportion of Variance 0.2271 0.1630 0.1355 0.1216 0.1197 0.09814 0.06813
+Cumulative Proportion  0.2271 0.3901 0.5257 0.6472 0.7669 0.86508 0.93321
+                           PC8
+Standard deviation     0.73098
+Proportion of Variance 0.06679
+Cumulative Proportion  1.00000</code></pre>
+</div>
+</div>
+<p>It’s probably better to look at the scree plot to decide how many principal components to keep for our analysis, rather than looking at the cumulative proportion of variance explained:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>variance <span class="ot">&lt;-</span> pca_fit<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(pca_fit<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>variance <span class="sc">%&gt;%</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="at">name =</span> <span class="st">"PC"</span>, <span class="at">value =</span> <span class="st">"variance"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> PC, <span class="at">y =</span> variance)) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Principal Component"</span>, <span class="at">y =</span> <span class="st">"Proportion of Variance Explained"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise_03_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As an alternative, we can also create a Pareto chart, which is a bar plot of the variance explained by each principal component, sorted in decreasing order, with a line plot of the cumulative variance explained:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(adas.utils)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'adas.utils' was built under R version 4.5.2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>variance <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="at">name =</span> <span class="st">"PC"</span>, <span class="at">value =</span> <span class="st">"variance"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pareto_chart</span>(<span class="at">labels=</span>PC, <span class="at">values=</span>variance)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in pareto_chart.data.frame(., labels = PC, values = variance): 'pareto_chart.data.frame' is deprecated.
+Use 'geom_pareto' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise_03_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This shows that the first 6 principal components explain about 90% of the variance, so we can keep these 6 components for our analysis. We can also look at the loadings of the first two principal components to see which variables contribute the most to these components:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggrepel' was built under R version 4.5.2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>loadings <span class="ot">&lt;-</span> pca_fit<span class="sc">$</span>rotation[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>loadings <span class="sc">%&gt;%</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"variable"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> PC1, <span class="at">y =</span> PC2, <span class="at">label =</span> variable)) <span class="sc">+</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="dv">0</span>, <span class="at">y=</span><span class="dv">0</span>, <span class="at">xend =</span> PC1, <span class="at">yend =</span> PC2), <span class="at">arrow =</span> <span class="fu">arrow</span>()) <span class="sc">+</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(<span class="at">color=</span><span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PCA loadings plot for the first two principal components"</span>) <span class="sc">+</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.6</span>, <span class="fl">0.6</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.6</span>, <span class="fl">0.6</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise_03_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-todo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Todo</span>Todo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the PCA analysis, try to build explanatory statistics that allow you to identify the different operating states of the machine, and to understand which features are most relevant for this classification.</p>
 </div>
 </div>
 
