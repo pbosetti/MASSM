@@ -12,6 +12,20 @@ format:
   pdf:
     toc: true
     number-sections: true
+custom-callout:
+  prompt:
+    title: "Prompt this:"
+    icon-symbol: "fa-wand-magic-sparkles"
+    color: "#b3ff00"
+  todo:
+    icon-symbol: "📝"
+    color: "pink"
+  thumbs-up:
+    title: "Great job!"
+    icon-symbol: "fa-thumbs-up"
+    color: "#008000"
+filters:
+  - custom-callout
 engine: knitr
 ---
 
@@ -19,7 +33,7 @@ engine: knitr
 
 ## Prerequisites
 
-Be sure to havve a look at the preliminary <exercise_01.qmd> to setup your MongoDB instance and load the example data.
+Be sure to have a look at the preliminary <exercise_01.qmd> to setup your MongoDB instance and load the example data.
 
 ## Tasks
 
@@ -32,7 +46,9 @@ We want to look at the time series represented by the microphone measurements. E
 
 In practice, you might ask the AI assistant in Compass to write the aggregation pipeline for you, by giving it the following instruction:
 
-> Write an aggregation pipeline that selects the `message.timestamp` and `message.measurements.microphone` fields from the `acceleration` collection, and unwinds the `message.measurements.microphone` array to create a single time series of the microphone measurements, together with the original index of the sample in the 10-sample window.
+::: prompt
+Write an aggregation pipeline that selects the `message.timestamp` and `message.measurements.microphone` fields from the `acceleration` collection, and unwinds the `message.measurements.microphone` array to create a single time series of the microphone measurements, together with the original index of the sample in the 10-sample window.
+:::
 
 You should get the following pipeline:
 
@@ -98,10 +114,18 @@ df %>%
   labs(x = "Time (s)", y = "Microphone", title = "Microphone time series")
 ```
 
+::: {.callout-warning}
+Be careful when using the `timestamp` field: the `mongolite$find()` method expects a pure JSON object as the query, and the `timestamp` field needs to be represented in JSON as `{"$date": "2011-01-01T01:10:34.780+00:00"}`. If you try to use a string representation of the timestamp, you will get an error or an empty result.
+
+In other words, what in Compass is represented as `timestamp: { $gte: ISODate("2011-01-01T01:10:34.780Z") }` in R needs to be represented as `timestamp: { "$date": "2011-01-01T01:10:34.780+00:00" }` in the query string.
+:::
+
 ::: {.callout-note}
 Learn to exploit the aggregation pipeline and the views in MongoDB to simplify your queries and make them more efficient. For example, you can create a view that already computes the `time` variable, so that you can directly query it without having to do any post-processing in R or Python. The AI asistant in MongoDB Compass can help you to write the aggregation pipeline for the view, by giving it the following instruction:
 
-> Write an aggregation pipeline that selects the `message.timestamp` and `message.measurements.microphone` fields from the `acceleration` collection, unwinds the `message.measurements.microphone` array to create a single time series of the microphone measurements, together with the original index of the sample in the 10-sample window, and then creates a new field `time` that represents the time in seconds from the start of the recording, using the `timestamp` field and the `index` field.
+::: prompt
+Write an aggregation pipeline that selects the `message.timestamp` and `message.measurements.microphone` fields from the `acceleration` collection, unwinds the `message.measurements.microphone` array to create a single time series of the microphone measurements, together with the original index of the sample in the 10-sample window, and then creates a new field `time` that represents the time in seconds from the start of the recording, using the `timestamp` field and the `index` field.
+:::
 :::
 
 ### Queries from Python

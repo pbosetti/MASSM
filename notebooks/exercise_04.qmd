@@ -1,0 +1,295 @@
+---
+title: "Multi-agent system for smart machining, part II"
+subtitle: "Chapter I-e: exercises"
+author: "Paolo Bosetti"
+date: "2026-03-20"
+date-modified: today
+format:
+  html:
+    code-fold: false
+    toc: true
+    number-sections: true
+  pdf:
+    toc: true
+    number-sections: true
+custom-callout:
+  prompt:
+    title: "Prompt this:"
+    icon-symbol: "fa-wand-magic-sparkles"
+    color: "#b3ff00"
+  todo:
+    icon-symbol: "fa-file-pen"
+    color: "pink"
+  thumbs-up:
+    title: "Great job!"
+    icon-symbol: "fa-thumbs-up"
+    color: "#008000"
+filters:
+  - custom-callout
+engine: knitr
+---
+
+# Exercise 1: FFT
+
+## Example in R
+
+```{r setup}
+#| include: true
+#| warning: false
+library(mongolite)
+library(MASS)
+library(patchwork)
+library(ggfortify)
+library(gsignal)
+library(tidyverse)
+library(RcppRoll)
+```
+
+Let's start with the plain FFT. We want to compute the FFT of the microphone time series for the first 10000 samples, and plot the amplitude spectrum. We can do this in R using the `fft()` function, which computes the discrete Fourier transform of a sequence. The amplitude spectrum can be obtained by taking the modulus of the FFT coefficients.
+
+```{r}
+N <- 10000 # number of samples
+fs = 10000 # sampling frequency in Hz
+m <- mongo(
+  collection = "all_data", db = "MASSM_1", 
+  url = "mongodb://localhost:27017")
+df <- m$find(limit=10000) 
+```
+
+We also define a utility finction for defining the frequency axis of the FFT, which depends on the sampling frequency and the length of the time series, where we only take une half of the spectrum, since the FFT is symmetric for real-valued signals.
+
+```{r}
+quick_fft <- function(signal, fs) {
+  N <- length(signal)
+  X <- fft(signal)
+  k <- 0:(N - 1)
+  freq <- k * fs / N
+  half_idx <- 1:(N / 2)
+  tibble(
+    frequency = freq[half_idx],
+    magnitude = Mod(X)[half_idx] / N
+  )
+}
+```
+
+Now we calculate the FFT (after applying the Hann window) and we use a trick for selecting the first 5 peaks:
+
+1. we calculate the rolling maximum of the magnitude with a window of 3 samples, which gives us a new variable `mag_3` that has the same value as `magnitude` for the local maxima, and a smaller value for the other samples;
+2. we sort the spectrum by magnitude in descending order, so that the peaks are at the top of the list;
+3. we select only the distinct values of `mag_3`, which gives us only the local maxima, and we keep all the other variables for those samples;
+4. we take the first 5 rows of the resulting data frame, which correspond to the 5 highest peaks in the spectrum.
+
+```{r}
+signal <- df$microphone
+spectrum <- quick_fft(signal * hann(length(signal)), fs) 
+peaks <- spectrum %>%
+  mutate(mag_3 = roll_max(magnitude, 3, fill = NA)) %>%
+  arrange(desc(magnitude)) %>%
+  distinct(mag_3, .keep_all = TRUE) %>% 
+  head(5)
+spectrum %>%
+  ggplot(aes(x = frequency, y = magnitude)) +
+  geom_line() +
+  geom_point(data = peaks, aes(x = frequency, y = magnitude), color = "blue", size = 2) +
+  labs(x = "Frequency (Hz)", y = "Magnitude")
+```
+
+::: {.callout-tip}
+The `RcppRoll` package has a lot of very efficient functions for rolling calculations, such as `roll_max()`, `roll_mean()`, `roll_sd()`, etc. These functions are implemented in C++ and are much faster than the equivalent functions in R, especially for large data frames. You can use them to compute rolling statistics on your time series data, which can be useful for peak detection, smoothing, or feature extraction.
+
+The above algorithm for peak detection is a simple and effective way to find the local maxima in the spectrum, and can be configured by setting the window size in the `roll_max()` function, so that wider windows lump together nearby peaks, while narrower windows can separate closely spaced peaks.
+:::
+
+The first 5 frequencies in the spectrume are:
+
+```{r}
+peaks %>% 
+  select(-mag_3) %>%
+  arrange(frequency) %>% 
+  knitr::kable()
+```
+
+Note that the first peak at frequency 0 Hz corresponds to the DC component of the signal, which is the average value of the microphone measurements. The other peaks correspond to the frequencies of the periodic components in the signal, which can be related to the physical phenomena that generated the sound.
+
+
+# Example in Python
+
+```{r}
+#| echo: false
+#| warning: false
+library(reticulate)
+py_require("pymongo")
+py_require("pandas")
+py_require("numpy")
+py_require("matplotlib")
+```
+
+The same workflow can be reproduced in Python with `pymongo`, `numpy`, `pandas`, and `matplotlib`.
+
+```{python}
+from pymongo import MongoClient
+import numpy as np
+import pandas as pd
+
+N = 10000
+fs = 10000
+
+client = MongoClient("mongodb://localhost:27017")
+db = client["MASSM_1"]
+collection = db["all_data"]
+
+df_py = pd.DataFrame(list(collection.find({}, {"_id": 0}).limit(N)))
+df_py.head()
+```
+
+We also define a small utility function to compute the FFT and build the corresponding frequency axis, again keeping only the first half of the spectrum.
+
+```{python}
+def quick_fft(signal, fs):
+    n = len(signal)
+    X = np.fft.fft(signal)
+    freq = np.arange(n) * fs / n
+    half_idx = slice(0, n // 2)
+    return pd.DataFrame(
+        {
+            "frequency": freq[half_idx],
+            "magnitude": np.abs(X)[half_idx] / n,
+        }
+    )
+```
+
+Now we apply the Hann window, compute the FFT, and use the same rolling-maximum trick to identify the 5 strongest local peaks in the spectrum.
+
+```{python}
+import matplotlib.pyplot as plt
+
+signal = df_py["microphone"].to_numpy()
+window = np.hanning(len(signal))
+spectrum = quick_fft(signal * window, fs)
+
+spectrum["mag_3"] = spectrum["magnitude"].rolling(3, center=True).max()
+peaks = (
+    spectrum.sort_values("magnitude", ascending=False)
+    .drop_duplicates(subset="mag_3")
+    .head(5)
+)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(spectrum["frequency"], spectrum["magnitude"])
+ax.scatter(peaks["frequency"], peaks["magnitude"], color="blue", s=30)
+ax.set_xlabel("Frequency (Hz)")
+ax.set_ylabel("Magnitude")
+plt.show()
+```
+
+The first 5 frequencies in the spectrum are:
+
+```{python}
+peaks[["frequency", "magnitude"]].sort_values("frequency").reset_index(drop=True)
+```
+
+The interpretation is the same as in R: the peak at 0 Hz is the DC component, while the other peaks correspond to the dominant periodic components of the microphone signal.
+
+
+# Exercise 2: STFT
+
+Now let's perform a *Short Time Fourier Transform* (STFT) of the microphone signal, which allows us to analyze how the frequency content of the signal changes over time. We can do this by applying the FFT to overlapping windows of the signal, and then plotting the resulting spectrogram, or we just use the `gsignal::stft()` function, which does all the work for us.
+
+Firstly, we fetch the first 10 000 samples from the database:
+
+```{r}
+N <- 10000 # number of samples
+fs = 10000 # sampling frequency in Hz
+m <- mongo(
+  collection = "all_data", db = "MASSM_1", 
+  url = "mongodb://localhost:27017")
+df <- m$find(limit=100000) 
+```
+
+Then, we calculate the STFT with a sliding windows of 1024 samples with the defualt overlapping of 0.75:
+
+```{r}
+ft <- stft(df$microphone, fs = fs, window = hann(1024))
+```
+
+Finally, we plot the spectrogram, which is a heatmap of the magnitude of the STFT coefficients as a function of time and frequency. We use a logarithmic scale for the magnitude to better visualize the peaks in the spectrum.
+
+```{r}
+expand.grid(freq=ft$f, time=ft$t) %>%
+  mutate(magnitude = as.vector(ft$s)) %>%
+  ggplot(aes(x = time, y = freq, fill = log10(magnitude))) +
+  geom_tile() +
+  labs(x = "Time (s)", y = "Frequency (Hz)", title="STFT of the microphone signal") +
+  scale_fill_viridis_c()
+```
+
+:::todo
+Using the `page()` method of the mongo query, repeat the above analysis by building the STFT on the fly, fetching pages of 1024 samples and calculating the FFT for each page, and then combining the results into a single data frame for plotting. This approach allows you to analyze longer time series without having to load the entire dataset into memory at once.
+:::
+
+# Exercise 3: The Goertzel algorithm
+
+The Goertzel algorithm is an efficient way to compute the DFT of a signal at a specific frequency, without having to compute the entire FFT. This can be useful when we are only interested in a few frequencies, such as the peaks identified in the previous exercise.
+
+We use the Goertzel library on <https://github.com/pbosetti/goertzel>, which can be installed in R with:
+
+```{r}
+pak::pak("pbosetti/goertzel")
+library(goertzel)
+```
+
+Now, remember that the Goertzel algorithm calculates the signal power in a given **frequency bin**, which is defined as the range of frequencies that are mapped to the same DFT coefficient. The width of the frequency bin depends on the sampling frequency and the length of the signal, and can be calculated as `fs / N`, where `fs` is the sampling frequency and `N` is the length of the signal. Therefore, when we want to calculate the power at a specific frequency using the Goertzel algorithm, we need to specify the corresponding frequency bin, which can be calculated as `round(frequency / (fs / N))`.
+
+For the algorithm to be more robust to small frequency variations, is thus evident that the **resolution** of the DFT shold be not too high, so that the controlled bin is wide enough to capture the energy of the signal even if the frequency is not exactly at the center of the bin. In other words, we need to **reduce** the frequency resolution, i.e. ,given the same sampling frequency, to reduce the length of the signal. Let's look at the STFT with much shorter windows, for example 64 samples, which gives us a frequency resolution of `fs / 64 = 156.25 Hz`, which is wide enough to capture the energy of the peaks we identified in the previous exercise:
+
+```{r}
+ft <- stft(df$microphone, fs = fs, window = hann(64), overlap=0.25)
+expand.grid(freq=ft$f, time=ft$t) %>%
+  mutate(magnitude = as.vector(ft$s)) %>%
+  ggplot(aes(x = time, y = freq, fill = log10(magnitude))) +
+  geom_tile() +
+  geom_hline(yintercept = 2950, alpha = 0.5) +
+  labs(x = "Time (s)", y = "Frequency (Hz)", title="STFT of the microphone signal") +
+  scale_fill_viridis_c()
+```
+
+::: {.callout-tip}
+Try and change the width of the Hann window and see how the vertical resolution changes.
+:::
+
+Now, suppose that we want to monitor the bin corresponding to the peak at 2950 Hz, which is the most interesting one for us. We can calculate the corresponding frequency bin as `round(2950 / (fs / 64)) = 19`, and then apply the Goertzel algorithm to the microphone signal to calculate the power in that bin over time. We can do this by applying the Goertzel algorithm to each window of the signal, and then plotting the resulting time series of the power in that bin. To enhance the analysis, we also decide to monitore the two adjacent bins:
+
+```{r}
+it <-  m$iterate()
+monitored_freq_bin <- tibble()
+for (i in 1:1000) {
+  page <- it$page(64)
+  if (nrow(page) == 0) break
+  tibble(
+    time = rep(page$timestamp[1], 3), # or you can use the average timestamp of the page
+    bin = 18:20, # we monitor the bins around the target frequency bin
+    g = goertzel(page$microphone, bin),
+    power = Mod(g)^2
+  ) %>%
+    bind_rows(monitored_freq_bin) -> monitored_freq_bin
+}
+monitored_freq_bin <- monitored_freq_bin %>% 
+  arrange(time) %>% 
+  mutate(
+    time = time - time[1],
+    bin = factor(bin))
+```
+
+Now we can plot the time evolution of the signal power in the monitored frequency bins, and see how it changes over time:
+
+```{r}
+monitored_freq_bin %>%
+  ggplot(aes(x = time, y = power, color=factor(bin))) +
+  geom_line() +
+  labs(x = "Time (s)", y = "Power in the 2950 Hz bin", title="Goertzel algorithm monitoring") + 
+  facet_wrap(~bin, ncol=1)
+```
+
+::: {.callout-note}
+The advantage of this approach is **purely computational**: when the signal processing is performed on the edge, with very limitet memory and computational resources, the Goertzel algorithm allows us to monitor specific frequencies without having to compute the entire FFT, which can be very expensive in terms of memory and computation time.
+:::

@@ -494,7 +494,10 @@ To integrate frequency-domain analysis into a real-time monitoring system, we ca
 We use FFT or SFFT to extract power in specific bands of interest:
 
 - in **chunks of data**: if  computation time exceeds sampling time, there's a risk of falling behind and loosing information
-- with **sliding window** approach to continuously update the features as new data arrives, only updating the extracted features at a lower rate than the raw data sampling rate
+- with **sliding window** approach to continuously update the features as new data arrives, reducing the computational load but with a potentially higher latency in feature updates
 - in **overlapping chunks of data** avoid the risk of loosing information between updates, but it can increase computational load
 
 ![](../images/windows.png){ fig-align="center" }
+
+# Exercises
+Look at the [exercise notebook](/notebooks/exercise_04.qmd){target="_blank"} for exercises on frequency domain analysis in R, Python, and MongoDB.

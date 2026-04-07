@@ -232,37 +232,38 @@ that separates the two classes with maximum robustness
 :::
 :::
 <!-- end columns -->
-For the linear case, $g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + b$ 
-and the separating boundary is the hyperplane $\mathbf{w}^T \mathbf{x} + b = 0$
+For the linear case, $g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} - b$ 
+and the separating boundary is the hyperplane $\mathbf{w}^T \mathbf{x} - b = 0$
 
 ## SVM: maximum-margin principle
 
+:::::: {.columns}
+::: {.column width="60%"}
 If the classes are linearly separable, the hard-margin SVM solves:
 $$
-\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2
-$$
-subject to
-$$
-y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1,\quad i=1,\dots,N
+\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 \\
+\textrm{subject to:}\quad y_i(\mathbf{w}^T\mathbf{x}_i-b)\ge1,\quad i=1,\dots,N
 $$
 
-The geometric margin is
-$$
-\gamma = \frac{2}{\|\mathbf{w}\|_2}
-$$
+The geometric margin is $\gamma = \frac{2}{\|\mathbf{w}\|_2}$
 
 Therefore, minimizing $\|\mathbf{w}\|_2^2$ is equivalent to maximizing the separation margin
+:::
+::: {.column width="40%"}
+![Maximum-margin hyperplane in 2-D](https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/SVM_margin.png/960px-SVM_margin.png)
 
-## SVM: Interactive Example
+:::
+:::
+<!-- end columns -->
+
+## SVM: Interactive Example in $\mathbb R^2$
 
 ::: {.columns}
 ::: {.column}
 :::smaller
-* We select as decision boundary $\mathbf{w} = [\cos(\theta), \sin(\theta)]^T$ 
-* $||\mathbf w||_2 = 1$ (it is a **unit vector**) 
-* $b$ the intercept with the vertical axis 
-
-The margin width is then $2/\|\mathbf{w}\|_2 = 2$ and the support vectors are those that satisfy $y_i(\mathbf{w}^T\mathbf{x}_i+b) = 1$
+* we search for two **parallel** (same $\mathbf w = \mathbf w(\theta, b)$) lines (i.e. 2-D hyperplanes) that separate the two classes and are as far apart as possible
+* the zone between them is called the **margin**
+* the **support vectors** are those that satisfy $y_i(\mathbf{w}^T\mathbf{x}_i-b) = 1$
 
 Try and find $\theta, b$ that **maximize the margin** while correctly classifying all points
 :::
@@ -341,12 +342,10 @@ Real process data are noisy, overlapping, and rarely perfectly separable
 The soft-margin formulation introduces **slack variables** $\xi_i \ge 0$:
 $$
 \min_{\mathbf{w},b,\boldsymbol{\xi}}
-\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i
+\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\xi_i \\
+\textrm{subject to:}\quad y_i(\mathbf{w}^T\mathbf{x}_i-b)\ge1-\xi_i
 $$
-subject to:
-$$
-y_i(\mathbf{w}^T\mathbf{x}_i+b)\ge1-\xi_i
-$$
+The parameter $C$ balances margin width against classification violations
 :::
 :::
 ::: {.column}
@@ -355,7 +354,6 @@ $$
 :::
 <!-- end columns -->
 
-The parameter $C$ balances margin width against classification violations
 
 ::: {.callout-note}
 Equivalent empirical-risk view: $\min_{\mathbf{w},b}\frac{1}{2}\|\mathbf{w}\|_2^2 + C\sum_{i=1}^{N}\max(0,1-y_i(\mathbf{w}^T\mathbf{x}_i+b))$
@@ -402,23 +400,25 @@ So this view is **equivalent** to the slack-variable formulation:
 ::: {.columns}
 ::: {.column}
 
-The dual formulation is
+The Lagrangian dual formulation is:
 $$
 \max_{\boldsymbol{\alpha}}
 \sum_{i=1}^{N}\alpha_i -
 \frac{1}{2}\sum_{i=1}^{N}\sum_{j=1}^{N}
-\alpha_i\alpha_j y_i y_j K(\mathbf{x}_i,\mathbf{x}_j)
-$$
-with constraints
-$$
-\alpha_i \ge 0,\qquad
+\alpha_i\alpha_j y_i y_j K(\mathbf{x}_i,\mathbf{x}_j) \\
+\textrm{subject to:}\quad
+\alpha_i \ge 0,\quad
 \sum_{i=1}^{N}\alpha_i y_i = 0
 $$
+
+::: {.callout-note}
+The LD formulation of any minimization problem is a maximization problem and *vice versa*. The dual is a quadratic function subject to linear constraints, which is **easier to solve** than the original problem. 
+:::
 
 :::
 ::: {.column}
 
-The kernel function
+The **kernel function**:
 $$
 K(\mathbf{x}_i,\mathbf{x}_j)=\phi(\mathbf{x}_i)^T\phi(\mathbf{x}_j)
 $$
@@ -501,7 +501,7 @@ Why this matters:
 
 * a linear separator in feature space becomes a nonlinear boundary in the original space
 * the optimization problem stays almost unchanged
-* prediction still depends only on support vectors
+* prediction still depends **only on support vectors**
 
 Common kernels:
 
@@ -526,7 +526,7 @@ After training, the decision function is
 $$
 g(\mathbf{x}) = \sum_{i \in SV}\alpha_i y_i K(\mathbf{x}_i,\mathbf{x}) + b
 $$
-where only the **support vectors** contribute
+where only the **support vectors** $x_i,~i \in SV$ contribute
 
 For time-series analysis, SVM is applied to features extracted from samples or windows, for example:
 
@@ -1035,6 +1035,7 @@ For high-dimensional time-series features this PCA plus SVM pipeline is often mo
 
 
 # Complementary resources
+Look at the [exercise notebook](/notebooks/exercise_03.qmd){target="_blank"} for exercises on PCA and SVM
 
 ## Hotelling's $T^2$ distribution
 
@@ -1255,3 +1256,7 @@ HotellingsT2Test(
 ```
 
 This is the most compact way to perform the one-sample test in R, but the underlying quantity remains the same statistic defined earlier
+
+
+# Exercises
+Look at the [exercise notebook](/notebooks/exercise_03.qmd){target="_blank"} for exercises on PCA and SVM analysis in R, Python, and MongoDB.
