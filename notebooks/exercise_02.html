@@ -122,6 +122,17 @@ div.callout-prompt.callout-style-default .callout-icon::before, div.callout-prom
   content: '\e2ca' !important;
   background-image: none;
 }
+div.callout-todo.callout {
+  border-left-color: pink;
+}
+div.callout-todo.callout-style-default .callout-header {
+  background-color: rgb(from pink r g b / 13%);
+}
+div.callout-todo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.callout-titled .callout-icon::before {
+  content: '📝';
+  background-image: none;
+}
 div.callout-thumbs-up.callout {
   border-left-color: #008000;
 }
@@ -134,17 +145,6 @@ div.callout-thumbs-up.callout-style-default .callout-icon::before, div.callout-t
   font-weight: 900;
   font-style: normal;
   content: '\f164' !important;
-  background-image: none;
-}
-div.callout-todo.callout {
-  border-left-color: pink;
-}
-div.callout-todo.callout-style-default .callout-header {
-  background-color: rgb(from pink r g b / 13%);
-}
-div.callout-todo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.callout-titled .callout-icon::before {
-  content: '📝';
   background-image: none;
 }
 </style>
@@ -208,7 +208,7 @@ div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.c
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 3, 2026</p>
+      <p class="date-modified">April 7, 2026</p>
     </div>
   </div>
     
@@ -311,6 +311,20 @@ Defaulting to continuous.</code></pre>
 <p><img src="exercise_02_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Be careful when using the <code>timestamp</code> field: the <code>mongolite$find()</code> method expects a pure JSON object as the query, and the <code>timestamp</code> field needs to be represented in JSON as <code>{"$date": "2011-01-01T01:10:34.780+00:00"}</code>. If you try to use a string representation of the timestamp, you will get an error or an empty result.</p>
+<p>In other words, what in Compass is represented as <code>timestamp: { $gte: ISODate("2011-01-01T01:10:34.780Z") }</code> in R needs to be represented as <code>timestamp: { "$date": "2011-01-01T01:10:34.780+00:00" }</code> in the query string.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
