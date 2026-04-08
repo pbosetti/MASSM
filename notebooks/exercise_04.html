@@ -108,20 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>
-div.callout-prompt.callout {
-  border-left-color: #b3ff00;
-}
-div.callout-prompt.callout-style-default .callout-header {
-  background-color: rgba(179, 255, 0, 0.13);
-}
-div.callout-prompt .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-prompt.callout-style-default .callout-icon::before, div.callout-prompt.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 7 Free';
-  font-weight: 900;
-  font-style: normal;
-  content: '\e2ca' !important;
-  background-image: none;
-}
 div.callout-thumbs-up.callout {
   border-left-color: #008000;
 }
@@ -150,6 +136,20 @@ div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.c
   content: '\f31c' !important;
   background-image: none;
 }
+div.callout-prompt.callout {
+  border-left-color: #b3ff00;
+}
+div.callout-prompt.callout-style-default .callout-header {
+  background-color: rgba(179, 255, 0, 0.13);
+}
+div.callout-prompt .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-prompt.callout-style-default .callout-icon::before, div.callout-prompt.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 7 Free';
+  font-weight: 900;
+  font-style: normal;
+  content: '\e2ca' !important;
+  background-image: none;
+}
 </style>
 
 
@@ -174,6 +174,7 @@ div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.c
   <li><a href="#example-in-python" id="toc-example-in-python" class="nav-link" data-scroll-target="#example-in-python"><span class="header-section-number">2</span> Example in Python</a></li>
   <li><a href="#exercise-2-stft" id="toc-exercise-2-stft" class="nav-link" data-scroll-target="#exercise-2-stft"><span class="header-section-number">3</span> Exercise 2: STFT</a></li>
   <li><a href="#exercise-3-the-goertzel-algorithm" id="toc-exercise-3-the-goertzel-algorithm" class="nav-link" data-scroll-target="#exercise-3-the-goertzel-algorithm"><span class="header-section-number">4</span> Exercise 3: The Goertzel algorithm</a></li>
+  <li><a href="#exercise-4-improve-the-mongodb-queries" id="toc-exercise-4-improve-the-mongodb-queries" class="nav-link" data-scroll-target="#exercise-4-improve-the-mongodb-queries"><span class="header-section-number">5</span> Exercise 4: Improve the MongoDB queries</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="exercise_04.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
@@ -207,7 +208,7 @@ div.callout-todo.callout-style-default .callout-icon::before, div.callout-todo.c
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 7, 2026</p>
+      <p class="date-modified">April 8, 2026</p>
     </div>
   </div>
     
@@ -491,7 +492,7 @@ Tip
 <pre><code>ℹ No downloads are needed</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 1 pkg + 1 dep: kept 2 [5.1s]</code></pre>
+<pre><code>✔ 1 pkg + 1 dep: kept 2 [5s]</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(goertzel)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -578,6 +579,523 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>The advantage of this approach is <strong>purely computational</strong>: when the signal processing is performed on the edge, with very limitet memory and computational resources, the Goertzel algorithm allows us to monitor specific frequencies without having to compute the entire FFT, which can be very expensive in terms of memory and computation time.</p>
+</div>
+</div>
+</section>
+<section id="exercise-4-improve-the-mongodb-queries" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Exercise 4: Improve the MongoDB queries</h1>
+<p>Now if you play on MongoDB Conpass with the combined view, you migh observe that filtering the data by time range is very slow. This is because the view is not a real table, and as such it does not have <strong>indexes</strong> on the timestamp field. Indexes can be created freely on real collections, and are the main tool to make quesries faster, but they cannot be created on views, which are just virtual tables defined by a query. Therefore, when we filter the view by time range, MongoDB has to scan the entire view and apply the filter to each document, which is very inefficient.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Always define an index on all the fields that you plan to use for filtering.</p>
+<p>Views that work on a single collection can reuse the indexes of that collection, but views that <strong>combine multiple collections</strong> cannot use any index, and are therefore very slow for filtering.</p>
+</div>
+</div>
+<p>So we can rework our approach by first filtering the original tables according to a given timestamp range, and then applying the same transformations as in the view to the filtered data. This way we can take advantage of the indexes on the original collections, and make our queries much faster.</p>
+<p>To do that, we cannot create a view in MongoDB Compass, but we can run the pipeline directly from the client, using the <code>aggregate()</code> method of the <code>mongolite</code> package.</p>
+<p>The pipeline above defined with the helop of the Compass AI can be rearranged and optimized as follows:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="er">$match</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"message.timestamp"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        <span class="er">$gte</span><span class="fu">:</span> <span class="er">ISODate(</span><span class="st">"2011-01-01T01:06:34.784+00:00"</span><span class="er">)</span><span class="fu">,</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        <span class="er">$lt</span><span class="fu">:</span> <span class="er">ISODate(</span><span class="st">"2011-01-01T01:06:35.784+00:00"</span><span class="er">)</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="er">$project</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>      <span class="er">ts</span><span class="fu">:</span> <span class="st">"$message.timestamp"</span><span class="fu">,</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>      <span class="er">Ax</span><span class="fu">:</span> <span class="st">"$message.measurements.Ax"</span><span class="fu">,</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>      <span class="er">Ay</span><span class="fu">:</span> <span class="st">"$message.measurements.Ay"</span><span class="fu">,</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>      <span class="er">Az</span><span class="fu">:</span> <span class="st">"$message.measurements.Az"</span><span class="fu">,</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>      <span class="er">microphone</span><span class="fu">:</span> <span class="st">"$message.measurements.microphone"</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="er">$set</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>      <span class="er">len</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>        <span class="er">$max</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span> <span class="er">$size</span><span class="fu">:</span> <span class="st">"$Ax"</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span> <span class="er">$size</span><span class="fu">:</span> <span class="st">"$Ay"</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span> <span class="er">$size</span><span class="fu">:</span> <span class="st">"$Az"</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span> <span class="er">$size</span><span class="fu">:</span> <span class="st">"$microphone"</span> <span class="fu">}</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    <span class="er">$project</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>      <span class="er">ts</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>      <span class="er">Ax</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>      <span class="er">Ay</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>      <span class="er">Az</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>      <span class="er">microphone</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>      <span class="er">idx</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">$range</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="st">"$len"</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span> <span class="er">$unwind</span><span class="fu">:</span> <span class="st">"$idx"</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>    <span class="er">$lookup</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>      <span class="er">from</span><span class="fu">:</span> <span class="st">"force"</span><span class="fu">,</span></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a>      <span class="er">let</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">ts</span><span class="fu">:</span> <span class="st">"$ts"</span> <span class="fu">},</span></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>      <span class="er">pipeline</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>          <span class="er">$match</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>            <span class="er">$expr</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>              <span class="er">$lte</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$message.timestamp"</span><span class="ot">,</span> <span class="st">"$$ts"</span><span class="ot">]</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>            <span class="fu">},</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"message.timestamp"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>              <span class="er">$gte</span><span class="fu">:</span> <span class="er">ISODate(</span><span class="st">"2011-01-01T01:06:34.784+00:00"</span><span class="er">)</span><span class="fu">,</span></span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>              <span class="er">$lt</span><span class="fu">:</span> <span class="er">ISODate(</span><span class="st">"2011-01-01T01:06:35.784+00:00"</span><span class="er">)</span></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span> <span class="er">$sort</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"message.timestamp"</span><span class="fu">:</span> <span class="dv">-1</span> <span class="fu">}</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span> <span class="er">$limit</span><span class="fu">:</span> <span class="dv">1</span> <span class="fu">}</span></span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>      <span class="er">as</span><span class="fu">:</span> <span class="st">"force_doc"</span></span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>    <span class="er">$set</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a>      <span class="er">force_doc</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">$arrayElemAt</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$force_doc"</span><span class="ot">,</span> <span class="dv">0</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a>    <span class="er">$project</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a>      <span class="er">_id</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a>      <span class="er">timestamp</span><span class="fu">:</span> <span class="st">"$ts"</span><span class="fu">,</span></span>
+<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a>      <span class="er">Fx</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.Fx"</span><span class="fu">,</span></span>
+<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a>      <span class="er">Fy</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.Fy"</span><span class="fu">,</span></span>
+<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a>      <span class="er">Fz</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.Fz"</span><span class="fu">,</span></span>
+<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>      <span class="er">Mz</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.Mz"</span><span class="fu">,</span></span>
+<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a>      <span class="er">sd_Fx</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.sd_Fx"</span><span class="fu">,</span></span>
+<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a>      <span class="er">sd_Fy</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.sd_Fy"</span><span class="fu">,</span></span>
+<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a>      <span class="er">sd_Fz</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.sd_Fz"</span><span class="fu">,</span></span>
+<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a>      <span class="er">sd_Mz</span><span class="fu">:</span> <span class="st">"$force_doc.message.measurements.sd_Mz"</span><span class="fu">,</span></span>
+<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a>      <span class="er">Ax</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">$arrayElemAt</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$Ax"</span><span class="ot">,</span> <span class="st">"$idx"</span><span class="ot">]</span> <span class="fu">},</span></span>
+<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>      <span class="er">Ay</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">$arrayElemAt</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$Ay"</span><span class="ot">,</span> <span class="st">"$idx"</span><span class="ot">]</span> <span class="fu">},</span></span>
+<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a>      <span class="er">Az</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">$arrayElemAt</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$Az"</span><span class="ot">,</span> <span class="st">"$idx"</span><span class="ot">]</span> <span class="fu">},</span></span>
+<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a>      <span class="er">microphone</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">$arrayElemAt</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$microphone"</span><span class="ot">,</span> <span class="st">"$idx"</span><span class="ot">]</span> <span class="fu">},</span></span>
+<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a>      <span class="er">idx</span><span class="fu">:</span> <span class="st">"$idx"</span></span>
+<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that we are doing a <code>$match</code> stage both at the beginning of the pipeline, to select a time slice in the <code>acceleration</code> collection, and inside the <code>$lookup</code> stage, to select the corresponding time slice in the <code>force</code> collection before merging the two collections using <code>message.timestamp</code>. This way we can take advantage of the indexes on the <code>timestamp</code> field in both collections, and make our queries <strong>much</strong> faster.</p>
+</div>
+</div>
+<p>Copy and paste that pipeline in MongoDB Compass, run it and look at the result.</p>
+<p>Now, saving that pipeline as a view is possible, but of little help, since the time boundaries are fixed in the pipeline, and cannot be changed when querying the view. Therefore, it is better to run that pipeline directly from the client, using the <code>aggregate()</code> method of the <code>mongolite</code> package, and passing the desired time boundaries as parameters to the pipeline. This way we can have a flexible and efficient way to query the data for any time range we are interested in.</p>
+<p>Working in R, we first define a function that takes the time boundaries as input, and returns the result of the aggregation pipeline as a JSON string:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>merge_pipeline <span class="ot">&lt;-</span> <span class="cf">function</span>(start_time, end_time, <span class="at">pretty=</span><span class="cn">TRUE</span>) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  time_range <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">'$gte'</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">"$date"</span> <span class="ot">=</span> start_time),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">'$lt'</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">"$date"</span> <span class="ot">=</span> end_time)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  pipeline <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$match'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">'message.timestamp'</span> <span class="ot">=</span> time_range</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$project'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">ts =</span> <span class="st">'$message.timestamp'</span>,</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ax =</span> <span class="st">'$message.measurements.Ax'</span>,</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ay =</span> <span class="st">'$message.measurements.Ay'</span>,</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">Az =</span> <span class="st">'$message.measurements.Az'</span>,</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">microphone =</span> <span class="st">'$message.measurements.microphone'</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$set'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">len =</span> <span class="fu">list</span>(</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>          <span class="st">'$max'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(<span class="st">'$size'</span> <span class="ot">=</span> <span class="st">'$Ax'</span>),</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(<span class="st">'$size'</span> <span class="ot">=</span> <span class="st">'$Ay'</span>),</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(<span class="st">'$size'</span> <span class="ot">=</span> <span class="st">'$Az'</span>),</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(<span class="st">'$size'</span> <span class="ot">=</span> <span class="st">'$microphone'</span>)</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$project'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">ts =</span> <span class="dv">1</span>,</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ax =</span> <span class="dv">1</span>,</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ay =</span> <span class="dv">1</span>,</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">Az =</span> <span class="dv">1</span>,</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">microphone =</span> <span class="dv">1</span>,</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">idx =</span> <span class="fu">list</span>(<span class="st">'$range'</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="st">'$len'</span>))</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="st">'$unwind'</span> <span class="ot">=</span> <span class="st">'$idx'</span>),</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$lookup'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">from =</span> <span class="st">'force'</span>,</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">let =</span> <span class="fu">list</span>(<span class="at">ts =</span> <span class="st">'$ts'</span>),</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">pipeline =</span> <span class="fu">list</span>(</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>          <span class="fu">list</span>(</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>            <span class="st">'$match'</span> <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>              <span class="st">'$expr'</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">'$lte'</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'$message.timestamp'</span>, <span class="st">'$$ts'</span>)),</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>              <span class="st">'message.timestamp'</span> <span class="ot">=</span> time_range</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>          <span class="fu">list</span>(<span class="st">'$sort'</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">'message.timestamp'</span><span class="ot">=</span><span class="sc">-</span><span class="dv">1</span>)),</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a>          <span class="fu">list</span>(<span class="st">'$limit'</span><span class="ot">=</span><span class="dv">1</span>)</span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a>        <span class="at">as=</span><span class="st">'force_doc'</span></span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$set'</span><span class="ot">=</span><span class="fu">list</span>(<span class="at">force_doc=</span><span class="fu">list</span>(<span class="st">'$arrayElemAt'</span><span class="ot">=</span><span class="fu">list</span>(<span class="st">'$force_doc'</span>, <span class="dv">0</span>)))</span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a>      <span class="st">'$project'</span><span class="ot">=</span><span class="fu">list</span>(</span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a>        <span class="st">'_id'</span><span class="ot">=</span><span class="dv">0</span>,</span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>        <span class="at">timestamp=</span><span class="st">'$ts'</span>,</span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a>        <span class="at">Fx=</span><span class="st">'$force_doc.message.measurements.Fx'</span>,</span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a>        <span class="at">Fy=</span><span class="st">'$force_doc.message.measurements.Fy'</span>,</span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a>        <span class="at">Fz=</span><span class="st">'$force_doc.message.measurements.Fz'</span>,</span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a>        <span class="at">Mz=</span><span class="st">'$force_doc.message.measurements.Mz'</span>,</span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_Fx=</span><span class="st">'$force_doc.message.measurements.sd_Fx'</span>,</span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_Fy=</span><span class="st">'$force_doc.message.measurements.sd_Fy'</span>,</span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_Fz=</span><span class="st">'$force_doc.message.measurements.sd_Fz'</span>,</span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_Mz=</span><span class="st">'$force_doc.message.measurements.sd_Mz'</span>,</span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ax=</span><span class="fu">list</span>(<span class="st">'$arrayElemAt'</span><span class="ot">=</span><span class="fu">list</span>(<span class="st">'$Ax'</span>, <span class="st">'$idx'</span>)),</span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ay=</span><span class="fu">list</span>(<span class="st">'$arrayElemAt'</span><span class="ot">=</span><span class="fu">list</span>(<span class="st">'$Ay'</span>, <span class="st">'$idx'</span>)),</span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a>        <span class="at">Az=</span><span class="fu">list</span>(<span class="st">'$arrayElemAt'</span><span class="ot">=</span><span class="fu">list</span>(<span class="st">'$Az'</span>, <span class="st">'$idx'</span>)),</span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a>        <span class="at">microphone=</span><span class="fu">list</span>(<span class="st">'$arrayElemAt'</span><span class="ot">=</span><span class="fu">list</span>(<span class="st">'$microphone'</span>, <span class="st">'$idx'</span>)),</span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a>        <span class="at">idx=</span><span class="st">'$idx'</span></span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(jsonlite<span class="sc">::</span><span class="fu">toJSON</span>(pipeline, <span class="at">auto_unbox =</span> <span class="cn">TRUE</span>, <span class="at">pretty=</span>pretty))</span>
+<span id="cb28-85"><a href="#cb28-85" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Try and run: </span></span>
+<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a><span class="co"># merge_pipeline("2011-01-01T01:06:34.784Z", "2011-01-01T01:06:35.784Z") </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now we can run that pipeline directly from the client, passing the desired time boundaries as parameters to the pipeline. We create a connection to the <code>acceleration</code> collection, and then we call the <code>aggregate()</code> method with the pipeline generated by the <code>merge_pipeline()</code> function, and we convert the result to a tibble for further analysis.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can run that pipeline directly from the client, passing the desired time boundaries as parameters to the pipeline.</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>start_time <span class="ot">&lt;-</span> <span class="st">"2011-01-01T01:06:37.0Z"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>end_time <span class="ot">&lt;-</span> <span class="st">"2011-01-01T01:06:38.0Z"</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">mongo</span>(</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">"acceleration"</span>, <span class="at">db =</span> <span class="st">"MASSM_1"</span>, </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">"mongodb://localhost:27017"</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">merge_pipeline</span>(start_time, end_time) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  m<span class="sc">$</span><span class="fu">aggregate</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n=</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 2%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">timestamp</th>
+<th style="text-align: right;">Ax</th>
+<th style="text-align: right;">Ay</th>
+<th style="text-align: right;">Az</th>
+<th style="text-align: right;">microphone</th>
+<th style="text-align: right;">idx</th>
+<th style="text-align: right;">Fx</th>
+<th style="text-align: right;">Fy</th>
+<th style="text-align: right;">Fz</th>
+<th style="text-align: right;">Mz</th>
+<th style="text-align: right;">sd_Fx</th>
+<th style="text-align: right;">sd_Fy</th>
+<th style="text-align: right;">sd_Fz</th>
+<th style="text-align: right;">sd_Mz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">1.65766</td>
+<td style="text-align: right;">0.07358</td>
+<td style="text-align: right;">1.13922</td>
+<td style="text-align: right;">0.62527</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">-1.63351</td>
+<td style="text-align: right;">-0.66040</td>
+<td style="text-align: right;">-0.01740</td>
+<td style="text-align: right;">0.89588</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">-1.59247</td>
+<td style="text-align: right;">-1.14576</td>
+<td style="text-align: right;">-1.27633</td>
+<td style="text-align: right;">0.73908</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">2.22538</td>
+<td style="text-align: right;">-0.59640</td>
+<td style="text-align: right;">-0.84463</td>
+<td style="text-align: right;">0.43243</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">-3.89462</td>
+<td style="text-align: right;">-1.21184</td>
+<td style="text-align: right;">-1.62275</td>
+<td style="text-align: right;">0.35504</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">2.36589</td>
+<td style="text-align: right;">0.11731</td>
+<td style="text-align: right;">1.66335</td>
+<td style="text-align: right;">0.10662</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">0.29732</td>
+<td style="text-align: right;">-0.25121</td>
+<td style="text-align: right;">-0.91621</td>
+<td style="text-align: right;">-0.01476</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">-3.24011</td>
+<td style="text-align: right;">-0.37762</td>
+<td style="text-align: right;">-0.99779</td>
+<td style="text-align: right;">-0.09670</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">3.33909</td>
+<td style="text-align: right;">0.63682</td>
+<td style="text-align: right;">-0.47612</td>
+<td style="text-align: right;">-0.48036</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2011-01-01 02:06:37</td>
+<td style="text-align: right;">-2.94858</td>
+<td style="text-align: right;">0.26939</td>
+<td style="text-align: right;">-1.48514</td>
+<td style="text-align: right;">-0.46298</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">-0.0038574</td>
+<td style="text-align: right;">-0.0608718</td>
+<td style="text-align: right;">-0.1912699</td>
+<td style="text-align: right;">0.0035848</td>
+<td style="text-align: right;">0.3972336</td>
+<td style="text-align: right;">0.7275536</td>
+<td style="text-align: right;">0.3775459</td>
+<td style="text-align: right;">0.0114774</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Waaaay faster!</strong></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The pipeline that we are using to merge the <code>acceleration</code> and <code>force</code> merges the slower <code>force</code> collection into the faster <code>acceleration</code> collection. Missing values in <code>force</code> are filled by carrying forward the <strong>last known value</strong>, which is a common technique for handling missing data in time series. The sole problem with this approach is that when the initial time of the query is arbitrary, the first value of the <code>force</code> variables will be missing, since there is no previous value to carry forward. For this reason we will use <code>na.omit()</code>: to exclude the first part of the time series where the <code>force</code> variables are missing, and only keep the part where all the variables have valid values.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-todo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Todo</span>Todo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Improve the <code>merge_pipeline()</code> function to accept defaults so that:</p>
+<ul>
+<li>if the start time is not given, it is assumed to be “since the beginning”</li>
+<li>if the end time is not given, it is assumed to be “until the end”</li>
+<li>at least one of the two time boundaries must be given, otherwise the function should throw an error.</li>
+</ul>
+</div>
+</div>
+<p>Now we want to extract a 1 s period from the beginning of the time series and calculate the reference average values for all the variables, which we can use as a baseline for further analysis. We can do this by filtering the data frame for the first 1 s of data, and then calculating the mean of each variable, excluding the timestamp and idx variables:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>reference <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>timestamp, <span class="sc">-</span>idx) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), mean)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>reference</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Ax            Ay            Az    microphone            Fx 
+-0.6142429498  0.0073205251 -0.5997727500 -0.0224257319 -0.0258568192 
+           Fy            Fz            Mz         sd_Fx         sd_Fy 
+-0.0169717721  0.3433675649  0.0004681969  0.5946844428  0.6298720919 
+        sd_Fz         sd_Mz 
+ 0.2511601236  0.0079699841 </code></pre>
+</div>
+</div>
+<p>This reference can be used within a Hotelling’s T-squared control chart to monitor the process and detect any deviations from the normal operating conditions, which can be indicative of tool wear or other issues in the machining process.</p>
+<p>Let’s for example extract a second frame, later on, and then apply the Hotelling’s T-squared test to compare the two frames and see if there is a significant difference between them:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>start_time <span class="ot">&lt;-</span> <span class="st">"2011-01-01T01:09:37.0Z"</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>end_time <span class="ot">&lt;-</span> <span class="st">"2011-01-01T01:09:38.0Z"</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">merge_pipeline</span>(start_time, end_time) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  m<span class="sc">$</span><span class="fu">aggregate</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>timestamp, <span class="sc">-</span>idx) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  DescTools<span class="sc">::</span><span class="fu">HotellingsT2Test</span>(</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> reference</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Hotelling's one sample T2-test
+
+data:  .
+T.2 = 9693423, df1 = 12, df2 = 9948, p-value &lt; 2.2e-16
+alternative hypothesis: true location is not equal to c(-0.614242949799197,0.00732052510040165,-0.59977275,-0.0224257319277108,-0.0258568191863453,-0.0169717720905623,0.343367564861044,0.000468196882931726,0.594684442798105,0.629872091935496,0.251160123645024,0.00796998413328374)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-todo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Todo</span>Todo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Improve the above analysis by looping over the time series in 1 s frames, and applying the Hotelling’s T-squared test to each frame, comparing it with the reference frame. This way we can monitor the process over time and detect any deviations from the normal operating conditions as they happen.</p>
 </div>
 </div>
 
