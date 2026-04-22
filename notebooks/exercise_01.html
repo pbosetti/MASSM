@@ -174,7 +174,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 17, 2026</p>
+      <p class="date-modified">April 22, 2026</p>
     </div>
   </div>
     
@@ -408,7 +408,7 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>I have recently released a package called <code>mdbplyr</code> that provides a <code>dplyr</code>-like interface to MongoDB, and it is designed to work with the <code>mongolite</code> package. It allows you to write your queries in a more intuitive way, using the <code>dplyr</code> syntax, and it will translate them into MongoDB queries under the hood. You can install it from GitHub with the command <code>pak::pak("pbosetti/mdbplyr")</code>. During the <strong>second half of April 2026</strong> it should be available on CRAN (<code>install.packages("mdbplyr")</code>).</p>
+<p>I have recently released a package called <code>mdbplyr</code> that provides a <code>dplyr</code>-like interface to MongoDB, and it is designed to work with the <code>mongolite</code> package. It allows you to write your queries in a more intuitive way, using the <code>dplyr</code> syntax, and it will translate them into MongoDB queries under the hood. The package is available on CRAN (<code>install.packages("mdbplyr")</code>), and there is a vignette available (<code>vignette("using-mdbplyr")</code>).</p>
 </div>
 </div>
 </section>
@@ -670,7 +670,7 @@ Tip
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/pbosetti\.github\.io\/MASSM\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
